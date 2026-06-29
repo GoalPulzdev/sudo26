@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Sudoku 2026",
+    "slug": "sudoku-2026",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "sudoku2026",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0f0f1a",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f0f1a"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "no.sudoku2026"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0f0f1a"
+      },
+      "package": "no.sudoku2026"
+    }
+  }
+}

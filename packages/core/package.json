@@ -1,0 +1,26 @@
+{
+  "name": "@sudoku-2026/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Core Sudoku game engine – shared across web and mobile",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "vitest": "^2.1.8",
+    "typescript": "^5.7.2"
+  }
+}
