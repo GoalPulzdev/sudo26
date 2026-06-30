@@ -33,7 +33,7 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>): React.ReactElement {
   return (
     <html lang="no" suppressHydrationWarning className={inter.variable}>
       <head>

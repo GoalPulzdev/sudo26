@@ -14,7 +14,7 @@ function randomId() {
   return Math.random().toString(36).slice(2, 10);
 }
 
-export default function SamuraiPage() {
+export default function SamuraiPage(): React.ReactElement {
   const { game, loadPuzzle, dispatch } = useGameStore();
   const [samurai, setSamurai] = useState<SamuraiPuzzle | null>(null);
   const [activeGrid, setActiveGrid] = useState(2); // Start with center (2)

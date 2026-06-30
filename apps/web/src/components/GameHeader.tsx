@@ -50,7 +50,7 @@ export default function GameHeader({
   title,
   filledCount,
   totalCells,
-}: GameHeaderProps) {
+}: GameHeaderProps): React.ReactElement {
   const pct = totalCells > 0 ? Math.round((filledCount / totalCells) * 100) : 0;
 
   return (

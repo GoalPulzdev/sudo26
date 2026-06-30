@@ -1,121 +1,141 @@
 # Sudoku 2026
 
-Next-generation Sudoku for alle plattformer. Bygget med **Turborepo**, **Next.js 15**, **Expo** og delt TypeScript spillogikk.
+Next-generation Sudoku for all platforms. Built with **Turborepo**, **Next.js 15**,
+**Expo**, and a shared TypeScript game engine.
+
+> **Status: Alpha → hardening toward production.**
+> This README separates what is *implemented*, what is *mock/prototype*, and what
+> is *planned*, so nobody mistakes a stub for a finished feature. See
+> [`docs/product-roadmap.md`](docs/product-roadmap.md).
 
 ---
 
-## Arkitektur
+## Architecture
 
 ```
-sudoku-2026/
+sudo26/
 ├── apps/
-│   ├── web/          ← Next.js 15 (web + PWA)
-│   └── mobile/       ← Expo / React Native (iOS + Android)
+│   ├── web/      ← Next.js 15 (web + PWA)
+│   └── mobile/   ← Expo / React Native (iOS + Android)
 └── packages/
-    └── core/         ← Delt spillmotor (TypeScript, null deps)
+    └── core/     ← Shared game engine (TypeScript, no framework deps)
 ```
 
-### `packages/core` – Spillmotoren
-Ren TypeScript, ingen rammeverk-avhengigheter. Inneholder:
+Full detail in [`docs/architecture.md`](docs/architecture.md).
 
-| Fil | Innhold |
-|-----|---------|
-| `generator.ts` | Sudoku-generator (backtracking + seeded RNG) |
-| `hints.ts` | AI hint-motor: 5 strategier (Naked Single → X-Wing → AI fallback) |
-| `gameState.ts` | Ren reducer for spilltilstand |
-| `killer.ts` | Killer Sudoku: cage-generering og validering |
-| `samurai.ts` | Samurai Sudoku: 5 overlappende 9×9 brett |
-| `streaks.ts` | Streak-beregning for daglige utfordringer |
+### `packages/core` — the engine
+Pure TypeScript, no framework dependencies.
 
-### `apps/web` – Next.js 15
-Alle sider er App Router-baserte og støtter SSG/SSR:
+| File | Contents |
+|------|----------|
+| `generator.ts` | Classic generate/solve, seeded RNG, deterministic daily |
+| `board.ts` | Board model, clone, serialize |
+| `gameState.ts` | Pure reducer (select, input, notes, undo, timer, win) |
+| `hints.ts` | Hint pipeline (singles, pairs, pointing pair, reveal fallback) |
+| `mini.ts` | 6×6 generator with uniqueness check |
+| `killer.ts` | Killer cage generation/validation |
+| `samurai.ts` | 5×9×9 generator (prototype) |
+| `streaks.ts` | Daily streak math |
 
-| Rute | Beskrivelse |
-|------|-------------|
-| `/` | Hjemmeside med alle spillmoduser |
-| `/play/classic/[difficulty]` | Klassisk Sudoku (enkel/middels/vanskelig/ekstrem) |
-| `/play/daily` | Daglig utfordring med streak-tracking |
-| `/play/killer` | Killer Sudoku |
-| `/play/samurai` | Samurai Sudoku (5 brett) |
-| `/multiplayer` | Opprett / bli med i multiplayer-rom |
-| `/leaderboard` | Global rangliste |
-| `/api/leaderboard` | REST API – leaderboard entries |
-| `/api/rooms` | REST API – opprett/hent multiplayer-rom |
+### `apps/web` — Next.js 15
+App Router. Pages under `src/app/play/*`. Game state in Zustand + localStorage.
 
-### `apps/mobile` – Expo
-React Native app med Expo Router. Deler core-pakken med web.
+### `apps/mobile` — Expo
+Expo Router. Shares `@sudoku-2026/core` with web.
 
 ---
 
-## Kom i gang
+## Feature status
 
-### Forutsetninger
+**Legend:** ✅ implemented · 🟡 mock / prototype · 🔜 planned
+
+| Feature | Status | Note |
+|---------|:------:|------|
+| Classic 9×9 Sudoku (all difficulties) | ✅ | seeded, unique-solution generator + tests |
+| Deterministic daily puzzle | ✅ | same board per date |
+| Pure game reducer (input/notes/undo/win) | ✅ | unit-tested |
+| Streaks | ✅ | core math tested; storage app-side |
+| Mini 6×6 Sudoku | ✅ | generator with uniqueness; UI not yet on shared shell |
+| Hints — singles, pairs, pointing pair | ✅ | with explanations |
+| Hints — X-Wing | 🟡 | declared in types/docstring, **not implemented** |
+| Hint fallback | 🟡 | reveals the solution; typed `ai_suggestion` but is **not** AI |
+| Technique-based difficulty rating | 🔜 | today difficulty = clue count only |
+| Killer Sudoku cages | 🟡 | generates; full cage validation pending |
+| Samurai Sudoku | 🟡 | 5 **independent** grids; overlaps do not match yet |
+| Leaderboard | 🟡 | UI + API on **mock/in-memory** data |
+| Multiplayer rooms | 🟡 | routing + server shell, not real-time |
+| PWA offline | ✅ | manifest + service worker |
+| Animated UI (Framer Motion) | ✅ | |
+| Dark mode | ✅ | |
+| iOS/Android via Expo | ✅ | app shell runs |
+| Server-side results / real leaderboard | 🔜 | needs Supabase (see `docs/supabase-schema.md`) |
+| Real-time multiplayer | 🔜 | Supabase Realtime / PartyKit |
+
+---
+
+## Getting started
+
+### Prerequisites
 - Node.js ≥ 20
-- pnpm ≥ 10 (`npm i -g pnpm`)
+- pnpm 10.33.0 (`npm i -g pnpm@10.33.0`, or `corepack` if writable)
 
-### Installer avhengigheter
+### Install
 ```bash
 pnpm install
 ```
 
-### Kjør web (development)
+### Run web (dev)
 ```bash
-pnpm --filter @sudoku-2026/web dev
-# → http://localhost:3000
+pnpm --filter @sudoku-2026/web dev   # → http://localhost:3000
 ```
 
-### Kjør mobil (Expo)
+### Run mobile (Expo)
 ```bash
-pnpm --filter @sudoku-2026/mobile dev
-# Skann QR-koden med Expo Go
+pnpm --filter @sudoku-2026/mobile dev   # scan the QR with Expo Go
 ```
 
-### Bygg alt
+### Quality gate (what CI runs)
 ```bash
+pnpm type-check
+pnpm lint
+pnpm test
 pnpm build
 ```
 
 ---
 
-## Features i 2026-utgaven
+## CI
 
-| Feature | Status |
-|---------|--------|
-| Klassisk 9×9 Sudoku (alle vanskelighetsgrader) | ✅ |
-| Daglige utfordringer med streak | ✅ |
-| AI-hints (5 strategier + fallback) | ✅ |
-| Pencil notes | ✅ |
-| Killer Sudoku cages | ✅ |
-| Samurai Sudoku (5 overlappende brett) | ✅ |
-| Multiplayer rom-system | ✅ (server-shell) |
-| Leaderboard | ✅ (mock-data) |
-| PWA offline-støtte | ✅ |
-| Animert UI (Framer Motion) | ✅ |
-| Dark mode | ✅ |
-| iOS/Android via Expo | ✅ |
-| Real-time WebSocket multiplayer | 🔜 (krever Redis + Socket.io) |
-| Ekte database-rangliste | 🔜 (krever Supabase/Postgres) |
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs type-check, lint,
+test, and build on every PR and on push to `main`. No merge to `main` without
+green CI. See [`docs/release-checklist.md`](docs/release-checklist.md).
 
 ---
 
-## Multiplayer (full implementasjon)
+## Docs
 
-For full sanntids-multiplayer trengs:
-1. **Redis** – for delt romtilstand
-2. **Socket.io** eller **Partykit** – WebSocket events
-3. Oppdater `/api/rooms` til å bruke Redis og emitte events
-
-Se `packages/core/src/types.ts` → `MultiplayerEvent` for event-protokollen.
+- [`docs/architecture.md`](docs/architecture.md)
+- [`docs/product-roadmap.md`](docs/product-roadmap.md)
+- [`docs/game-engine-contract.md`](docs/game-engine-contract.md)
+- [`docs/testing-strategy.md`](docs/testing-strategy.md)
+- [`docs/supabase-schema.md`](docs/supabase-schema.md)
+- [`docs/release-checklist.md`](docs/release-checklist.md)
 
 ---
 
-## Teknologi
+## Technology
 
-- **Turborepo** – monorepo med parallell bygging
-- **Next.js 15** – App Router, SSR/SSG, API Routes
-- **Expo 52** – iOS/Android/Web via React Native
-- **Zustand** – spilltilstand med localStorage-persistering
-- **Framer Motion** – animasjoner
-- **Tailwind CSS v4** – styling
-- **TypeScript** – end-to-end typesikkerhet
-- **tsup** – ultra-rask bundling av core-pakken
+Turborepo · Next.js 15 (App Router) · Expo 54 · Zustand · Framer Motion ·
+Tailwind CSS v4 · TypeScript · tsup · Vitest
+
+---
+
+## Multiplayer (toward real-time)
+
+The current rooms API is an in-memory shell. Real-time needs:
+1. shared room state (Supabase Realtime, PartyKit, or Redis + Socket.io)
+2. event protocol — see `packages/core/src/types.ts` → `MultiplayerEvent`
+3. server-validated results
+
+Per the roadmap, multiplayer comes **after** core, daily, profiles, and a real
+leaderboard are solid.

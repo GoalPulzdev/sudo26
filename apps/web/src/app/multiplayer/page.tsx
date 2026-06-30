@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import type { MultiplayerRoom, Puzzle } from "@sudoku-2026/core";
 
-export default function MultiplayerPage() {
+export default function MultiplayerPage(): React.ReactElement {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [roomCode, setRoomCode] = useState("");

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import type React from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Board, CellValue, Hint } from "@sudoku-2026/core";
 import {
@@ -316,10 +317,10 @@ function DailyWinOverlay({
             Se statistikk
           </a>
           <DailyChallengeRow elapsed={elapsed} />
-          <a href="/" className="block text-xs font-bold uppercase tracking-widest transition-colors"
+          <Link href="/" className="block text-xs font-bold uppercase tracking-widest transition-colors"
             style={{ color: "var(--text-dim)" }}>
             Tilbake til meny
-          </a>
+          </Link>
         </div>
       </motion.div>
     </motion.div>

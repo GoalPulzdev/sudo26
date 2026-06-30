@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import type React from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Difficulty, CellValue, Hint, Puzzle } from "@sudoku-2026/core";
 import { createPuzzle, getHint, boardToString } from "@sudoku-2026/core";
@@ -118,7 +119,7 @@ export default function ClassicGamePage(): React.JSX.Element {
     <main className="min-h-screen flex flex-col items-center justify-start gap-4 px-4 py-6 relative">
       {/* Back link */}
       <div style={{ width: "min(92vw, 480px)" }} className="self-start">
-        <a
+        <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest transition-colors"
           style={{ color: "var(--text-muted)" }}
@@ -129,7 +130,7 @@ export default function ClassicGamePage(): React.JSX.Element {
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           Hjem
-        </a>
+        </Link>
       </div>
 
       <GameHeader

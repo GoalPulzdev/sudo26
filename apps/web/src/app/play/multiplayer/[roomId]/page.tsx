@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import type React from "react";
 import { useParams, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import type { CellValue, Hint, Puzzle } from "@sudoku-2026/core";
 import { getHint, boardToString } from "@sudoku-2026/core";
@@ -627,13 +628,13 @@ function MultiplayerWinOverlay({
           >
             Ny duel
           </a>
-          <a
+          <Link
             href="/"
             className="block text-xs font-bold uppercase tracking-widest"
             style={{ color: "var(--text-dim)" }}
           >
             Tilbake til meny
-          </a>
+          </Link>
         </div>
       </motion.div>
     </motion.div>

@@ -11,7 +11,7 @@ interface SudokuBoardProps {
   hintCell?: [number, number] | null;
 }
 
-export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell }: SudokuBoardProps) {
+export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell }: SudokuBoardProps): React.ReactElement {
   const selVal = selectedCell ? board[selectedCell[0]][selectedCell[1]].value : 0;
 
   return (

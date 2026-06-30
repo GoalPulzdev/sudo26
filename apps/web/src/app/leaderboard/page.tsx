@@ -43,7 +43,7 @@ const row = {
   show:   { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number,number,number,number] } },
 };
 
-export default function LeaderboardPage() {
+export default function LeaderboardPage(): React.ReactElement {
   const stats = useGameStore((s) => s.stats);
 
   // Sort difficulties by best time (played first, null last)
