@@ -175,3 +175,134 @@ export function validateKillerPuzzle(puzzle: Puzzle): { ok: boolean; error?: str
   }
   return { ok: true };
 }
+
+// ─── Killer-aware solver (uniqueness) ────────────────────────────────────────────
+
+function sudokuLegal(grid: number[], pos: number, n: number): boolean {
+  const row = Math.floor(pos / 9);
+  const col = pos % 9;
+  const boxRow = Math.floor(row / 3) * 3;
+  const boxCol = Math.floor(col / 3) * 3;
+  for (let i = 0; i < 9; i++) {
+    if (grid[row * 9 + i] === n) return false;
+    if (grid[i * 9 + col] === n) return false;
+    const br = boxRow + Math.floor(i / 3);
+    const bc = boxCol + (i % 3);
+    if (grid[br * 9 + bc] === n) return false;
+  }
+  return true;
+}
+
+export interface KillerSolveCount {
+  count: number;
+  /** True when the node budget was hit before the search finished. */
+  exhausted: boolean;
+}
+
+/**
+ * Count solutions (up to `limit`) of a Killer puzzle, honouring Sudoku rules
+ * *and* cage constraints (distinct digits per cage, sums match). `clues` may be
+ * an 81-char string ('0' = empty) or omitted for an all-empty board.
+ *
+ * Bounded by `maxNodes` so it always terminates; check `exhausted` before
+ * trusting a `count` of 0 or 1.
+ */
+export function countKillerSolutions(
+  cages: KillerCage[],
+  clues?: string,
+  opts: { limit?: number; maxNodes?: number } = {}
+): KillerSolveCount {
+  const limit = opts.limit ?? 2;
+  const maxNodes = opts.maxNodes ?? 500_000;
+
+  const grid = clues ? clues.split("").map(Number) : new Array(81).fill(0);
+  const cageOf = new Array(81).fill(-1);
+  cages.forEach((cg, ci) => cg.cells.forEach(([r, c]) => (cageOf[r * 9 + c] = ci)));
+
+  // Cages already fully filled by the clues are never revisited during the
+  // search, so validate them (distinct digits + exact sum) upfront.
+  for (const cg of cages) {
+    const vals = cg.cells.map(([r, c]) => grid[r * 9 + c]);
+    if (vals.every((v) => v !== 0)) {
+      const sum = vals.reduce((a, b) => a + b, 0);
+      if (new Set(vals).size !== vals.length || sum !== cg.sum) {
+        return { count: 0, exhausted: false };
+      }
+    }
+  }
+
+  let count = 0;
+  let nodes = 0;
+  let exhausted = false;
+
+  const cageFeasible = (pos: number, n: number): boolean => {
+    const ci = cageOf[pos];
+    if (ci < 0) return true;
+    const cg = cages[ci];
+    let sum = 0;
+    let filled = 0;
+    const used = new Set<number>();
+    for (const [r, c] of cg.cells) {
+      const v = grid[r * 9 + c];
+      if (v) {
+        sum += v;
+        filled++;
+        used.add(v);
+      }
+    }
+    if (used.has(n)) return false;
+    const newSum = sum + n;
+    const remaining = cg.cells.length - (filled + 1);
+    if (remaining === 0) return newSum === cg.sum;
+
+    const avail: number[] = [];
+    for (let d = 1; d <= 9; d++) if (d !== n && !used.has(d)) avail.push(d);
+    if (avail.length < remaining) return false;
+    let minR = 0;
+    let maxR = 0;
+    for (let k = 0; k < remaining; k++) {
+      minR += avail[k];
+      maxR += avail[avail.length - 1 - k];
+    }
+    return newSum + minR <= cg.sum && newSum + maxR >= cg.sum;
+  };
+
+  const recurse = (): void => {
+    if (count >= limit || exhausted) return;
+    if (++nodes > maxNodes) {
+      exhausted = true;
+      return;
+    }
+    const pos = grid.indexOf(0);
+    if (pos === -1) {
+      count++;
+      return;
+    }
+    for (let n = 1; n <= 9; n++) {
+      if (count >= limit || exhausted) return;
+      if (sudokuLegal(grid, pos, n) && cageFeasible(pos, n)) {
+        grid[pos] = n;
+        recurse();
+        grid[pos] = 0;
+      }
+    }
+  };
+
+  recurse();
+  return { count, exhausted };
+}
+
+/**
+ * Does the Killer puzzle have exactly one solution from its cages (+ any clues)?
+ * Returns false if ambiguous, unsolvable, or the search was bounded out.
+ */
+export function hasUniqueKillerSolution(
+  puzzle: Puzzle,
+  maxNodes = 500_000
+): boolean {
+  const r = countKillerSolutions(puzzle.killerCages ?? [], puzzle.clues, {
+    limit: 2,
+    maxNodes,
+  });
+  return !r.exhausted && r.count === 1;
+}

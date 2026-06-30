@@ -48,8 +48,10 @@ Rules:
 
 Implemented in `difficulty.ts`: `rateDifficulty(clues)` solves with the logic
 engine and returns `{ label, score, requiredTechniques, estimatedMinutes }`.
-Remaining gap: the classic **generator** still picks clue-count buckets
-(`CLUE_COUNTS`) and does not yet label puzzles via `rateDifficulty`.
+`generator.ts` adds `generateMatchedPuzzle` / `createMatchedPuzzle`, which
+regenerate (deterministically, `${seed}#i`) until the measured logic-label
+matches the requested bucket — so difficulty reflects solving logic, not just
+clue count.
 
 ## Solver (target)
 
@@ -109,7 +111,10 @@ optional `affectedCells` / `eliminations` for future UI highlighting.
 - **Killer:** `validateKillerPuzzle` proves all 81 cells covered, no cell in two
   cages, cages connected, no repeated digit per cage, and sums match the
   solution. The generator now grows cages digit-distinct (a connected region may
-  not reuse a digit). Remaining gap: puzzle uniqueness from cages alone.
+  not reuse a digit). `countKillerSolutions` / `hasUniqueKillerSolution` add a
+  bounded killer-aware solver (Sudoku + cage sum/distinct pruning). Remaining
+  gap: clueless generated puzzles may exceed the node budget before uniqueness
+  is proven.
 - **Samurai:** 21×21 master grid, 5 overlapping 9×9 grids at offsets
   `[0,0] [0,12] [6,6] [12,0] [12,12]`. The generator builds the center first,
   then completes each corner with the shared 3×3 box fixed from the center, so

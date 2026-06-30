@@ -5,7 +5,7 @@
  * so puzzles are reproducible from a seed string.
  */
 
-import type { Difficulty, Puzzle } from "./types.js";
+import type { Difficulty, DifficultyRating, Puzzle } from "./types.js";
 import { boardFromPuzzle } from "./board.js";
 import { rateDifficulty } from "./difficulty.js";
 
@@ -204,6 +204,69 @@ export function createRatedPuzzle(
 ): Puzzle {
   const puzzle = createPuzzle(difficulty, seed, puzzleId, date);
   return { ...puzzle, rating: rateDifficulty(puzzle.clues) };
+}
+
+/** Difficulty buckets whose requested label can be matched to solving logic. */
+const MATCHABLE_LABELS: Difficulty[] = ["easy", "medium", "hard", "extreme"];
+
+export interface MatchedPuzzle {
+  puzzle: string;
+  solution: string;
+  rating: DifficultyRating;
+  /** True when the puzzle's measured logic-label equals the requested bucket. */
+  matched: boolean;
+  /** Seed suffix index that produced this puzzle. */
+  attempt: number;
+}
+
+/**
+ * Generate a puzzle whose *measured* difficulty (by solving logic) matches the
+ * requested bucket, by regenerating with derived seeds until it does.
+ *
+ * Deterministic for a given `seed` (it walks `${seed}#0`, `${seed}#1`, …). Falls
+ * back to the first candidate if no attempt matches within `attempts`. For
+ * non-bucket difficulties (`daily`, `mini`) it just attaches a rating.
+ */
+export function generateMatchedPuzzle(
+  difficulty: Difficulty,
+  seed: string,
+  attempts = 24
+): MatchedPuzzle {
+  const targetable = MATCHABLE_LABELS.includes(difficulty);
+  let first: MatchedPuzzle | null = null;
+
+  for (let i = 0; i < attempts; i++) {
+    const g = generateSudoku(difficulty, `${seed}#${i}`);
+    const rating = rateDifficulty(g.puzzle);
+    const matched = targetable ? rating.label === difficulty : true;
+    const candidate: MatchedPuzzle = { ...g, rating, matched, attempt: i };
+    if (!first) first = candidate;
+    if (matched) return candidate;
+  }
+  return { ...(first as MatchedPuzzle), matched: false };
+}
+
+/**
+ * Like `createRatedPuzzle`, but regenerates until the measured logic-label
+ * matches the requested difficulty bucket (best-effort within `attempts`).
+ */
+export function createMatchedPuzzle(
+  difficulty: Difficulty,
+  seed: string,
+  puzzleId: string,
+  date?: string
+): Puzzle {
+  const { puzzle, solution, rating } = generateMatchedPuzzle(difficulty, seed);
+  return {
+    id: puzzleId,
+    variant: "classic",
+    difficulty,
+    clues: puzzle,
+    solution,
+    seed,
+    rating,
+    ...(date ? { date } : {}),
+  };
 }
 
 export { boardFromPuzzle };

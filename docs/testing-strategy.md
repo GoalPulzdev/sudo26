@@ -43,13 +43,22 @@ Also implemented:
 - `killer.test.ts` — cages cover all 81 cells exactly once, connected, sums
   match, no-repeat; negative case (uncovered cell) rejected; `validateCage`.
 - `rated.test.ts` — `createRatedPuzzle` attaches a technique-based rating.
+- `matched.test.ts` — `generateMatchedPuzzle` / `createMatchedPuzzle` regenerate
+  until the measured logic-label matches the requested bucket; deterministic.
+- `mini.test.ts` — 36-char output, legal 6×6 solution (2×3 boxes), clue subset,
+  deterministic, clue count scales with difficulty.
+- `killer.test.ts` (solver) — `countKillerSolutions` honours cages: one
+  completion when clued, zero when a cage sum is corrupted (incl. fully-clued
+  cages), bounded by a node budget.
+- `hints.test.ts` — null on a solved board; valid strategy + coordinates; the
+  last empty cell is solved with a correct single; every hint has an explanation.
 
 ## Gaps to close (tracked, not yet done)
 
-- Generator: optionally regenerate until logic-label matches the requested bucket.
-- Mini: 36-char output, unique solution, 2×3 box rule (test coverage).
-- Killer: puzzle uniqueness from cages alone (needs a killer-aware solver).
-- Hints: each pipeline stage triggers on a crafted board.
+- Killer: prove uniqueness for *clueless* generated puzzles (search may hit the
+  node budget — `hasUniqueKillerSolution` returns false when `exhausted`).
+- Hints: dedicated triggers for naked-pair / pointing-pair on crafted boards.
+- Web + mobile: automated flows (still manual).
 
 ## Web (`apps/web`)
 

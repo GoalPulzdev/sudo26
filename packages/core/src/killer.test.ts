@@ -1,6 +1,18 @@
 import { describe, it, expect } from "vitest";
-import { createKillerPuzzle, validateKillerPuzzle, validateCage } from "./index.js";
+import {
+  createKillerPuzzle,
+  validateKillerPuzzle,
+  validateCage,
+  countKillerSolutions,
+} from "./index.js";
 import type { KillerCage } from "./index.js";
+
+/** Blank `n` deterministic cells of an 81-char solution to make clues. */
+function blank(solution: string, n: number): string {
+  const arr = solution.split("");
+  for (let i = 0; i < n; i++) arr[i * 7 % 81] = "0";
+  return arr.join("");
+}
 
 describe("createKillerPuzzle", () => {
   it("covers all 81 cells with valid, connected cages summing to the solution", () => {
@@ -37,6 +49,33 @@ describe("validateKillerPuzzle (negative)", () => {
     // drop the last cage → leaves cells uncovered
     p.killerCages = (p.killerCages ?? []).slice(0, -1);
     expect(validateKillerPuzzle(p).ok).toBe(false);
+  });
+});
+
+describe("countKillerSolutions", () => {
+  it("finds exactly one completion when most cells are clued", () => {
+    const p = createKillerPuzzle("ks", "id");
+    const clues = blank(p.solution, 8); // 8 blanks, cages + clues pin the rest
+    const r = countKillerSolutions(p.killerCages ?? [], clues, { limit: 2 });
+    expect(r.exhausted).toBe(false);
+    expect(r.count).toBe(1);
+  });
+
+  it("finds no completion when a cage sum is corrupted", () => {
+    const p = createKillerPuzzle("ks2", "id");
+    const clues = blank(p.solution, 8);
+    const cages = (p.killerCages ?? []).map((c, i) =>
+      i === 0 ? { ...c, sum: c.sum + 1 } : c
+    );
+    const r = countKillerSolutions(cages, clues, { limit: 2 });
+    expect(r.exhausted).toBe(false);
+    expect(r.count).toBe(0);
+  });
+
+  it("the real solution satisfies the cages (count >= 1 from full clues)", () => {
+    const p = createKillerPuzzle("ks3", "id");
+    const r = countKillerSolutions(p.killerCages ?? [], p.solution, { limit: 2 });
+    expect(r.count).toBe(1);
   });
 });
 
