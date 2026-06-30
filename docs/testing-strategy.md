@@ -6,7 +6,7 @@ not asserted by the README.
 ## Current state
 
 - Runner: **Vitest** (`pnpm test`, via `packages/core`).
-- 23 tests across generator, reducer, and streaks.
+- 37 tests across generator, reducer, streaks, solver, and difficulty.
 
 ## Core (`packages/core`) — must stay high-coverage
 
@@ -26,11 +26,19 @@ Implemented:
   - win declared only when fully and correctly solved
 - `streaks.test.ts`
   - first completion, consecutive extend, gap resets, duplicate is a no-op
+- `solver.test.ts`
+  - `validatePuzzle` accepts legal grids, rejects bad length/chars/conflicts
+  - `countSolutions` = 1 for generated puzzles, 2 (capped) for ambiguous grids
+  - `solveWithBacktracking` solves back to the generator's solution
+  - `solveWithLogic` solves an easy puzzle with pure logic, flags `guess_required` when stalled
+  - `solve` always yields a solution for solvable puzzles
+- `difficulty.test.ts`
+  - singles-solvable puzzle → `easy`; logic-unsolvable grid → `extreme`
+  - score increases with harder required techniques
 
 ## Gaps to close (tracked, not yet done)
 
-- Generator: assert **unique** solution explicitly (expose `countSolutions`).
-- Difficulty: rating matches required solving technique, not just clue count.
+- Generator: label puzzles via `rateDifficulty` instead of clue-count buckets.
 - Mini: 36-char output, unique solution, 2×3 box rule.
 - Killer: cages cover all 81 cells, no cell in two cages, sums match solution,
   cages connected, unique solution.

@@ -135,7 +135,8 @@ export type HintStrategy =
   | "naked_pair"
   | "pointing_pair"
   | "x_wing"
-  | "ai_suggestion";
+  /** Reveal of the solution value – NOT AI. Used as the final fallback. */
+  | "solution_reveal";
 
 export interface Hint {
   strategy: HintStrategy;
@@ -143,4 +144,38 @@ export interface Hint {
   col: number;
   value: CellValue;
   explanation: string;
+  /** Cells that participate in the technique (for UI highlighting). */
+  affectedCells?: [row: number, col: number][];
+  /** Candidate eliminations the technique proves (for elimination hints). */
+  eliminations?: { row: number; col: number; value: CellValue }[];
+}
+
+// ─── Solver & Difficulty ──────────────────────────────────────────────────────
+
+export type SolvingTechnique =
+  | "naked_single"
+  | "hidden_single"
+  | "naked_pair"
+  | "pointing_pair"
+  | "box_line_reduction"
+  | "x_wing"
+  | "guess_required";
+
+export interface DifficultyRating {
+  label: "easy" | "medium" | "hard" | "extreme";
+  /** Weighted score; higher = harder. */
+  score: number;
+  /** Hardest techniques required to solve with pure logic (no guessing). */
+  requiredTechniques: SolvingTechnique[];
+  estimatedMinutes: number;
+}
+
+export interface SolveResult {
+  solved: boolean;
+  solution?: string;
+  /** True when exactly one solution exists. */
+  unique: boolean;
+  /** Techniques used by the logic solver, in first-seen order. */
+  techniques: SolvingTechnique[];
+  error?: string;
 }

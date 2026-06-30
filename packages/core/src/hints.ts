@@ -9,8 +9,12 @@
  *  2. Hidden Single  – a digit appears in only one cell in a unit
  *  3. Naked Pair     – two cells in a unit share exactly the same two candidates
  *  4. Pointing Pair  – a candidate in a box is confined to one row/col
- *  5. X-Wing         – two rows/cols share a candidate in exactly the same two cols/rows
- *  6. AI Suggestion  – fall back to revealing the solution value with a friendly message
+ *  5. Solution Reveal – fall back to revealing the solution value with a friendly message
+ *
+ * NOTE: X-Wing is implemented in the solver/difficulty engine (`solver.ts`),
+ * which is where elimination logic is verifiable. This placement-oriented hint
+ * pipeline surfaces singles + pair eliminations, then reveals as a last resort.
+ * The reveal fallback is NOT AI.
  */
 
 import type { Hint, HintStrategy } from "./types.js";
@@ -175,16 +179,16 @@ function pointingPair(cands: Candidates): Hint | null {
   return null;
 }
 
-function aiSuggestion(grid: number[], solution: string): Hint | null {
+function solutionReveal(grid: number[], solution: string): Hint | null {
   for (let i = 0; i < 81; i++) {
     if (grid[i] === 0) {
       const v = parseInt(solution[i], 10);
       return {
-        strategy: "ai_suggestion",
+        strategy: "solution_reveal",
         row: Math.floor(i / 9),
         col: i % 9,
         value: v as Hint["value"],
-        explanation: `AI-hint: Sett inn **${v}** i rute (${Math.floor(i / 9) + 1}, ${
+        explanation: `Fasit: Sett inn **${v}** i rute (${Math.floor(i / 9) + 1}, ${
           i % 9 + 1
         }). Prøv å finne logikken selv neste gang!`,
       };
@@ -204,7 +208,7 @@ export function getHint(currentBoard: string, solution: string): Hint | null {
     () => hiddenSingle(buildCandidates(grid)),
     () => nakedPair(buildCandidates(grid)),
     () => pointingPair(buildCandidates(grid)),
-    () => aiSuggestion(grid, solution),
+    () => solutionReveal(grid, solution),
   ];
 
   for (const strategy of strategies) {

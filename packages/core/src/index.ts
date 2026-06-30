@@ -9,3 +9,5 @@ export * from "./killer.js";
 export * from "./samurai.js";
 export * from "./streaks.js";
 export * from "./mini.js";
+export * from "./solver.js";
+export * from "./difficulty.js";

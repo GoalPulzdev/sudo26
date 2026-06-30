@@ -57,9 +57,11 @@ Expo Router. Shares `@sudoku-2026/core` with web.
 | Streaks | ✅ | core math tested; storage app-side |
 | Mini 6×6 Sudoku | ✅ | generator with uniqueness; UI not yet on shared shell |
 | Hints — singles, pairs, pointing pair | ✅ | with explanations |
-| Hints — X-Wing | 🟡 | declared in types/docstring, **not implemented** |
-| Hint fallback | 🟡 | reveals the solution; typed `ai_suggestion` but is **not** AI |
-| Technique-based difficulty rating | 🔜 | today difficulty = clue count only |
+| Structured solver (validate / uniqueness / logic) | ✅ | `solve`, `countSolutions`, `solveWithLogic` + tests |
+| X-Wing | ✅ | implemented in the solver/difficulty engine (`solver.ts`) |
+| Hint fallback | ✅ | `solution_reveal` — reveals the value; **not** AI, named honestly |
+| X-Wing surfaced as a play-UI hint | 🔜 | engine has it; placement hint pipeline shows singles/pairs |
+| Technique-based difficulty rating | ✅ | `rateDifficulty()`; generator label-wiring still clue-count |
 | Killer Sudoku cages | 🟡 | generates; full cage validation pending |
 | Samurai Sudoku | 🟡 | 5 **independent** grids; overlaps do not match yet |
 | Leaderboard | 🟡 | UI + API on **mock/in-memory** data |

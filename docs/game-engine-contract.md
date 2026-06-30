@@ -46,8 +46,10 @@ Rules:
 - extreme → may require X-Wing or harder
 - no puzzle requires pure guessing unless labelled extreme/experimental
 
-Today the classic generator sets difficulty by clue-count buckets only
-(`CLUE_COUNTS`). This is a known gap.
+Implemented in `difficulty.ts`: `rateDifficulty(clues)` solves with the logic
+engine and returns `{ label, score, requiredTechniques, estimatedMinutes }`.
+Remaining gap: the classic **generator** still picks clue-count buckets
+(`CLUE_COUNTS`) and does not yet label puzzles via `rateDifficulty`.
 
 ## Solver (target)
 
@@ -68,8 +70,10 @@ interface SolveResult {
 Validate input length, characters 0–9, and that clues don't already break Sudoku
 rules. Return a structured result, never a bare string/null.
 
-Today: `solvePuzzle` returns `string | null` (backtracking only); uniqueness is
-checked internally during generation but not exposed.
+Implemented in `solver.ts`: `validatePuzzle`, `countSolutions` (exposed),
+`solveWithBacktracking`, `solveWithLogic` (records required `SolvingTechnique`s),
+and `solve` returning a `SolveResult { solved, solution?, unique, techniques, error? }`.
+The legacy `solvePuzzle` (string|null) remains for backward compatibility.
 
 ## Hint contract (target)
 
@@ -91,10 +95,12 @@ interface Hint {
 }
 ```
 
-Today (`hints.ts`): naked single, hidden single, naked pair, pointing pair, then
-a solution-reveal fallback typed `ai_suggestion`. **X-Wing is declared in the
-type and docstring but not implemented**, and `Hint` lacks `affectedCells` /
-`eliminations`, so the UI can't yet highlight the reasoning.
+Today (`hints.ts`): the play-UI pipeline surfaces naked single, hidden single,
+naked pair, pointing pair, then a `solution_reveal` fallback (renamed from the
+misleading `ai_suggestion` — it is not AI). X-Wing and box-line reduction are
+implemented in the **solver/difficulty engine** (`solver.ts`), where elimination
+logic is testable, rather than in the placement-only hint UI. `Hint` now carries
+optional `affectedCells` / `eliminations` for future UI highlighting.
 
 ## Variant specifics
 
