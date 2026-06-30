@@ -1,7 +1,7 @@
 {
   "name": "Sudoku 2026",
   "short_name": "Sudoku",
-  "description": "Next-generation Sudoku with AI hints and multiplayer",
+  "description": "Modern Sudoku with guided hints, daily challenges, and streaks",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0f1a",

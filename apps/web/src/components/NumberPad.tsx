@@ -95,7 +95,7 @@ export default function NumberPad({
       <div className="grid grid-cols-3 gap-2">
         <ActionBtn onClick={onErase} icon={<IconBackspace />} label="Slett"    accent="#f43f5e" />
         <ActionBtn onClick={onNote}  icon={<IconPencil />}    label={noteMode ? "Notat ON" : "Notat"} accent="#0891b2" active={noteMode} />
-        <ActionBtn onClick={onHint}  icon={<IconLightbulb />} label="AI-hint"  accent="#d97706" />
+        <ActionBtn onClick={onHint}  icon={<IconLightbulb />} label="Hint"     accent="#d97706" />
       </div>
     </div>
   );

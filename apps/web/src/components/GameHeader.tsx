@@ -125,7 +125,7 @@ export default function GameHeader({
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.15em] mb-1" style={{ color: "#d97706" }}>
-                  AI-hint
+                  Hint
                   <span className="font-medium normal-case ml-1 opacity-70">
                     · {hint.strategy.replace(/_/g, " ")}
                   </span>

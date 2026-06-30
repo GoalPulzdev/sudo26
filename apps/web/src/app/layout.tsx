@@ -14,7 +14,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Sudoku 2026",
-  description: "Next-generation Sudoku – AI hints, multiplayer duels, and daily challenges.",
+  description: "Modern Sudoku – guided hints, daily challenges, and streaks.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
