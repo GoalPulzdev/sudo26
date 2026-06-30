@@ -304,9 +304,9 @@ export default function MultiplayerGamePage(): React.JSX.Element {
             onClick={copyInviteLink}
             className="w-full py-2.5 rounded-xl text-sm font-bold transition-colors"
             style={{
-              background: copyState === "copied" ? "rgba(5,150,105,0.10)" : "var(--accent-light)",
-              border: `1px solid ${copyState === "copied" ? "rgba(5,150,105,0.40)" : "var(--border-2)"}`,
-              color: copyState === "copied" ? "#059669" : "var(--accent)",
+              background: copyState === "copied" ? "rgba(95,138,106,0.10)" : "var(--accent-light)",
+              border: `1px solid ${copyState === "copied" ? "rgba(95,138,106,0.40)" : "var(--border-2)"}`,
+              color: copyState === "copied" ? "#5f8a6a" : "var(--accent)",
             }}
           >
             {copyState === "copied" ? "✓ Lenke kopiert!" : "📋 Kopier invitasjonslenke"}
@@ -345,8 +345,8 @@ export default function MultiplayerGamePage(): React.JSX.Element {
               onClick={startGame}
               className="w-full py-3 rounded-xl font-black uppercase tracking-widest text-sm text-white"
               style={{
-                background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
-                boxShadow: "0 4px 20px rgba(124,58,237,0.40)",
+                background: "linear-gradient(135deg, #3a4a66, #2c3a4f)",
+                boxShadow: "0 4px 20px rgba(58,74,102,0.40)",
               }}
             >
               Start spillet!
@@ -460,14 +460,14 @@ function PlayerProgressBar({
       className="flex items-center gap-3 rounded-xl px-3 py-2"
       style={{
         background: "var(--surface)",
-        border: `1px solid ${isSelf ? "rgba(124,58,237,0.30)" : "var(--border)"}`,
+        border: `1px solid ${isSelf ? "rgba(58,74,102,0.30)" : "var(--border)"}`,
       }}
     >
       <div className="flex items-center gap-2 shrink-0" style={{ width: "5rem" }}>
         <span
           className={`w-2 h-2 rounded-full shrink-0 ${finished ? "" : "animate-pulse"}`}
           style={{
-            background: finished ? "#059669" : isSelf ? "var(--accent)" : "#0891b2",
+            background: finished ? "#5f8a6a" : isSelf ? "var(--accent)" : "#3a6b73",
           }}
         />
         <span
@@ -483,10 +483,10 @@ function PlayerProgressBar({
           className="h-full rounded-full"
           style={{
             background: finished
-              ? "#059669"
+              ? "#5f8a6a"
               : isSelf
-              ? "linear-gradient(90deg, #7c3aed, #4f46e5)"
-              : "linear-gradient(90deg, #0891b2, #0369a1)",
+              ? "linear-gradient(90deg, #3a4a66, #2c3a4f)"
+              : "linear-gradient(90deg, #3a6b73, #2f5560)",
           }}
           animate={{ width: `${progress}%` }}
           transition={{ ease: "easeOut", duration: 0.4 }}
@@ -495,7 +495,7 @@ function PlayerProgressBar({
 
       <div className="text-right shrink-0" style={{ width: "4.5rem" }}>
         {finished && m !== null ? (
-          <span className="text-xs font-bold tabular-nums" style={{ color: "#059669" }}>
+          <span className="text-xs font-bold tabular-nums" style={{ color: "#5f8a6a" }}>
             {m}:{s}
           </span>
         ) : (
@@ -557,7 +557,7 @@ function MultiplayerWinOverlay({
         className="rounded-3xl max-w-sm w-full mx-4 flex flex-col overflow-hidden text-center"
         style={{
           background: "var(--surface)",
-          boxShadow: "0 24px 80px rgba(124,58,237,0.28), 0 0 0 1.5px rgba(124,58,237,0.20)",
+          boxShadow: "0 24px 80px rgba(58,74,102,0.28), 0 0 0 1.5px rgba(58,74,102,0.20)",
         }}
       >
         {/* Header */}
@@ -565,8 +565,8 @@ function MultiplayerWinOverlay({
           className="px-7 pt-8 pb-5"
           style={{
             background: iWon
-              ? "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)"
-              : "linear-gradient(135deg, #0891b2 0%, #0369a1 100%)",
+              ? "linear-gradient(135deg, #3a4a66 0%, #2c3a4f 100%)"
+              : "linear-gradient(135deg, #3a6b73 0%, #2f5560 100%)",
           }}
         >
           <div className="text-5xl mb-2">{iWon ? "🏆" : "🥈"}</div>
@@ -589,8 +589,8 @@ function MultiplayerWinOverlay({
                   key={p.username}
                   className="flex items-center gap-3 rounded-xl px-3 py-2.5"
                   style={{
-                    background: p.isSelf ? "rgba(124,58,237,0.08)" : "var(--surface-2)",
-                    border: `1px solid ${p.isSelf ? "rgba(124,58,237,0.25)" : "var(--border)"}`,
+                    background: p.isSelf ? "rgba(58,74,102,0.08)" : "var(--surface-2)",
+                    border: `1px solid ${p.isSelf ? "rgba(58,74,102,0.25)" : "var(--border)"}`,
                   }}
                 >
                   <span className="text-sm font-black w-5">{medals[i] ?? `${i + 1}.`}</span>
@@ -623,8 +623,8 @@ function MultiplayerWinOverlay({
             href="/multiplayer"
             className="block w-full py-3 rounded-xl text-sm font-black uppercase tracking-widest text-center text-white"
             style={{
-              background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
-              boxShadow: "0 4px 20px rgba(124,58,237,0.35)",
+              background: "linear-gradient(135deg, #3a4a66, #2c3a4f)",
+              boxShadow: "0 4px 20px rgba(58,74,102,0.35)",
             }}
           >
             Ny duel

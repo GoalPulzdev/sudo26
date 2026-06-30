@@ -11,8 +11,8 @@ import type { Difficulty } from "@sudoku-2026/core";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PALETTE = [
-  "#7c3aed", "#4f46e5", "#0891b2", "#059669",
-  "#d97706", "#dc2626", "#db2777", "#0d9488",
+  "#3a4a66", "#2c3a4f", "#3a6b73", "#5f8a6a",
+  "#bf9c45", "#b4554a", "#a85a78", "#3a6b66",
 ];
 
 const DIFF_LABELS: Record<Difficulty, string> = {
@@ -21,8 +21,8 @@ const DIFF_LABELS: Record<Difficulty, string> = {
 };
 
 const DIFF_ACCENTS: Record<Difficulty, string> = {
-  easy: "#059669", medium: "#d97706", hard: "#dc2626",
-  extreme: "#7c3aed", daily: "#0891b2", mini: "#10b981",
+  easy: "#5f8a6a", medium: "#bf9c45", hard: "#b4554a",
+  extreme: "#3a4a66", daily: "#3a6b73", mini: "#6f9a78",
 };
 
 const ALL_DIFFICULTIES: Difficulty[] = ["easy", "medium", "hard", "extreme", "daily", "mini"];
@@ -215,7 +215,7 @@ export default function ProfilePage(): React.JSX.Element {
   const totalTime   = ALL_DIFFICULTIES.reduce((a, d) => a + stats.byDifficulty[d].totalTime, 0);
 
   const displayName = profile?.username ?? "Anonym spiller";
-  const displayColor = profile?.color ?? "#7c3aed";
+  const displayColor = profile?.color ?? "#3a4a66";
 
   return (
     <main className="min-h-screen flex flex-col items-center gap-6 px-4 py-6">

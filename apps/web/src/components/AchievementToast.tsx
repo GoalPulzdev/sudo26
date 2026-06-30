@@ -51,7 +51,7 @@ export default function AchievementToastContainer(): React.JSX.Element {
             style={{
               background: "var(--surface)",
               border: "1.5px solid var(--border-2)",
-              boxShadow: "0 8px 32px rgba(124,58,237,0.22), var(--shadow)",
+              boxShadow: "0 8px 32px rgba(58,74,102,0.22), var(--shadow)",
             }}
           >
             <span className="text-2xl flex-shrink-0">{def.emoji}</span>

@@ -79,7 +79,7 @@ export async function getChallenge(
   const challenge: ChallengeRecord = {
     ...(challengeRaw as Omit<ChallengeRecord, "creator_username" | "creator_color">),
     creator_username: profiles?.username ?? null,
-    creator_color: profiles?.color ?? "#7c3aed",
+    creator_color: profiles?.color ?? "#3a4a66",
   };
 
   const { data: attemptsRaw } = await sb
@@ -95,7 +95,7 @@ export async function getChallenge(
       id: a.id as string,
       user_id: a.user_id as string,
       username: p?.username ?? null,
-      color: p?.color ?? "#7c3aed",
+      color: p?.color ?? "#3a4a66",
       time_seconds: a.time_seconds as number,
       mistakes: a.mistakes as number,
       completed_at: a.completed_at as string,

@@ -131,11 +131,11 @@ function KillerBoard({ cages, hint }: { cages: KillerCage[]; hint: Hint | null }
               {isHint && (
                 <motion.span
                   className="absolute inset-0 pointer-events-none"
-                  style={{ boxShadow: "inset 0 0 0 2.5px #d97706" }}
+                  style={{ boxShadow: "inset 0 0 0 2.5px #bf9c45" }}
                   animate={{ opacity: [1, 0.35, 1] }}
                   transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <span className="absolute inset-0" style={{ background: "rgba(251,191,36,0.22)" }} />
+                  <span className="absolute inset-0" style={{ background: "rgba(224,200,115,0.22)" }} />
                 </motion.span>
               )}
               {cell.value !== 0 && (
@@ -179,7 +179,7 @@ function KillerWinOverlay({
     const tx    = Math.round(Math.cos(rad) * dist);
     const ty    = Math.round(Math.sin(rad) * dist + 60);
     const tr    = Math.round((Math.random() - 0.5) * 540);
-    const colors = ["#7c3aed","#4f46e5","#0891b2","#f59e0b","#10b981","#f43f5e","#a78bfa"];
+    const colors = ["#3a4a66","#2c3a4f","#3a6b73","#d4b25a","#6f9a78","#c2615a","#9aa3bb"];
     return { tx, ty, tr, color: colors[i % colors.length], size: 6 + Math.random() * 7 };
   });
 
@@ -208,11 +208,11 @@ function KillerWinOverlay({
         exit={{ scale: 0.82, opacity: 0, y: 24 }}
         transition={{ type: "spring", stiffness: 380, damping: 26 }}
         className="rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col overflow-hidden"
-        style={{ background: "var(--surface)", boxShadow: "0 24px 80px rgba(124,58,237,0.28), 0 0 0 1.5px rgba(124,58,237,0.18)" }}
+        style={{ background: "var(--surface)", boxShadow: "0 24px 80px rgba(58,74,102,0.28), 0 0 0 1.5px rgba(58,74,102,0.18)" }}
       >
         {/* Header bar */}
         <div className="px-7 pt-8 pb-5"
-          style={{ background: "linear-gradient(135deg, #7c3aed 0%, #0891b2 100%)" }}>
+          style={{ background: "linear-gradient(135deg, #3a4a66 0%, #3a6b73 100%)" }}>
           <div className="text-5xl mb-2">🔪</div>
           <h2 className="text-2xl font-black text-white">Killer Sudoku løst!</h2>
           <p className="text-sm text-white/70 mt-1">Imponerende</p>
@@ -222,13 +222,13 @@ function KillerWinOverlay({
         <div className="px-6 py-5 grid grid-cols-2 gap-3">
           <div className="rounded-xl py-3 flex flex-col items-center gap-0.5 relative overflow-hidden"
             style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
-            <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-xl" style={{ background: "#0891b2" }} />
+            <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-xl" style={{ background: "#3a6b73" }} />
             <span className="text-base font-black tabular-nums" style={{ color: "var(--text)" }}>{m}:{s}</span>
             <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>Tid</span>
           </div>
           <div className="rounded-xl py-3 flex flex-col items-center gap-0.5 relative overflow-hidden"
             style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
-            <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-xl" style={{ background: mistakes === 0 ? "#059669" : "#dc2626" }} />
+            <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-xl" style={{ background: mistakes === 0 ? "#5f8a6a" : "#b4554a" }} />
             <span className="text-base font-black tabular-nums" style={{ color: "var(--text)" }}>{mistakes}</span>
             <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>Feil</span>
           </div>
@@ -241,7 +241,7 @@ function KillerWinOverlay({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
             className="w-full py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest"
-            style={{ background: "linear-gradient(135deg, #7c3aed, #0891b2)", color: "#fff", boxShadow: "0 4px 20px rgba(124,58,237,0.35), 0 2px 0 rgba(79,70,229,0.5)" }}
+            style={{ background: "linear-gradient(135deg, #3a4a66, #3a6b73)", color: "#fff", boxShadow: "0 4px 20px rgba(58,74,102,0.35), 0 2px 0 rgba(44,58,79,0.5)" }}
           >
             Nytt spill
           </motion.button>

@@ -21,7 +21,7 @@ const LABELS: Record<Difficulty, string> = {
 };
 
 const DIFFICULTY_ACCENT: Record<Difficulty, string> = {
-  easy: "#059669", medium: "#d97706", hard: "#dc2626", extreme: "#7c3aed", daily: "#0891b2", mini: "#10b981",
+  easy: "#5f8a6a", medium: "#bf9c45", hard: "#b4554a", extreme: "#3a4a66", daily: "#3a6b73", mini: "#6f9a78",
 };
 
 function fmt(secs: number | null): string {
@@ -120,7 +120,7 @@ export default function StatsPage() {
           <h1
             className="text-4xl font-black tracking-tight"
             style={{
-              background: "linear-gradient(120deg, #7c3aed 0%, #4f46e5 55%, #0891b2 100%)",
+              background: "linear-gradient(120deg, #3a4a66 0%, #2c3a4f 55%, #3a6b73 100%)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
             }}
           >
@@ -133,10 +133,10 @@ export default function StatsPage() {
 
         {/* Big stat cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <BigStat label="Streak"  value={animStreak} unit="" suffix=" dager" accent="#d97706" icon={<IconFlame />} />
-          <BigStat label="Beste"   value={animBest}   unit="" suffix=" dager" accent="#0891b2" />
-          <BigStat label="Vunnet"  value={animWinPct} unit="" suffix="%"      accent="#059669" note={`${totalWon}/${totalPlayed}`} />
-          <BigStatText label="Totaltid" value={fmtTotal(totalTimeSec)} accent="#7c3aed" />
+          <BigStat label="Streak"  value={animStreak} unit="" suffix=" dager" accent="#bf9c45" icon={<IconFlame />} />
+          <BigStat label="Beste"   value={animBest}   unit="" suffix=" dager" accent="#3a6b73" />
+          <BigStat label="Vunnet"  value={animWinPct} unit="" suffix="%"      accent="#5f8a6a" note={`${totalWon}/${totalPlayed}`} />
+          <BigStatText label="Totaltid" value={fmtTotal(totalTimeSec)} accent="#3a4a66" />
         </div>
 
         {/* Per-difficulty table */}
@@ -186,7 +186,7 @@ export default function StatsPage() {
                 <span className="text-center font-mono text-sm" style={{ color: "var(--text-muted)" }}>
                   {ds.played || "–"}
                 </span>
-                <span className="text-center font-mono font-bold text-sm" style={{ color: ds.won > 0 ? "#059669" : "var(--text-dim)" }}>
+                <span className="text-center font-mono font-bold text-sm" style={{ color: ds.won > 0 ? "#5f8a6a" : "var(--text-dim)" }}>
                   {pct(ds.won, ds.played)}
                 </span>
                 <span className="text-center font-mono text-sm font-bold" style={{ color: accent }}>
@@ -205,9 +205,9 @@ export default function StatsPage() {
           href="/play/classic"
           className="w-full py-4 rounded-2xl text-center font-black text-sm tracking-wide"
           style={{
-            background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
+            background: "linear-gradient(135deg, #3a4a66, #2c3a4f)",
             color: "#fff",
-            boxShadow: "0 4px 20px rgba(124,58,237,0.32), 0 2px 0 rgba(79,70,229,0.5)",
+            boxShadow: "0 4px 20px rgba(58,74,102,0.32), 0 2px 0 rgba(44,58,79,0.5)",
           }}
         >
           Spill nå →

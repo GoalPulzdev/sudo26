@@ -72,7 +72,7 @@ export default function GameHeader({
           <Div />
           <Stat label="FEIL" value={String(mistakes)}    color={mistakes > 0 ? "var(--error)" : "var(--text-dim)"} />
           <Div />
-          <Stat label="HINT" value={String(hintsUsed)}   color="#d97706" />
+          <Stat label="HINT" value={String(hintsUsed)}   color="#bf9c45" />
           <Div />
           <button
             onClick={onPause}
@@ -80,9 +80,9 @@ export default function GameHeader({
             className="w-8 h-8 rounded-lg flex items-center justify-center
                        transition-all duration-150 cursor-pointer focus:outline-none"
             style={{
-              background: isPlaying ? "rgba(124,58,237,0.10)" : "rgba(16,185,129,0.10)",
-              color: isPlaying ? "var(--accent)" : "#059669",
-              border: isPlaying ? "1.5px solid rgba(124,58,237,0.30)" : "1.5px solid rgba(16,185,129,0.30)",
+              background: isPlaying ? "rgba(58,74,102,0.10)" : "rgba(111,154,120,0.10)",
+              color: isPlaying ? "var(--accent)" : "#5f8a6a",
+              border: isPlaying ? "1.5px solid rgba(58,74,102,0.30)" : "1.5px solid rgba(111,154,120,0.30)",
             }}
           >
             {isPlaying ? <IconPause /> : <IconPlay />}
@@ -103,8 +103,8 @@ export default function GameHeader({
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           style={{
             background: pct === 100
-              ? "linear-gradient(90deg, #059669, #34d399)"
-              : "linear-gradient(90deg, #7c3aed, #4f46e5)",
+              ? "linear-gradient(90deg, #5f8a6a, #8fb89a)"
+              : "linear-gradient(90deg, #3a4a66, #2c3a4f)",
           }}
         />
       </div>
@@ -118,13 +118,13 @@ export default function GameHeader({
             exit={{ opacity: 0, y: -8, height: 0 }}
             className="rounded-2xl px-4 py-3 overflow-hidden"
             style={{
-              background: "rgba(251,191,36,0.08)",
-              border: "1.5px solid rgba(217,119,6,0.28)",
+              background: "rgba(224,200,115,0.08)",
+              border: "1.5px solid rgba(191,156,69,0.28)",
             }}
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.15em] mb-1" style={{ color: "#d97706" }}>
+                <p className="text-[11px] font-bold uppercase tracking-[0.15em] mb-1" style={{ color: "#bf9c45" }}>
                   Hint
                   <span className="font-medium normal-case ml-1 opacity-70">
                     · {hint.strategy.replace(/_/g, " ")}
@@ -134,7 +134,7 @@ export default function GameHeader({
                   className="text-sm leading-relaxed"
                   style={{ color: "var(--text)" }}
                   dangerouslySetInnerHTML={{
-                    __html: hint.explanation.replace(/\*\*(.+?)\*\*/g, "<strong style=''color:#92400e''>$1</strong>"),
+                    __html: hint.explanation.replace(/\*\*(.+?)\*\*/g, "<strong style=''color:#6b4a2a''>$1</strong>"),
                   }}
                 />
               </div>

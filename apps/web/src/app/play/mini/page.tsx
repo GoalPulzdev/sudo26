@@ -213,7 +213,7 @@ export default function MiniPage(): React.JSX.Element {
         {/* Progress bar */}
         <div className="h-1 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
           <motion.div className="h-full rounded-full"
-            style={{ background: "linear-gradient(90deg, #059669, #10b981)", width: `${pct}%` }}
+            style={{ background: "linear-gradient(90deg, #5f8a6a, #6f9a78)", width: `${pct}%` }}
             animate={{ width: `${pct}%` }}
             transition={{ type: "spring", stiffness: 80 }}
           />
@@ -269,9 +269,9 @@ export default function MiniPage(): React.JSX.Element {
                   borderRight,
                   borderBottom,
                   background: isSelected
-                    ? "rgba(5,150,105,0.25)"
+                    ? "rgba(95,138,106,0.25)"
                     : isSameVal
-                    ? "rgba(5,150,105,0.12)"
+                    ? "rgba(95,138,106,0.12)"
                     : isPeer
                     ? "var(--surface-2)"
                     : "transparent",
@@ -347,9 +347,9 @@ export default function MiniPage(): React.JSX.Element {
             className="flex items-center justify-center gap-1.5 rounded-xl text-xs font-bold uppercase tracking-widest"
             style={{
               height: "44px",
-              background: noteMode ? "rgba(5,150,105,0.15)" : "var(--surface)",
-              border: `1.5px solid ${noteMode ? "#059669" : "var(--border-2)"}`,
-              color: noteMode ? "#059669" : "var(--text-muted)",
+              background: noteMode ? "rgba(95,138,106,0.15)" : "var(--surface)",
+              border: `1.5px solid ${noteMode ? "#5f8a6a" : "var(--border-2)"}`,
+              color: noteMode ? "#5f8a6a" : "var(--text-muted)",
               boxShadow: "var(--key-shadow)",
             }}
           >
@@ -416,7 +416,7 @@ function MiniWinOverlay({
     const tx    = Math.round(Math.cos(rad) * dist);
     const ty    = Math.round(Math.sin(rad) * dist + 50);
     const tr    = Math.round((Math.random() - 0.5) * 540);
-    const colors = ["#059669","#10b981","#34d399","#6ee7b7","#f59e0b","#7c3aed","#f43f5e"];
+    const colors = ["#5f8a6a","#6f9a78","#8fb89a","#b6d4bd","#d4b25a","#3a4a66","#c2615a"];
     return { tx, ty, tr, color: colors[i % colors.length], size: 6 + Math.random() * 7 };
   });
 
@@ -426,7 +426,7 @@ function MiniWinOverlay({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50"
-      style={{ background: "rgba(5,150,105,0.15)" }}
+      style={{ background: "rgba(95,138,106,0.15)" }}
     >
       {confetti.map((p, i) => (
         <motion.div
@@ -445,11 +445,11 @@ function MiniWinOverlay({
         exit={{ scale: 0.82, opacity: 0, y: 24 }}
         transition={{ type: "spring", stiffness: 380, damping: 26 }}
         className="rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col overflow-hidden"
-        style={{ background: "var(--surface)", boxShadow: "0 24px 80px rgba(5,150,105,0.28), 0 0 0 1.5px rgba(5,150,105,0.2)" }}
+        style={{ background: "var(--surface)", boxShadow: "0 24px 80px rgba(95,138,106,0.28), 0 0 0 1.5px rgba(95,138,106,0.2)" }}
       >
         {/* Header */}
         <div className="px-7 pt-8 pb-5"
-          style={{ background: "linear-gradient(135deg, #059669 0%, #0891b2 100%)" }}>
+          style={{ background: "linear-gradient(135deg, #5f8a6a 0%, #3a6b73 100%)" }}>
           <div className="text-5xl mb-2">⚡</div>
           <h2 className="text-2xl font-black text-white">Mini løst!</h2>
           <p className="text-sm text-white/70 mt-1">{DIFFICULTY_LABELS[difficulty]} — godt jobbet!</p>
@@ -459,13 +459,13 @@ function MiniWinOverlay({
         <div className="px-6 py-5 grid grid-cols-2 gap-3">
           <div className="rounded-xl py-3 flex flex-col items-center gap-0.5 relative overflow-hidden"
             style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
-            <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-xl" style={{ background: "#0891b2" }} />
+            <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-xl" style={{ background: "#3a6b73" }} />
             <span className="text-base font-black tabular-nums" style={{ color: "var(--text)" }}>{m}:{s}</span>
             <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>Tid</span>
           </div>
           <div className="rounded-xl py-3 flex flex-col items-center gap-0.5 relative overflow-hidden"
             style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
-            <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-xl" style={{ background: mistakes === 0 ? "#059669" : "#dc2626" }} />
+            <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-xl" style={{ background: mistakes === 0 ? "#5f8a6a" : "#b4554a" }} />
             <span className="text-base font-black tabular-nums" style={{ color: "var(--text)" }}>{mistakes}</span>
             <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>Feil</span>
           </div>
@@ -478,7 +478,7 @@ function MiniWinOverlay({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
             className="w-full py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest"
-            style={{ background: "linear-gradient(135deg, #059669, #0891b2)", color: "#fff", boxShadow: "0 4px 20px rgba(5,150,105,0.35)" }}
+            style={{ background: "linear-gradient(135deg, #5f8a6a, #3a6b73)", color: "#fff", boxShadow: "0 4px 20px rgba(95,138,106,0.35)" }}
           >
             Nytt spill
           </motion.button>

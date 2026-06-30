@@ -85,7 +85,7 @@ function ScoreRow({
       className="flex items-center gap-3 px-4 py-3"
       style={{ borderBottom: "1px solid var(--border)", background: isYou ? `${color}0c` : undefined }}
     >
-      <span className="w-5 text-xs font-black tabular-nums" style={{ color: rank <= 3 ? "#f59e0b" : "var(--text-dim)" }}>
+      <span className="w-5 text-xs font-black tabular-nums" style={{ color: rank <= 3 ? "#d4b25a" : "var(--text-dim)" }}>
         {rank}
       </span>
       <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0"
@@ -219,7 +219,7 @@ function MiniBoardView({
             const bg = isSel
               ? "var(--accent)"
               : isHighVal
-              ? "rgba(124,58,237,0.18)"
+              ? "rgba(58,74,102,0.18)"
               : isHighRow || isBox
               ? "var(--surface-2)"
               : "var(--surface)";

@@ -73,7 +73,7 @@ export default function NumberPad({
             }}
             onMouseEnter={(e) => {
               const el = e.currentTarget as HTMLButtonElement;
-              el.style.background = "rgba(124,58,237,0.08)";
+              el.style.background = "rgba(58,74,102,0.08)";
               el.style.borderColor = "var(--accent)";
               el.style.color = "var(--accent)";
               el.style.boxShadow = "var(--key-shadow-hover)";
@@ -93,9 +93,9 @@ export default function NumberPad({
 
       {/* Action buttons */}
       <div className="grid grid-cols-3 gap-2">
-        <ActionBtn onClick={onErase} icon={<IconBackspace />} label="Slett"    accent="#f43f5e" />
-        <ActionBtn onClick={onNote}  icon={<IconPencil />}    label={noteMode ? "Notat ON" : "Notat"} accent="#0891b2" active={noteMode} />
-        <ActionBtn onClick={onHint}  icon={<IconLightbulb />} label="Hint"     accent="#d97706" />
+        <ActionBtn onClick={onErase} icon={<IconBackspace />} label="Slett"    accent="#c2615a" />
+        <ActionBtn onClick={onNote}  icon={<IconPencil />}    label={noteMode ? "Notat ON" : "Notat"} accent="#3a6b73" active={noteMode} />
+        <ActionBtn onClick={onHint}  icon={<IconLightbulb />} label="Hint"     accent="#bf9c45" />
       </div>
     </div>
   );

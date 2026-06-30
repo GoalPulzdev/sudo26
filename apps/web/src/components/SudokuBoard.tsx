@@ -73,29 +73,29 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
                 {isSelected && (
                   <span className="absolute inset-0"
                     style={{
-                      background: "rgba(124,58,237,0.18)",
-                      boxShadow: "inset 0 0 0 2px rgba(124,58,237,0.55)",
+                      background: "rgba(58,74,102,0.18)",
+                      boxShadow: "inset 0 0 0 2px rgba(58,74,102,0.55)",
                     }}
                   />
                 )}
                 {isSameValue && (
                   <span className="absolute inset-0"
-                    style={{ background: "rgba(8,145,178,0.13)" }}
+                    style={{ background: "rgba(58,107,115,0.13)" }}
                   />
                 )}
                 {isPeer && !isSameValue && (
                   <span className="absolute inset-0"
-                    style={{ background: "rgba(124,58,237,0.07)" }}
+                    style={{ background: "rgba(58,74,102,0.07)" }}
                   />
                 )}
                 {isHint && (
                   <motion.span
                     className="absolute inset-0 pointer-events-none z-10"
-                    style={{ boxShadow: "inset 0 0 0 2.5px #d97706" }}
+                    style={{ boxShadow: "inset 0 0 0 2.5px #bf9c45" }}
                     animate={{ opacity: [1, 0.35, 1] }}
                     transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <span className="absolute inset-0" style={{ background: "rgba(251,191,36,0.22)" }} />
+                    <span className="absolute inset-0" style={{ background: "rgba(224,200,115,0.22)" }} />
                   </motion.span>
                 )}
 
@@ -128,7 +128,7 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
                 {cell.error && (
                   <motion.span
                     className="absolute inset-0 pointer-events-none z-20"
-                    style={{ background: "rgba(220,38,38,0.18)" }}
+                    style={{ background: "rgba(180,85,74,0.18)" }}
                     animate={{ opacity: [1, 0] }}
                     transition={{ duration: 0.55 }}
                   />
@@ -151,7 +151,7 @@ function NoteGrid({ notes }: { notes: Set<CellValue> }) {
           className="flex items-center justify-center leading-none font-semibold"
           style={{
             fontSize: "clamp(6px, 1.6vw, 9px)",
-            color: notes.has(n) ? "#6d28d9" : "transparent",
+            color: notes.has(n) ? "#2c3a4f" : "transparent",
           }}
         >
           {n}

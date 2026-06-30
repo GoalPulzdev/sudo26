@@ -51,7 +51,7 @@ export default function ChallengeButton({
       whileTap={{ scale: 0.96 }}
       className="w-full py-3 rounded-2xl font-bold text-sm tracking-wide cursor-pointer"
       style={{
-        background: copied ? "#059669" : "var(--surface-2)",
+        background: copied ? "#5f8a6a" : "var(--surface-2)",
         color: copied ? "#fff" : "var(--text)",
         border: "1.5px solid var(--border-2)",
       }}

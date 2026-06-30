@@ -4,8 +4,8 @@
   "description": "Modern Sudoku with guided hints, daily challenges, and streaks",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f5f3ff",
-  "theme_color": "#7c3aed",
+  "background_color": "#f4f1ea",
+  "theme_color": "#3a4a66",
   "orientation": "portrait",
   "icons": [
     {

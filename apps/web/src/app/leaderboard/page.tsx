@@ -9,7 +9,7 @@ const LABELS: Record<Difficulty, string> = {
   easy: "Enkel", medium: "Middels", hard: "Vanskelig", extreme: "Ekstrem", daily: "Daglig", mini: "Mini 6×6",
 };
 const ACCENTS: Record<Difficulty, string> = {
-  easy: "#059669", medium: "#d97706", hard: "#dc2626", extreme: "#7c3aed", daily: "#0891b2", mini: "#10b981",
+  easy: "#5f8a6a", medium: "#bf9c45", hard: "#b4554a", extreme: "#3a4a66", daily: "#3a6b73", mini: "#6f9a78",
 };
 const ORDER: Difficulty[] = ["easy", "medium", "hard", "extreme", "daily", "mini"];
 
@@ -85,7 +85,7 @@ export default function LeaderboardPage(): React.ReactElement {
           <h1
             className="text-4xl font-black tracking-tight"
             style={{
-              background: "linear-gradient(120deg, #7c3aed 0%, #4f46e5 55%, #0891b2 100%)",
+              background: "linear-gradient(120deg, #3a4a66 0%, #2c3a4f 55%, #3a6b73 100%)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
             }}
           >

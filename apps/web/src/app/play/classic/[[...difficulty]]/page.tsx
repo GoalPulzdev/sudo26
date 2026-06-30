@@ -67,10 +67,10 @@ function DifficultyPicker({ current }: { current: Difficulty }) {
           href={`/play/classic/${d}`}
           className="flex-1 py-2 rounded-xl text-xs font-bold uppercase tracking-widest text-center transition-all duration-150"
           style={{
-            background: d === current ? "rgba(124,58,237,0.12)" : "var(--surface)",
+            background: d === current ? "rgba(58,74,102,0.12)" : "var(--surface)",
             border: `1.5px solid ${d === current ? "var(--accent)" : "var(--border-2)"}`,
             color: d === current ? "var(--accent)" : "var(--text-muted)",
-            boxShadow: d === current ? "0 0 0 3px rgba(124,58,237,0.12)" : "var(--shadow-sm)",
+            boxShadow: d === current ? "0 0 0 3px rgba(58,74,102,0.12)" : "var(--shadow-sm)",
           }}
         >
           {LABELS[d]}
@@ -106,7 +106,7 @@ function WinOverlay({
     const tx    = Math.round(Math.cos(rad) * dist);
     const ty    = Math.round(Math.sin(rad) * dist + 60);
     const tr    = Math.round((Math.random() - 0.5) * 540);
-    const colors = ["#7c3aed","#4f46e5","#0891b2","#f59e0b","#10b981","#f43f5e","#a78bfa"];
+    const colors = ["#3a4a66","#2c3a4f","#3a6b73","#d4b25a","#6f9a78","#c2615a","#9aa3bb"];
     return { tx, ty, tr, color: colors[i % colors.length], size: 6 + Math.random() * 7 };
   });
 
@@ -150,13 +150,13 @@ function WinOverlay({
         style={{
           background: "var(--surface)",
           border: "1.5px solid var(--border-2)",
-          boxShadow: "0 24px 64px rgba(79,70,229,0.22), 0 4px 16px rgba(0,0,0,0.08)",
+          boxShadow: "0 24px 64px rgba(44,58,79,0.22), 0 4px 16px rgba(0,0,0,0.08)",
         }}
       >
         {/* Top colour band */}
         <div className="h-1.5 w-full" style={{ background: isPersonalBest
-          ? "linear-gradient(90deg,#d97706,#fbbf24)"
-          : "linear-gradient(90deg,#7c3aed,#4f46e5,#0891b2)" }} />
+          ? "linear-gradient(90deg,#bf9c45,#e0c873)"
+          : "linear-gradient(90deg,#3a4a66,#2c3a4f,#3a6b73)" }} />
 
         <div className="p-8 flex flex-col gap-5">
           {/* Trophy */}
@@ -180,7 +180,7 @@ function WinOverlay({
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 }}
                 className="text-xs font-bold uppercase tracking-widest mt-1"
-                style={{ color: "#d97706" }}
+                style={{ color: "#bf9c45" }}
               >
                 ✨ Personlig rekord!
               </motion.p>
@@ -208,8 +208,8 @@ function WinOverlay({
 
           {/* Mini stats */}
           <div className="grid grid-cols-3 gap-2">
-            <MiniStat label="Streak" value={`${stats.currentStreak}`} accent="#d97706" unit="🔥" />
-            <MiniStat label="Vunnet" value={`${ds.won}`}              accent="#059669" />
+            <MiniStat label="Streak" value={`${stats.currentStreak}`} accent="#bf9c45" unit="🔥" />
+            <MiniStat label="Vunnet" value={`${ds.won}`}              accent="#5f8a6a" />
             <MiniStat
               label="Best"
               value={ds.bestTime !== null
@@ -226,9 +226,9 @@ function WinOverlay({
               whileTap={{ scale: 0.96 }}
               className="w-full py-3.5 rounded-2xl font-bold text-sm tracking-wide cursor-pointer"
               style={{
-                background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
+                background: "linear-gradient(135deg, #3a4a66, #2c3a4f)",
                 color: "#fff",
-                boxShadow: "0 4px 20px rgba(124,58,237,0.35), 0 2px 0 rgba(79,70,229,0.5)",
+                boxShadow: "0 4px 20px rgba(58,74,102,0.35), 0 2px 0 rgba(44,58,79,0.5)",
               }}
             >
               Nytt spill
@@ -302,7 +302,7 @@ function ChallengeButton({ elapsed }: { elapsed: number }) {
       whileTap={{ scale: 0.96 }}
       className="w-full py-3 rounded-2xl font-bold text-sm tracking-wide cursor-pointer"
       style={{
-        background: copied ? "#059669" : "var(--surface-2)",
+        background: copied ? "#5f8a6a" : "var(--surface-2)",
         color: copied ? "#fff" : "var(--text)",
         border: "1.5px solid var(--border-2)",
       }}

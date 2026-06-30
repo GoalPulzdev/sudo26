@@ -76,10 +76,10 @@ export default function DailyPage(): React.ReactElement {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center gap-2 rounded-full px-4 py-1.5"
-        style={{ background: "rgba(8,145,178,0.10)", border: "1px solid rgba(8,145,178,0.30)" }}
+        style={{ background: "rgba(58,107,115,0.10)", border: "1px solid rgba(58,107,115,0.30)" }}
       >
         <span className="text-base">🔥</span>
-        <span className="text-sm font-bold" style={{ color: "#0891b2" }}>{streak} dager på rad!</span>
+        <span className="text-sm font-bold" style={{ color: "#3a6b73" }}>{streak} dager på rad!</span>
       </motion.div>
     ) : null;
 
@@ -161,7 +161,7 @@ function DailyWinOverlay({
     const tx    = Math.round(Math.cos(rad) * dist);
     const ty    = Math.round(Math.sin(rad) * dist + 60);
     const tr    = Math.round((Math.random() - 0.5) * 540);
-    const colors = ["#7c3aed","#4f46e5","#0891b2","#f59e0b","#10b981","#f43f5e","#a78bfa"];
+    const colors = ["#3a4a66","#2c3a4f","#3a6b73","#d4b25a","#6f9a78","#c2615a","#9aa3bb"];
     return { tx, ty, tr, color: colors[i % colors.length], size: 6 + Math.random() * 7 };
   });
 
@@ -190,11 +190,11 @@ function DailyWinOverlay({
         exit={{ scale: 0.82, opacity: 0, y: 24 }}
         transition={{ type: "spring", stiffness: 380, damping: 26 }}
         className="rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col overflow-hidden"
-        style={{ background: "var(--surface)", boxShadow: "0 24px 80px rgba(8,145,178,0.28), 0 0 0 1.5px rgba(8,145,178,0.20)" }}
+        style={{ background: "var(--surface)", boxShadow: "0 24px 80px rgba(58,107,115,0.28), 0 0 0 1.5px rgba(58,107,115,0.20)" }}
       >
         {/* Header */}
         <div className="px-7 pt-8 pb-5"
-          style={{ background: "linear-gradient(135deg, #0891b2 0%, #0369a1 100%)" }}>
+          style={{ background: "linear-gradient(135deg, #3a6b73 0%, #2f5560 100%)" }}>
           <div className="text-5xl mb-2">📅</div>
           <h2 className="text-2xl font-black text-white">Dagens brett løst!</h2>
           {streak > 0 && (
@@ -207,9 +207,9 @@ function DailyWinOverlay({
         {/* Stats */}
         <div className="px-6 py-5 grid grid-cols-3 gap-3">
           {[
-            { label: "Tid",    value: `${m}:${s}`, accent: "#0891b2" },
-            { label: "Feil",   value: String(mistakes), accent: mistakes === 0 ? "#059669" : "#dc2626" },
-            { label: "Streak", value: String(streak),   accent: "#d97706" },
+            { label: "Tid",    value: `${m}:${s}`, accent: "#3a6b73" },
+            { label: "Feil",   value: String(mistakes), accent: mistakes === 0 ? "#5f8a6a" : "#b4554a" },
+            { label: "Streak", value: String(streak),   accent: "#bf9c45" },
           ].map(({ label, value, accent }) => (
             <div key={label} className="rounded-xl py-3 flex flex-col items-center gap-0.5 relative overflow-hidden"
               style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
@@ -226,8 +226,8 @@ function DailyWinOverlay({
             onClick={handleShare}
             className="w-full py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest text-center transition-all"
             style={shareState === "copied"
-              ? { background: "linear-gradient(135deg, #059669, #047857)", color: "#fff", boxShadow: "0 4px 20px rgba(5,150,105,0.35), 0 2px 0 rgba(4,120,87,0.5)" }
-              : { background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "#fff", boxShadow: "0 4px 20px rgba(124,58,237,0.35), 0 2px 0 rgba(79,70,229,0.5)" }
+              ? { background: "linear-gradient(135deg, #5f8a6a, #4f7a5c)", color: "#fff", boxShadow: "0 4px 20px rgba(95,138,106,0.35), 0 2px 0 rgba(4,120,87,0.5)" }
+              : { background: "linear-gradient(135deg, #3a4a66, #2c3a4f)", color: "#fff", boxShadow: "0 4px 20px rgba(58,74,102,0.35), 0 2px 0 rgba(44,58,79,0.5)" }
             }
           >
             {shareState === "copied" ? "✓ Kopiert!" : "📤 Del resultatet"}
@@ -235,7 +235,7 @@ function DailyWinOverlay({
           <a
             href="/stats"
             className="block w-full py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest text-center"
-            style={{ background: "linear-gradient(135deg, #0891b2, #0369a1)", color: "#fff", boxShadow: "0 4px 20px rgba(8,145,178,0.35), 0 2px 0 rgba(3,105,161,0.5)" }}
+            style={{ background: "linear-gradient(135deg, #3a6b73, #2f5560)", color: "#fff", boxShadow: "0 4px 20px rgba(58,107,115,0.35), 0 2px 0 rgba(47,85,96,0.5)" }}
           >
             Se statistikk
           </a>
