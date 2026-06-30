@@ -1,22 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useEffect, useState } from "react";
 import type React from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import type { Board, CellValue, Hint } from "@sudoku-2026/core";
+import { motion } from "framer-motion";
+import type { Board } from "@sudoku-2026/core";
 import {
   createDailyPuzzle,
-  getHint,
-  boardToString,
   todayString,
   recordCompletion,
   createEmptyStreak,
 } from "@sudoku-2026/core";
 import { useGameStore } from "@/store/gameStore";
-import SudokuBoard from "@/components/SudokuBoard";
-import NumberPad from "@/components/NumberPad";
-import GameHeader from "@/components/GameHeader";
+import GameShell from "@/components/game/GameShell";
 import ChallengeButton from "@/components/ChallengeButton";
 
 const STREAK_KEY = "sudoku-streak";
@@ -37,135 +33,62 @@ function saveStreak(data: ReturnType<typeof createEmptyStreak>) {
   }
 }
 
-export default function DailyPage(): React.JSX.Element {
+export default function DailyPage(): React.ReactElement {
   const today = todayString();
-  const { game, loadPuzzle, dispatch } = useGameStore();
-  const [hint, setHint] = useState<Hint | null>(null);
+  const { game, loadPuzzle } = useGameStore();
   const [streak, setStreak] = useState(0);
   const [errorCells, setErrorCells] = useState<Set<string>>(new Set());
-  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const puzzle = createDailyPuzzle(today);
-    if (game?.puzzle.id !== puzzle.id) {
-      loadPuzzle(puzzle);
-    }
-    const s = loadStreak("local");
-    setStreak(s.currentStreak);
+    if (game?.puzzle.id !== puzzle.id) loadPuzzle(puzzle);
+    setStreak(loadStreak("local").currentStreak);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [today]);
 
+  // Record the daily completion and bump the streak.
   useEffect(() => {
     if (game?.status === "won" && game.puzzle.date === today) {
-      const s = loadStreak("local");
-      const updated = recordCompletion(s, today);
+      const updated = recordCompletion(loadStreak("local"), today);
       saveStreak(updated);
       setStreak(updated.currentStreak);
     }
   }, [game?.status, game?.puzzle.date, today]);
 
-  useEffect(() => {
-    if (game?.status === "playing") {
-      tickRef.current = setInterval(() => dispatch({ type: "TICK" }), 1000);
-    }
-    return () => { if (tickRef.current) clearInterval(tickRef.current); };
-  }, [game?.status, dispatch]);
-
-  // Reset error tracking when a new puzzle is loaded
+  // Reset error tracking when a new puzzle loads.
   useEffect(() => {
     setErrorCells(new Set());
   }, [game?.puzzle.id]);
 
-  // Accumulate cells that have ever had an error (for share grid)
+  // Accumulate cells that ever had an error (for the share grid).
   useEffect(() => {
     if (!game?.board) return;
     game.board.forEach((row, r) => row.forEach((cell, c) => {
       if (cell.error) {
-        setErrorCells(prev => {
-          if (prev.has(`${r},${c}`)) return prev;
-          const next = new Set(prev);
-          next.add(`${r},${c}`);
-          return next;
-        });
+        setErrorCells((prev) => (prev.has(`${r},${c}`) ? prev : new Set(prev).add(`${r},${c}`)));
       }
     }));
   }, [game?.board]);
 
-  const handleHint = useCallback(() => {
-    if (!game) return;
-    const h = getHint(boardToString(game.board), game.puzzle.solution);
-    setHint(h);
-    if (h) dispatch({ type: "APPLY_HINT", row: h.row, col: h.col, value: h.value });
-  }, [game, dispatch]);
-
-  const { filledCount, totalCells } = useMemo(() => {
-    if (!game) return { filledCount: 0, totalCells: 81 };
-    let filled = 0, total = 0;
-    for (const row of game.board) for (const cell of row) {
-      if (!cell.given) { total++; if (cell.value !== 0) filled++; }
-    }
-    return { filledCount: filled, totalCells: total };
-  }, [game]);
-
-  if (!game) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full"
-        />
-      </div>
-    );
-  }
+  const streakBanner =
+    streak > 0 ? (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center gap-2 rounded-full px-4 py-1.5"
+        style={{ background: "rgba(8,145,178,0.10)", border: "1px solid rgba(8,145,178,0.30)" }}
+      >
+        <span className="text-base">🔥</span>
+        <span className="text-sm font-bold" style={{ color: "#0891b2" }}>{streak} dager på rad!</span>
+      </motion.div>
+    ) : null;
 
   return (
-    <main className="min-h-screen flex flex-col items-center gap-5 px-4 py-6">
-      {/* Streak banner */}
-      {streak > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 rounded-full px-4 py-1.5"
-          style={{ background: "rgba(8,145,178,0.10)", border: "1px solid rgba(8,145,178,0.30)" }}
-        >
-          <span className="text-base">🔥</span>
-          <span className="text-sm font-bold" style={{ color: "#0891b2" }}>{streak} dager på rad!</span>
-        </motion.div>
-      )}
-
-      <GameHeader
-        title={`Daglig utfordring · ${today}`}
-        elapsed={game.elapsed}
-        mistakes={game.mistakes}
-        hintsUsed={game.hintsUsed}
-        isPlaying={game.status === "playing"}
-        hint={hint}
-        onDismissHint={() => setHint(null)}
-        onPause={() => dispatch({ type: game.status === "playing" ? "PAUSE" : "RESUME" })}
-        filledCount={filledCount}
-        totalCells={totalCells}
-      />
-
-      <SudokuBoard
-        board={game.board}
-        selectedCell={game.selectedCell}
-        onCellClick={(row, col) => dispatch({ type: "SELECT_CELL", row, col })}
-        hintCell={hint ? [hint.row, hint.col] : null}
-      />
-
-      <NumberPad
-        noteMode={game.noteMode}
-        onNumber={(v: CellValue) =>
-          dispatch(game.noteMode ? { type: "TOGGLE_NOTE", value: v } : { type: "INPUT_VALUE", value: v })
-        }
-        onErase={() => dispatch({ type: "ERASE" })}
-        onNote={() => dispatch({ type: "TOGGLE_NOTE_MODE" })}
-        onHint={handleHint}
-      />
-
-      <AnimatePresence>
-        {game.status === "won" && (
+    <GameShell
+      title={`Daglig utfordring · ${today}`}
+      aboveHeader={streakBanner}
+      overlay={
+        game?.status === "won" ? (
           <DailyWinOverlay
             streak={streak}
             elapsed={game.elapsed}
@@ -174,9 +97,9 @@ export default function DailyPage(): React.JSX.Element {
             errorCells={errorCells}
             today={today}
           />
-        )}
-      </AnimatePresence>
-    </main>
+        ) : null
+      }
+    />
   );
 }
 

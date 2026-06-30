@@ -1,18 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useEffect, useState } from "react";
 import type React from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import type { Difficulty, CellValue, Hint, Puzzle } from "@sudoku-2026/core";
-import { createPuzzle, getHint, boardToString } from "@sudoku-2026/core";
+import { motion } from "framer-motion";
+import type { Difficulty } from "@sudoku-2026/core";
+import { createPuzzle } from "@sudoku-2026/core";
 import { useGameStore } from "@/store/gameStore";
 import { useAuthStore } from "@/store/authStore";
 import { createChallenge } from "@/lib/challenges";
-import SudokuBoard from "@/components/SudokuBoard";
-import NumberPad from "@/components/NumberPad";
-import GameHeader from "@/components/GameHeader";
+import GameShell from "@/components/game/GameShell";
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   easy: "Enkel", medium: "Middels", hard: "Vanskelig", extreme: "Ekstrem", daily: "Daglig", mini: "Mini 6×6",
@@ -22,149 +19,27 @@ function randomId() {
   return Math.random().toString(36).slice(2, 10);
 }
 
-export default function ClassicGamePage(): React.JSX.Element {
+export default function ClassicGamePage(): React.ReactElement {
   const params = useParams();
   const difficulty = (params?.difficulty as Difficulty | undefined) ?? "medium";
 
-  const { game, loadPuzzle, dispatch } = useGameStore();
-  const [hint, setHint] = useState<Hint | null>(null);
-  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { game, loadPuzzle } = useGameStore();
 
-  // Start a game if none loaded or difficulty changed
+  // Start a game if none loaded or difficulty changed.
   useEffect(() => {
     if (!game || game.puzzle.difficulty !== difficulty) {
       const seed = `${difficulty}-${randomId()}`;
-      const puzzle = createPuzzle(difficulty, seed, randomId());
-      loadPuzzle(puzzle);
+      loadPuzzle(createPuzzle(difficulty, seed, randomId()));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficulty]);
 
-  // Tick timer
-  useEffect(() => {
-    if (game?.status === "playing") {
-      tickRef.current = setInterval(() => dispatch({ type: "TICK" }), 1000);
-    }
-    return () => {
-      if (tickRef.current) clearInterval(tickRef.current);
-    };
-  }, [game?.status, dispatch]);
-
-  const handleCellClick = useCallback(
-    (row: number, col: number) => dispatch({ type: "SELECT_CELL", row, col }),
-    [dispatch]
-  );
-
-  const handleNumber = useCallback(
-    (value: CellValue) => {
-      if (game?.noteMode) {
-        dispatch({ type: "TOGGLE_NOTE", value });
-      } else {
-        dispatch({ type: "INPUT_VALUE", value });
-      }
-    },
-    [dispatch, game?.noteMode]
-  );
-
-  const handleHint = useCallback(() => {
-    if (!game) return;
-    const currentStr = boardToString(game.board);
-    const h = getHint(currentStr, game.puzzle.solution);
-    setHint(h);
-    if (h) dispatch({ type: "APPLY_HINT", row: h.row, col: h.col, value: h.value });
-  }, [game, dispatch]);
-
-  // Board fill stats for progress bar
-  const { filledCount, totalCells } = useMemo(() => {
-    if (!game) return { filledCount: 0, totalCells: 81 };
-    let filled = 0;
-    let total = 0;
-    for (const row of game.board) {
-      for (const cell of row) {
-        if (!cell.given) {
-          total++;
-          if (cell.value !== 0) filled++;
-        }
-      }
-    }
-    return { filledCount: filled, totalCells: total };
-  }, [game]);
-
-  // Keyboard support
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (!game) return;
-      const num = parseInt(e.key, 10) as CellValue;
-      if (num >= 1 && num <= 9) handleNumber(num);
-      if (e.key === "Backspace" || e.key === "Delete") dispatch({ type: "ERASE" });
-      if (e.key === "n") dispatch({ type: "TOGGLE_NOTE_MODE" });
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [game, handleNumber, dispatch]);
-
-  if (!game) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full"
-        />
-      </div>
-    );
-  }
-
   return (
-    <main className="min-h-screen flex flex-col items-center justify-start gap-4 px-4 py-6 relative">
-      {/* Back link */}
-      <div style={{ width: "min(92vw, 480px)" }} className="self-start">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest transition-colors"
-          style={{ color: "var(--text-muted)" }}
-          onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "var(--text)")}
-          onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)")}
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-          Hjem
-        </Link>
-      </div>
-
-      <GameHeader
-        title={`Klassisk · ${DIFFICULTY_LABELS[difficulty]}`}
-        elapsed={game.elapsed}
-        mistakes={game.mistakes}
-        hintsUsed={game.hintsUsed}
-        isPlaying={game.status === "playing"}
-        hint={hint}
-        onDismissHint={() => setHint(null)}
-        onPause={() => dispatch({ type: game.status === "playing" ? "PAUSE" : "RESUME" })}
-        filledCount={filledCount}
-        totalCells={totalCells}
-      />
-
-      <SudokuBoard
-        board={game.board}
-        selectedCell={game.selectedCell}
-        onCellClick={handleCellClick}
-        hintCell={hint ? [hint.row, hint.col] : null}
-      />
-
-      <NumberPad
-        noteMode={game.noteMode}
-        onNumber={handleNumber}
-        onErase={() => dispatch({ type: "ERASE" })}
-        onNote={() => dispatch({ type: "TOGGLE_NOTE_MODE" })}
-        onHint={handleHint}
-      />
-
-      <DifficultyPicker current={difficulty} />
-
-      <AnimatePresence>
-        {game.status === "won" && (
+    <GameShell
+      title={`Klassisk · ${DIFFICULTY_LABELS[difficulty]}`}
+      belowPad={<DifficultyPicker current={difficulty} />}
+      overlay={
+        game?.status === "won" ? (
           <WinOverlay
             elapsed={game.elapsed}
             mistakes={game.mistakes}
@@ -174,9 +49,9 @@ export default function ClassicGamePage(): React.JSX.Element {
               loadPuzzle(createPuzzle(difficulty, seed, randomId()));
             }}
           />
-        )}
-      </AnimatePresence>
-    </main>
+        ) : null
+      }
+    />
   );
 }
 
