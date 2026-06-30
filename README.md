@@ -77,6 +77,23 @@ Expo Router. Shares `@sudoku-2026/core` with web.
 
 ---
 
+## Backend & configuration
+
+The app runs fully without a backend. Supabase is **env-gated**:
+
+- **Auth requires Supabase env.** Without `NEXT_PUBLIC_SUPABASE_URL` +
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY` (web) / `EXPO_PUBLIC_*` (mobile), no Supabase
+  client is created. Auth runs in **local mock mode** — a stable local
+  anonymous profile, no network, no errors.
+- **Leaderboard falls back to mock.** When Supabase is not configured, the
+  leaderboard API serves seeded mock data (the response carries a `live: false`
+  flag); with env set it reads real `leaderboard_entries`.
+- **Supabase schema is written but not provisioned.** The SQL + RLS live in
+  [`supabase/migrations/0001_initial_schema.sql`](supabase/migrations/0001_initial_schema.sql);
+  no project has been created or deployed yet. See
+  [`docs/supabase-schema.md`](docs/supabase-schema.md) and
+  [`.env.example`](.env.example).
+
 ## Getting started
 
 ### Prerequisites
