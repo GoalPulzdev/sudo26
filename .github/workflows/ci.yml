@@ -18,21 +18,9 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: type-check core
-        if: always()
-        run: pnpm --filter @sudoku-2026/core type-check
-      - name: type-check web
-        if: always()
-        run: pnpm --filter @sudoku-2026/web type-check
-      - name: type-check mobile
-        if: always()
-        run: pnpm --filter @sudoku-2026/mobile type-check
-      - name: lint
-        if: always()
-        run: pnpm lint
-      - name: test
-        if: always()
-        run: pnpm test
-      - name: build
-        if: always()
-        run: pnpm build
+      # Build first so packages/core/dist (its .d.ts) exists before the apps
+      # type-check against @sudoku-2026/core.
+      - run: pnpm build
+      - run: pnpm type-check
+      - run: pnpm lint
+      - run: pnpm test

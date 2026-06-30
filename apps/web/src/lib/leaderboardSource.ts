@@ -58,7 +58,7 @@ async function liveLeaderboard(
 
   if (error) throw new Error(`leaderboard query failed: ${error.message}`);
 
-  return (data ?? []).map((row) => ({
+  return (data ?? []).map((row: Record<string, unknown>) => ({
     userId: row.user_id as string,
     username: row.username as string,
     puzzleId: row.puzzle_id as string,
