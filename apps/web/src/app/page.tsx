@@ -127,7 +127,10 @@ const item = {
 
 /* ─── Main component ─────────────────────────────────────────────────── */
 export default function HomePage(): React.JSX.Element {
-  const streak = useGameStore((s) => s.stats.currentStreak);
+  const stats = useGameStore((s) => s.stats);
+  const streak = stats.currentStreak;
+  const totalSolved = Object.values(stats.byDifficulty).reduce((sum, d) => sum + d.won, 0);
+  const bestStreak = stats.bestStreak;
   const profile = useAuthStore((s) => s.profile);
 
   const today = new Date().toLocaleDateString("no-NO", {
@@ -194,6 +197,13 @@ export default function HomePage(): React.JSX.Element {
               {profile?.username ? profile.username[0].toUpperCase() : "?"}
             </Link>
           </div>
+        </motion.div>
+
+        {/* ── Stats strip ── */}
+        <motion.div variants={item} className="w-full grid grid-cols-3 gap-3">
+          <StatChip emoji="🔥" value={streak} label="Streak" accent="#d97706" />
+          <StatChip emoji="✓" value={totalSolved} label="Løste" accent="#059669" />
+          <StatChip emoji="🏆" value={bestStreak} label="Rekord" accent="#7c3aed" />
         </motion.div>
 
         {/* ── Daily hero ── */}
@@ -270,6 +280,23 @@ export default function HomePage(): React.JSX.Element {
   );
 }
 
+/* ─── Stat chip ──────────────────────────────────────────────────────── */
+function StatChip({ emoji, value, label, accent }: {
+  emoji: string; value: number; label: string; accent: string;
+}) {
+  return (
+    <div
+      className="relative flex flex-col items-center gap-0.5 py-3 rounded-2xl overflow-hidden"
+      style={{ background: "var(--surface)", border: "1.5px solid var(--border-2)", boxShadow: "var(--shadow-sm)" }}
+    >
+      <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: accent }} />
+      <span className="text-base leading-none mb-0.5">{emoji}</span>
+      <span className="text-lg font-black tabular-nums leading-none" style={{ color: "var(--text)" }}>{value}</span>
+      <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>{label}</span>
+    </div>
+  );
+}
+
 /* ─── Section label with trailing line ─────────────────────────────── */
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -289,7 +316,7 @@ function QuickCard({ href, label, sub, level, accent, featured }: {
   return (
     <Link
       href={href}
-      className="group relative flex flex-col items-center gap-2.5 py-5 px-3 rounded-2xl
+      className="group relative min-w-0 flex flex-col items-center gap-2.5 py-5 px-3 rounded-2xl
                  transition-all duration-150 active:scale-[0.97]"
       style={{
         background: featured ? accent + "14" : "var(--surface)",
@@ -317,7 +344,7 @@ function QuickCard({ href, label, sub, level, accent, featured }: {
 function ComingSoonCard({ icon, label, desc }: { icon: React.ReactNode; label: string; desc: string }) {
   return (
     <div
-      className="relative flex items-center gap-3 p-4 rounded-2xl"
+      className="relative min-w-0 flex items-center gap-3 p-4 rounded-2xl"
       style={{
         background: "var(--surface)",
         border: "1.5px solid var(--border)",
@@ -349,7 +376,7 @@ function GameModeCard({ href, icon, label, desc, accent }: {
   return (
     <Link
       href={href}
-      className="group relative flex items-center gap-3 p-4 rounded-2xl transition-all duration-150 active:scale-[0.97]"
+      className="group relative min-w-0 flex items-center gap-3 p-4 rounded-2xl transition-all duration-150 active:scale-[0.97]"
       style={{
         background: "var(--surface)",
         border: `1.5px solid var(--border-2)`,

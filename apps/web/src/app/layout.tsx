@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 import AuthBootstrap from "@/components/AuthBootstrap";
 import AchievementToastContainer from "@/components/AchievementToast";
+import MotionProvider from "@/components/MotionProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -36,14 +37,11 @@ export default function RootLayout({
 }>): React.ReactElement {
   return (
     <html lang="no" suppressHydrationWarning className={inter.variable}>
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-      </head>
       <body>
         <ServiceWorkerRegistrar />
         <AuthBootstrap />
         <AchievementToastContainer />
-        {children}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );
