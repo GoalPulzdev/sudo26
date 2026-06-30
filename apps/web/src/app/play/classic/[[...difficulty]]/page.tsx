@@ -9,6 +9,7 @@ import { createPuzzle } from "@sudoku-2026/core";
 import { useGameStore } from "@/store/gameStore";
 import { useAuthStore } from "@/store/authStore";
 import { createChallenge } from "@/lib/challenges";
+import { isSupabaseConfigured } from "@/lib/supabase";
 import GameShell from "@/components/game/GameShell";
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
@@ -270,6 +271,8 @@ function ChallengeButton({ elapsed }: { elapsed: number }) {
   const [copied, setCopied] = useState(false);
 
   if (!puzzle) return null;
+  // Challenges require Supabase; hide in mock/demo mode.
+  if (!isSupabaseConfigured()) return null;
 
   const handleCreate = async () => {
     if (link) {

@@ -5,6 +5,7 @@ import type React from "react";
 import { motion } from "framer-motion";
 import type { Puzzle } from "@sudoku-2026/core";
 import { createChallenge } from "@/lib/challenges";
+import { isSupabaseConfigured } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
 
 export default function ChallengeButton({
@@ -18,6 +19,9 @@ export default function ChallengeButton({
   const [link, setLink] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Challenges require a Supabase backend; hide the action in mock/demo mode.
+  if (!isSupabaseConfigured()) return null;
 
   const handleCreate = async () => {
     if (link) {
