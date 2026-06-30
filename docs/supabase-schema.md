@@ -1,7 +1,15 @@
-# Supabase schema (target)
+# Supabase schema
 
-Status: **not yet implemented.** Leaderboard and rooms APIs are mock/in-memory
-today. This documents the target backend for roadmap Fase 4.
+Status: **SQL written, not yet provisioned.** The schema and RLS below are
+implemented as a runnable migration at
+[`supabase/migrations/0001_initial_schema.sql`](../supabase/migrations/0001_initial_schema.sql).
+Row shapes are typed in `packages/core/src/db.ts`. Submission validation
+(anti-cheat) is implemented and tested in `packages/core/src/antiCheat.ts`.
+
+Remaining: provision a Supabase project, set env (see `.env.example`), apply the
+migration (`supabase db push`), and wire the leaderboard writer (service role).
+The leaderboard API already reads live data when env is configured
+(`apps/web/src/lib/leaderboardSource.ts`), mock otherwise.
 
 ## Tables (minimum)
 

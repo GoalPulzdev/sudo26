@@ -64,7 +64,9 @@ Expo Router. Shares `@sudoku-2026/core` with web.
 | Technique-based difficulty rating | ✅ | `rateDifficulty()`; `createRatedPuzzle()` attaches it to puzzles |
 | Killer Sudoku cages | ✅ | full coverage, connected, no-repeat, sum-checked + `validateKillerPuzzle` |
 | Samurai Sudoku | ✅ | real overlapping grids; corner⇄center boxes identical + `validateSamurai` |
-| Leaderboard | 🟡 | UI + API on **mock/in-memory** data |
+| Leaderboard | 🟡 | env-gated: real Supabase when configured, seeded mock otherwise (`live` flag) |
+| Anti-cheat (submission validation) | ✅ | pure `validateSubmission` (accept/suspicious/reject) + tests |
+| Supabase schema + RLS | 🟡 | SQL migration ready (`supabase/migrations/`); not yet provisioned/deployed |
 | Multiplayer rooms | 🟡 | routing + server shell, not real-time |
 | PWA offline | ✅ | manifest + service worker |
 | Animated UI (Framer Motion) | ✅ | |
