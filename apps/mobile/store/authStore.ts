@@ -30,13 +30,29 @@ function pickDefaultColor(userId: string): string {
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       profile: null,
       isLoading: true,
 
       init: async () => {
         const sb = getSupabase();
         set({ isLoading: true });
+
+        // Local mock mode — Supabase not configured. Stable local profile, no network.
+        if (!sb) {
+          const existing = get().profile;
+          if (existing) {
+            set({ isLoading: false });
+          } else {
+            const userId = `local-${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+            set({
+              profile: { userId, username: null, color: pickDefaultColor(userId), isAnonymous: true },
+              isLoading: false,
+            });
+          }
+          return;
+        }
+
         try {
           const { data: { session } } = await sb.auth.getSession();
           let userId = session?.user?.id;
@@ -77,6 +93,11 @@ export const useAuthStore = create<AuthStore>()(
 
       updateProfile: async (username, color) => {
         const sb = getSupabase();
+        // Local mock mode — persist locally only.
+        if (!sb) {
+          set((s) => ({ profile: s.profile ? { ...s.profile, username, color } : null }));
+          return;
+        }
         const { data: { session } } = await sb.auth.getSession();
         if (!session?.user?.id) throw new Error("Ikke logget inn");
         const { error } = await (sb as any).from("profiles").upsert({

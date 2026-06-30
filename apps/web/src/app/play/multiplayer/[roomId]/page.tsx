@@ -67,6 +67,7 @@ export default function MultiplayerGamePage(): React.JSX.Element {
   useEffect(() => {
     if (phase === "loading") return;
     const supabase = getSupabase();
+    if (!supabase) return; // multiplayer requires Supabase Realtime
     const channel = supabase.channel(`multiplayer:${roomId}`, {
       config: {
         broadcast: { self: false },

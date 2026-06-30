@@ -36,6 +36,7 @@ export async function createChallenge(
   creatorTimeSec: number
 ): Promise<string> {
   const sb = getSupabase();
+  if (!sb) throw new Error("Challenges require Supabase configuration");
 
   const { data, error } = await sb
     .from("challenges")
@@ -63,6 +64,7 @@ export async function getChallenge(
   id: string
 ): Promise<{ challenge: ChallengeRecord; attempts: ChallengeAttempt[] }> {
   const sb = getSupabase();
+  if (!sb) throw new Error("Challenges require Supabase configuration");
 
   const { data: challengeRaw, error: ce } = await sb
     .from("challenges")
@@ -113,6 +115,7 @@ export async function submitChallengeAttempt(
   mistakes: number
 ): Promise<void> {
   const sb = getSupabase();
+  if (!sb) throw new Error("Challenges require Supabase configuration");
   const { error } = await sb.from("challenge_attempts").upsert({
     challenge_id: challengeId,
     user_id: userId,

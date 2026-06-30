@@ -41,6 +41,27 @@ export const useAuthStore = create<AuthStore>()(
         const sb = getSupabase();
         set({ isLoading: true });
 
+        // Local mock mode — Supabase not configured. Use a stable local profile,
+        // no network, no errors.
+        if (!sb) {
+          const existing = get().profile;
+          if (existing) {
+            set({ isLoading: false });
+          } else {
+            const userId = `local-${crypto.randomUUID()}`;
+            set({
+              profile: {
+                userId,
+                username: null,
+                color: pickDefaultColor(userId),
+                isAnonymous: true,
+              },
+              isLoading: false,
+            });
+          }
+          return;
+        }
+
         try {
           // Get existing session
           const { data: { session } } = await sb.auth.getSession();
@@ -90,6 +111,12 @@ export const useAuthStore = create<AuthStore>()(
         if (!profile) return;
 
         const sb = getSupabase();
+        // Local mock mode — persist the profile locally only.
+        if (!sb) {
+          set({ profile: { ...profile, username: username.trim(), color } });
+          return;
+        }
+
         const { error } = await sb
           .from("profiles")
           .upsert({ id: profile.userId, username: username.trim(), color });
