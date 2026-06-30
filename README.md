@@ -61,9 +61,9 @@ Expo Router. Shares `@sudoku-2026/core` with web.
 | X-Wing | ✅ | implemented in the solver/difficulty engine (`solver.ts`) |
 | Hint fallback | ✅ | `solution_reveal` — reveals the value; **not** AI, named honestly |
 | X-Wing surfaced as a play-UI hint | 🔜 | engine has it; placement hint pipeline shows singles/pairs |
-| Technique-based difficulty rating | ✅ | `rateDifficulty()`; generator label-wiring still clue-count |
-| Killer Sudoku cages | 🟡 | generates; full cage validation pending |
-| Samurai Sudoku | 🟡 | 5 **independent** grids; overlaps do not match yet |
+| Technique-based difficulty rating | ✅ | `rateDifficulty()`; `createRatedPuzzle()` attaches it to puzzles |
+| Killer Sudoku cages | ✅ | full coverage, connected, no-repeat, sum-checked + `validateKillerPuzzle` |
+| Samurai Sudoku | ✅ | real overlapping grids; corner⇄center boxes identical + `validateSamurai` |
 | Leaderboard | 🟡 | UI + API on **mock/in-memory** data |
 | Multiplayer rooms | 🟡 | routing + server shell, not real-time |
 | PWA offline | ✅ | manifest + service worker |

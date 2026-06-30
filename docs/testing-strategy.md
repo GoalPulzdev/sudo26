@@ -36,13 +36,19 @@ Implemented:
   - singles-solvable puzzle → `easy`; logic-unsolvable grid → `extreme`
   - score increases with harder required techniques
 
+Also implemented:
+
+- `samurai.test.ts` — 5 legal sub-grid solutions, corner⇄center overlaps
+  identical (solution + clues), deterministic, center mirrors index 2.
+- `killer.test.ts` — cages cover all 81 cells exactly once, connected, sums
+  match, no-repeat; negative case (uncovered cell) rejected; `validateCage`.
+- `rated.test.ts` — `createRatedPuzzle` attaches a technique-based rating.
+
 ## Gaps to close (tracked, not yet done)
 
-- Generator: label puzzles via `rateDifficulty` instead of clue-count buckets.
-- Mini: 36-char output, unique solution, 2×3 box rule.
-- Killer: cages cover all 81 cells, no cell in two cages, sums match solution,
-  cages connected, unique solution.
-- Samurai: overlapping cells between corner and center grids are identical.
+- Generator: optionally regenerate until logic-label matches the requested bucket.
+- Mini: 36-char output, unique solution, 2×3 box rule (test coverage).
+- Killer: puzzle uniqueness from cages alone (needs a killer-aware solver).
 - Hints: each pipeline stage triggers on a crafted board.
 
 ## Web (`apps/web`)

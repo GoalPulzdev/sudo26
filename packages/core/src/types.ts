@@ -55,6 +55,8 @@ export interface Puzzle {
   date?: string;
   /** Seed used for generation */
   seed?: string;
+  /** Technique-based difficulty rating (when computed at generation time) */
+  rating?: DifficultyRating;
 }
 
 export interface GameState {

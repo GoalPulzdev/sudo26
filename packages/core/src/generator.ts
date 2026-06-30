@@ -7,6 +7,7 @@
 
 import type { Difficulty, Puzzle } from "./types.js";
 import { boardFromPuzzle } from "./board.js";
+import { rateDifficulty } from "./difficulty.js";
 
 // ─── Seeded RNG (xoshiro128**) ────────────────────────────────────────────────
 
@@ -188,6 +189,21 @@ export function createDailyPuzzle(date: string): Puzzle {
   const seed = `daily-${date}`;
   const id = `daily-${date}`;
   return createPuzzle("daily", seed, id, date);
+}
+
+/**
+ * Like `createPuzzle`, but attaches a technique-based `DifficultyRating` measured
+ * by solving the puzzle with the logic engine. The `difficulty` label still comes
+ * from the requested clue bucket; `rating` reports the actual solving difficulty.
+ */
+export function createRatedPuzzle(
+  difficulty: Difficulty,
+  seed: string,
+  puzzleId: string,
+  date?: string
+): Puzzle {
+  const puzzle = createPuzzle(difficulty, seed, puzzleId, date);
+  return { ...puzzle, rating: rateDifficulty(puzzle.clues) };
 }
 
 export { boardFromPuzzle };

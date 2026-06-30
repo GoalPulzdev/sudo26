@@ -106,9 +106,12 @@ optional `affectedCells` / `eliminations` for future UI highlighting.
 
 - **Mini (6×6):** 2×3 boxes, values 1–6, uniqueness enforced. Needs to move onto
   the shared shell instead of local component state.
-- **Killer:** generator must prove all 81 cells covered, no cell in two cages,
-  cage sums match the solution, cages connected, unique solution.
+- **Killer:** `validateKillerPuzzle` proves all 81 cells covered, no cell in two
+  cages, cages connected, no repeated digit per cage, and sums match the
+  solution. The generator now grows cages digit-distinct (a connected region may
+  not reuse a digit). Remaining gap: puzzle uniqueness from cages alone.
 - **Samurai:** 21×21 master grid, 5 overlapping 9×9 grids at offsets
-  `[0,0] [0,12] [6,6] [12,0] [12,12]`. Overlap cells between each corner and the
-  center **must be identical**. Current generator builds 5 independent grids —
-  overlaps do not match. This is prototype, not real Samurai.
+  `[0,0] [0,12] [6,6] [12,0] [12,12]`. The generator builds the center first,
+  then completes each corner with the shared 3×3 box fixed from the center, so
+  overlap cells are identical by construction. `validateSamurai` checks the
+  invariant on both solution and clues.
