@@ -16,6 +16,12 @@ interface GameShellProps {
   title: string;
   /** Optional content rendered above the header (e.g. a streak banner). */
   aboveHeader?: React.ReactNode;
+  /**
+   * Custom board renderer. Receives the shell-owned `hint` so the board can
+   * highlight it. Defaults to the standard 9×9 `SudokuBoard`. Variants with a
+   * bespoke board (e.g. Killer cages) supply their own.
+   */
+  board?: (hint: Hint | null) => React.ReactNode;
   /** Optional content rendered under the number pad (e.g. a difficulty picker). */
   belowPad?: React.ReactNode;
   /** Optional overlay (e.g. a completion modal); page decides when to show it. */
@@ -33,6 +39,7 @@ interface GameShellProps {
 export default function GameShell({
   title,
   aboveHeader,
+  board,
   belowPad,
   overlay,
 }: GameShellProps): React.ReactElement {
@@ -143,12 +150,16 @@ export default function GameShell({
         totalCells={totalCells}
       />
 
-      <SudokuBoard
-        board={game.board}
-        selectedCell={game.selectedCell}
-        onCellClick={handleCellClick}
-        hintCell={hint ? [hint.row, hint.col] : null}
-      />
+      {board ? (
+        board(hint)
+      ) : (
+        <SudokuBoard
+          board={game.board}
+          selectedCell={game.selectedCell}
+          onCellClick={handleCellClick}
+          hintCell={hint ? [hint.row, hint.col] : null}
+        />
+      )}
 
       <NumberPad
         noteMode={game.noteMode}

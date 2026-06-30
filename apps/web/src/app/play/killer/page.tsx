@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import type React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import type { CellValue, Hint, KillerCage } from "@sudoku-2026/core";
-import { createKillerPuzzle, getHint, boardToString, validateCage } from "@sudoku-2026/core";
+import { motion } from "framer-motion";
+import type { Hint, KillerCage } from "@sudoku-2026/core";
+import { createKillerPuzzle, validateCage } from "@sudoku-2026/core";
 import { useGameStore } from "@/store/gameStore";
-import NumberPad from "@/components/NumberPad";
-import GameHeader from "@/components/GameHeader";
+import GameShell from "@/components/game/GameShell";
 import ChallengeButton from "@/components/ChallengeButton";
 import clsx from "clsx";
 
@@ -22,10 +21,8 @@ const CAGE_COLORS = [
   "bg-pink-100",    "bg-teal-100",    "bg-indigo-100",
 ];
 
-export default function KillerPage(): React.JSX.Element {
-  const { game, loadPuzzle, dispatch } = useGameStore();
-  const [hint, setHint] = useState<Hint | null>(null);
-  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
+export default function KillerPage(): React.ReactElement {
+  const { game, loadPuzzle } = useGameStore();
   const [cages, setCages] = useState<KillerCage[]>([]);
 
   useEffect(() => {
@@ -36,165 +33,12 @@ export default function KillerPage(): React.JSX.Element {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (game?.status === "playing") {
-      tickRef.current = setInterval(() => dispatch({ type: "TICK" }), 1000);
-    }
-    return () => { if (tickRef.current) clearInterval(tickRef.current); };
-  }, [game?.status, dispatch]);
-
-  const handleHint = useCallback(() => {
-    if (!game) return;
-    const h = getHint(boardToString(game.board), game.puzzle.solution);
-    setHint(h);
-    if (h) dispatch({ type: "APPLY_HINT", row: h.row, col: h.col, value: h.value });
-  }, [game, dispatch]);
-
-  // Build a cell → cage lookup
-  const cellToCage = new Map<string, { cage: KillerCage; idx: number }>();
-  cages.forEach((cage, idx) => {
-    cage.cells.forEach(([r, c]) => cellToCage.set(`${r}-${c}`, { cage, idx }));
-  });
-
-  // Is this cell the top-left of its cage? (show sum label there)
-  function isTopLeft(r: number, c: number, cage: KillerCage): boolean {
-    const sorted = [...cage.cells].sort(([ar, ac], [br, bc]) =>
-      ar !== br ? ar - br : ac - bc
-    );
-    return sorted[0][0] === r && sorted[0][1] === c;
-  }
-
-  if (!game) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-2 border-rose-500 border-t-transparent rounded-full"
-        />
-      </div>
-    );
-  }
-
-  const { filledCount, totalCells } = (() => {
-    if (!game) return { filledCount: 0, totalCells: 81 };
-    let filled = 0, total = 0;
-    for (const row of game.board) for (const cell of row) {
-      if (!cell.given) { total++; if (cell.value !== 0) filled++; }
-    }
-    return { filledCount: filled, totalCells: total };
-  })();
-
-  const boardValues = game.board.map((row) => row.map((c) => c.value));
-
   return (
-    <main className="min-h-screen flex flex-col items-center gap-5 px-4 py-6">
-      <GameHeader
-        title="Killer Sudoku"
-        elapsed={game.elapsed}
-        mistakes={game.mistakes}
-        hintsUsed={game.hintsUsed}
-        isPlaying={game.status === "playing"}
-        hint={hint}
-        onDismissHint={() => setHint(null)}
-        onPause={() => dispatch({ type: game.status === "playing" ? "PAUSE" : "RESUME" })}
-        filledCount={filledCount}
-        totalCells={totalCells}
-      />
-
-      {/* Killer board */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(9, 1fr)",
-          width: "min(95vw, 500px)",
-          aspectRatio: "1",
-          border: "2px solid var(--box-border)",
-          borderRadius: "12px",
-          overflow: "hidden",
-          background: "var(--surface)",
-        }}
-        className="select-none"
-      >
-        {game.board.map((row, r) =>
-          row.map((cell, c) => {
-            const key = `${r}-${c}`;
-            const cageInfo = cellToCage.get(key);
-            const isSelected =
-              game.selectedCell?.[0] === r && game.selectedCell?.[1] === c;
-            const isHint = hint?.row === r && hint?.col === c;
-            const isInvalid = cageInfo
-              ? !validateCage(cageInfo.cage, boardValues)
-              : false;
-
-            const borderRight =
-              (c + 1) % 3 === 0 && c !== 8
-                ? "2px solid var(--box-border)"
-                : "1px solid var(--border)";
-            const borderBottom =
-              (r + 1) % 3 === 0 && r !== 8
-                ? "2px solid var(--box-border)"
-                : "1px solid var(--border)";
-
-            return (
-              <motion.button
-                key={key}
-                onClick={() => dispatch({ type: "SELECT_CELL", row: r, col: c })}
-                whileTap={{ scale: 0.95 }}
-                style={{ borderRight, borderBottom }}
-                className={clsx(
-                  "relative flex items-center justify-center text-lg font-semibold",
-                  "cursor-pointer transition-colors focus:outline-none",
-                  cageInfo
-                    ? CAGE_COLORS[cageInfo.idx % CAGE_COLORS.length]
-                    : "",
-                  isSelected && "!bg-violet-300/60",
-                  cell.error || isInvalid ? "text-[var(--error)]" : "text-[var(--player)]",
-                  cell.given && "!text-[var(--given)] font-extrabold"
-                )}
-              >
-                {/* Cage sum label */}
-                {cageInfo && isTopLeft(r, c, cageInfo.cage) && (
-                  <span className="absolute top-0.5 left-0.5 text-[8px] font-bold text-amber-400 leading-none pointer-events-none">
-                    {cageInfo.cage.sum}
-                  </span>
-                )}
-                {isHint && (
-                  <motion.span
-                    className="absolute inset-0 pointer-events-none"
-                    style={{ boxShadow: "inset 0 0 0 2.5px #d97706" }}
-                    animate={{ opacity: [1, 0.35, 1] }}
-                    transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <span className="absolute inset-0" style={{ background: "rgba(251,191,36,0.22)" }} />
-                  </motion.span>
-                )}
-                {cell.value !== 0 && (
-                  <motion.span
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                  >
-                    {cell.value}
-                  </motion.span>
-                )}
-              </motion.button>
-            );
-          })
-        )}
-      </div>
-
-      <NumberPad
-        noteMode={game.noteMode}
-        onNumber={(v: CellValue) =>
-          dispatch(game.noteMode ? { type: "TOGGLE_NOTE", value: v } : { type: "INPUT_VALUE", value: v })
-        }
-        onErase={() => dispatch({ type: "ERASE" })}
-        onNote={() => dispatch({ type: "TOGGLE_NOTE_MODE" })}
-        onHint={handleHint}
-      />
-
-      <AnimatePresence>
-        {game.status === "won" && (
+    <GameShell
+      title="Killer Sudoku"
+      board={(hint) => <KillerBoard cages={cages} hint={hint} />}
+      overlay={
+        game?.status === "won" ? (
           <KillerWinOverlay
             elapsed={game.elapsed}
             mistakes={game.mistakes}
@@ -205,9 +49,108 @@ export default function KillerPage(): React.JSX.Element {
               setCages(puzzle.killerCages ?? []);
             }}
           />
-        )}
-      </AnimatePresence>
-    </main>
+        ) : null
+      }
+    />
+  );
+}
+
+/** Killer board with cage colouring + sum labels; reads state from the store. */
+function KillerBoard({ cages, hint }: { cages: KillerCage[]; hint: Hint | null }) {
+  const { game, dispatch } = useGameStore();
+  if (!game) return null;
+
+  const cellToCage = new Map<string, { cage: KillerCage; idx: number }>();
+  cages.forEach((cage, idx) => {
+    cage.cells.forEach(([r, c]) => cellToCage.set(`${r}-${c}`, { cage, idx }));
+  });
+
+  const isTopLeft = (r: number, c: number, cage: KillerCage): boolean => {
+    const sorted = [...cage.cells].sort(([ar, ac], [br, bc]) =>
+      ar !== br ? ar - br : ac - bc
+    );
+    return sorted[0][0] === r && sorted[0][1] === c;
+  };
+
+  const boardValues = game.board.map((row) => row.map((c) => c.value));
+
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(9, 1fr)",
+        width: "min(95vw, 500px)",
+        aspectRatio: "1",
+        border: "2px solid var(--box-border)",
+        borderRadius: "12px",
+        overflow: "hidden",
+        background: "var(--surface)",
+      }}
+      className="select-none"
+    >
+      {game.board.map((row, r) =>
+        row.map((cell, c) => {
+          const key = `${r}-${c}`;
+          const cageInfo = cellToCage.get(key);
+          const isSelected =
+            game.selectedCell?.[0] === r && game.selectedCell?.[1] === c;
+          const isHint = hint?.row === r && hint?.col === c;
+          const isInvalid = cageInfo
+            ? !validateCage(cageInfo.cage, boardValues)
+            : false;
+
+          const borderRight =
+            (c + 1) % 3 === 0 && c !== 8
+              ? "2px solid var(--box-border)"
+              : "1px solid var(--border)";
+          const borderBottom =
+            (r + 1) % 3 === 0 && r !== 8
+              ? "2px solid var(--box-border)"
+              : "1px solid var(--border)";
+
+          return (
+            <motion.button
+              key={key}
+              onClick={() => dispatch({ type: "SELECT_CELL", row: r, col: c })}
+              whileTap={{ scale: 0.95 }}
+              style={{ borderRight, borderBottom }}
+              className={clsx(
+                "relative flex items-center justify-center text-lg font-semibold",
+                "cursor-pointer transition-colors focus:outline-none",
+                cageInfo ? CAGE_COLORS[cageInfo.idx % CAGE_COLORS.length] : "",
+                isSelected && "!bg-violet-300/60",
+                cell.error || isInvalid ? "text-[var(--error)]" : "text-[var(--player)]",
+                cell.given && "!text-[var(--given)] font-extrabold"
+              )}
+            >
+              {cageInfo && isTopLeft(r, c, cageInfo.cage) && (
+                <span className="absolute top-0.5 left-0.5 text-[8px] font-bold text-amber-400 leading-none pointer-events-none">
+                  {cageInfo.cage.sum}
+                </span>
+              )}
+              {isHint && (
+                <motion.span
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ boxShadow: "inset 0 0 0 2.5px #d97706" }}
+                  animate={{ opacity: [1, 0.35, 1] }}
+                  transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <span className="absolute inset-0" style={{ background: "rgba(251,191,36,0.22)" }} />
+                </motion.span>
+              )}
+              {cell.value !== 0 && (
+                <motion.span
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                >
+                  {cell.value}
+                </motion.span>
+              )}
+            </motion.button>
+          );
+        })
+      )}
+    </div>
   );
 }
 

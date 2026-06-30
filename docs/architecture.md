@@ -54,9 +54,17 @@ localStorage. Pages under `src/app/play/*`. API routes (`/api/leaderboard`,
 Variant pages share `components/game/GameShell.tsx`, which owns the common chrome
 (back-link, header/timer/mistakes/hints/progress + hint banner, board, number
 pad, keyboard input, per-second timer) and the standard reducer wiring. A page
-only loads a puzzle and supplies page-specific extras via `aboveHeader`,
-`belowPad`, and `overlay`. `classic` and `daily` are migrated; `killer`, `mini`,
-`samurai`, and `multiplayer` still inline their own chrome (follow-up).
+loads a puzzle and supplies page-specific extras via `aboveHeader`, a custom
+`board(hint)` renderer (defaults to the 9×9 `SudokuBoard`), `belowPad`, and
+`overlay`.
+
+Migrated: **classic**, **daily**, **killer** (its cage board is passed via the
+`board` slot). Intentionally standalone — they don't fit a single-board,
+shared-reducer shell:
+- **mini** — own local 6×6 state, not the shared `GameState`/reducer (needs the
+  "Mini into shared engine" work from Fase 3 first);
+- **samurai** — five overlapping boards with an active-grid switcher;
+- **multiplayer** — realtime opponents and room state.
 
 ## apps/mobile — Expo
 
