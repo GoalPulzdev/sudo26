@@ -135,6 +135,7 @@ green CI. See [`docs/release-checklist.md`](docs/release-checklist.md).
 
 ## Docs
 
+- [`docs/PROGRESS.md`](docs/PROGRESS.md) — what's done and what remains (status report)
 - [`docs/architecture.md`](docs/architecture.md)
 - [`docs/product-roadmap.md`](docs/product-roadmap.md)
 - [`docs/game-engine-contract.md`](docs/game-engine-contract.md)
