@@ -1,48 +1,48 @@
 ﻿@import "tailwindcss";
 @source "../../src";
 
-/* Design tokens - bright, colourful, joyful */
+/* Design tokens — "Nordic premium puzzle": linen paper, ink, deep slate-blue, gold */
 :root {
-  /* Surfaces */
-  --bg:            #f5f3ff;
-  --bg-2:          #ede9fe;
-  --surface:       #ffffff;
-  --surface-2:     #faf9ff;
-  --surface-glass: rgba(255,255,255,0.72);
+  /* Surfaces — warm paper */
+  --bg:            #f4f1ea;
+  --bg-2:          #ece7db;
+  --surface:       #fffdf8;
+  --surface-2:     #f8f5ed;
+  --surface-glass: rgba(255,253,248,0.72);
 
-  /* Borders */
-  --border:        #e4e0f8;
-  --border-2:      #c4b5fd;
-  --box-border:    #6d28d9;
+  /* Borders — stone */
+  --border:        #e7e1d4;
+  --border-2:      #d3cab6;
+  --box-border:    #2c3a4f;
 
-  /* Brand */
-  --accent:        #7c3aed;
-  --accent-light:  #ede9fe;
-  --accent-2:      #0891b2;
-  --accent-2-light:#e0f2fe;
+  /* Brand — deep slate-blue, gold secondary */
+  --accent:        #33415a;
+  --accent-light:  #e8eaef;
+  --accent-2:      #bf9c45;
+  --accent-2-light:#f3ebd6;
 
   /* Gradients */
-  --gradient-brand:  linear-gradient(135deg, #7c3aed 0%, #4f46e5 55%, #0891b2 100%);
-  --gradient-subtle: linear-gradient(135deg, rgba(124,58,237,0.08) 0%, rgba(79,70,229,0.04) 100%);
+  --gradient-brand:  linear-gradient(135deg, #3a4a66 0%, #2c3a4f 60%, #233044 100%);
+  --gradient-subtle: linear-gradient(135deg, rgba(58,74,102,0.06) 0%, rgba(44,58,79,0.03) 100%);
 
-  /* Text */
-  --text:          #1e1b4b;
-  --text-muted:    #6d64a0;
-  --text-dim:      #a39fc8;
+  /* Text — ink on paper */
+  --text:          #232228;
+  --text-muted:    #6f6a5f;
+  --text-dim:      #a89f8f;
 
   /* Game */
-  --given:         #4f46e5;
-  --player:        #0369a1;
-  --error:         #dc2626;
+  --given:         #23304a;
+  --player:        #4a6aa0;
+  --error:         #b4554a;
 
-  /* Shadows (violet-tinted) */
-  --shadow-sm: 0 1px 3px rgba(79,70,229,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow:    0 4px 16px rgba(79,70,229,0.10), 0 2px 4px rgba(0,0,0,0.04);
-  --shadow-lg: 0 16px 48px rgba(79,70,229,0.14), 0 4px 12px rgba(0,0,0,0.06);
+  /* Shadows — soft, warm */
+  --shadow-sm: 0 1px 3px rgba(40,38,34,0.06), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow:    0 4px 16px rgba(40,38,34,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 18px 50px rgba(40,38,34,0.12), 0 4px 12px rgba(0,0,0,0.05);
 
   /* Physical key shadow */
-  --key-shadow:       0 3px 0 rgba(109,40,217,0.22), 0 1px 3px rgba(0,0,0,0.08);
-  --key-shadow-hover: 0 4px 0 rgba(109,40,217,0.26), 0 2px 6px rgba(79,70,229,0.12);
+  --key-shadow:       0 3px 0 rgba(44,58,79,0.16), 0 1px 3px rgba(0,0,0,0.07);
+  --key-shadow-hover: 0 4px 0 rgba(44,58,79,0.20), 0 2px 6px rgba(40,38,34,0.10);
 
   /* Easing */
   --ease-out-expo: cubic-bezier(0.16,1,0.3,1);
@@ -58,8 +58,8 @@
   --color-text:           var(--text);
   --color-muted:          var(--text-muted);
   --color-accent:         var(--accent);
-  --color-success:        #059669;
-  --color-warning:        #d97706;
+  --color-success:        #5f8a6a;
+  --color-warning:        #bf9c45;
   --color-danger:         var(--error);
   --radius-button:        16px;
   --radius-card:          24px;
@@ -76,9 +76,9 @@ body {
   min-height: 100%;
   background: var(--bg);
   background-image:
-    radial-gradient(ellipse 70% 50% at 15%   0%, rgba(167,139,250,0.28), transparent 65%),
-    radial-gradient(ellipse 60% 40% at 85% 100%, rgba(103,232,249,0.20), transparent 65%),
-    radial-gradient(ellipse 80% 80% at 50%  50%, rgba(255,255,255,0.55), transparent 80%);
+    radial-gradient(ellipse 70% 50% at 15%   0%, rgba(191,156,69,0.10), transparent 65%),
+    radial-gradient(ellipse 60% 40% at 85% 100%, rgba(58,74,102,0.09), transparent 65%),
+    radial-gradient(ellipse 80% 80% at 50%  50%, rgba(255,253,247,0.55), transparent 80%);
   background-attachment: fixed;
   color: var(--text);
   font-family: var(--font-inter), "Inter", system-ui, -apple-system, sans-serif;
@@ -101,7 +101,7 @@ body {
 
 /* Dot-grid ambient texture */
 .grid-bg {
-  background-image: radial-gradient(circle, rgba(109,40,217,0.12) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(44,58,79,0.10) 1px, transparent 1px);
   background-size: 22px 22px;
 }
 

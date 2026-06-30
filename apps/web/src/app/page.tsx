@@ -144,9 +144,9 @@ export default function HomePage(): React.JSX.Element {
     <main className="min-h-screen flex flex-col items-center gap-8 px-4 py-10 relative overflow-hidden">
       {/* Ambient blobs */}
       <div aria-hidden className="pointer-events-none absolute top-0 left-0 w-[640px] h-[420px] rounded-full -translate-x-1/2 -translate-y-1/3"
-        style={{ background: "radial-gradient(ellipse, rgba(167,139,250,0.26) 0%, transparent 70%)" }} />
+        style={{ background: "radial-gradient(ellipse, rgba(191,156,69,0.16) 0%, transparent 70%)" }} />
       <div aria-hidden className="pointer-events-none absolute bottom-0 right-0 w-[520px] h-[420px] rounded-full translate-x-1/3 translate-y-1/3"
-        style={{ background: "radial-gradient(ellipse, rgba(103,232,249,0.18) 0%, transparent 70%)" }} />
+        style={{ background: "radial-gradient(ellipse, rgba(58,74,102,0.12) 0%, transparent 70%)" }} />
 
       <motion.div
         variants={container}
@@ -163,7 +163,7 @@ export default function HomePage(): React.JSX.Element {
             <h1
               className="text-3xl font-black tracking-tight leading-none mt-0.5"
               style={{
-                background: "linear-gradient(120deg, #7c3aed 0%, #4f46e5 55%, #0891b2 100%)",
+                background: "linear-gradient(120deg, #2c3a4f 0%, #3a4a66 52%, #bf9c45 112%)",
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
               }}
             >
@@ -201,9 +201,9 @@ export default function HomePage(): React.JSX.Element {
 
         {/* ── Stats strip ── */}
         <motion.div variants={item} className="w-full grid grid-cols-3 gap-3">
-          <StatChip emoji="🔥" value={streak} label="Streak" accent="#d97706" />
-          <StatChip emoji="✓" value={totalSolved} label="Løste" accent="#059669" />
-          <StatChip emoji="🏆" value={bestStreak} label="Rekord" accent="#7c3aed" />
+          <StatChip emoji="🔥" value={streak} label="Streak" accent="#bf9c45" />
+          <StatChip emoji="✓" value={totalSolved} label="Løste" accent="#5f8a6a" />
+          <StatChip emoji="🏆" value={bestStreak} label="Rekord" accent="#3a4a66" />
         </motion.div>
 
         {/* ── Daily hero ── */}
@@ -211,12 +211,12 @@ export default function HomePage(): React.JSX.Element {
           <Link href="/play/daily" className="group relative block w-full">
             {/* Glow on hover */}
             <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl pointer-events-none"
-              style={{ background: "rgba(124,58,237,0.22)" }} />
+              style={{ background: "rgba(191,156,69,0.20)" }} />
             <div
               className="relative rounded-3xl p-6 overflow-hidden transition-transform duration-200 group-hover:scale-[1.015] group-active:scale-[0.99]"
               style={{
-                background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #0891b2 100%)",
-                boxShadow: "0 8px 32px rgba(124,58,237,0.38)",
+                background: "linear-gradient(135deg, #3a4a66 0%, #2c3a4f 55%, #233044 100%)",
+                boxShadow: "0 8px 30px rgba(44,58,79,0.34)",
               }}
             >
               {/* Dot-grid texture overlay */}
@@ -250,9 +250,9 @@ export default function HomePage(): React.JSX.Element {
         <motion.div variants={item} className="w-full flex flex-col gap-3">
           <SectionLabel>Hurtigspill</SectionLabel>
           <div className="grid grid-cols-3 gap-3">
-            <QuickCard href="/play/classic/easy"   label="Enkel"     sub="~5 min"  level={1} accent="#059669" />
-            <QuickCard href="/play/classic/medium" label="Middels"   sub="~10 min" level={2} accent="#d97706" featured />
-            <QuickCard href="/play/classic/hard"   label="Vanskelig" sub="~20 min" level={3} accent="#dc2626" />
+            <QuickCard href="/play/classic/easy"   label="Enkel"     sub="~5 min"  level={1} accent="#5f8a6a" />
+            <QuickCard href="/play/classic/medium" label="Middels"   sub="~10 min" level={2} accent="#bf9c45" featured />
+            <QuickCard href="/play/classic/hard"   label="Vanskelig" sub="~20 min" level={3} accent="#b4554a" />
           </div>
         </motion.div>
 
@@ -260,10 +260,10 @@ export default function HomePage(): React.JSX.Element {
         <motion.div variants={item} className="w-full flex flex-col gap-3">
           <SectionLabel>Spillmodi</SectionLabel>
           <div className="grid grid-cols-2 gap-3">
-            <GameModeCard href="/play/killer"  icon={<IconSkull />}  label="Killer Sudoku"  desc="Summer cellene"   accent="#dc2626" />
-            <GameModeCard href="/play/samurai" icon={<IconZap />}    label="Samurai Sudoku" desc="5 brett i kors"    accent="#7c3aed" />
-            <GameModeCard href="/play/mini"    icon={<IconMini />}   label="Mini Sudoku"    desc="6×6, lynrask"     accent="#059669" />
-            <GameModeCard href="/leaderboard"  icon={<IconTrophy />} label="Mine rekorder"  desc="Dine beste tider" accent="#d97706" />
+            <GameModeCard href="/play/killer"  icon={<IconSkull />}  label="Killer Sudoku"  desc="Summer cellene"   accent="#b4554a" />
+            <GameModeCard href="/play/samurai" icon={<IconZap />}    label="Samurai Sudoku" desc="5 brett i kors"    accent="#3a4a66" />
+            <GameModeCard href="/play/mini"    icon={<IconMini />}   label="Mini Sudoku"    desc="6×6, lynrask"     accent="#5f8a6a" />
+            <GameModeCard href="/leaderboard"  icon={<IconTrophy />} label="Mine rekorder"  desc="Dine beste tider" accent="#bf9c45" />
             <ComingSoonCard icon={<IconFlame />} label="Thermo Sudoku" desc="Kommer snart" />
           </div>
         </motion.div>

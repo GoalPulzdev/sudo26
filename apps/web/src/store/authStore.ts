@@ -21,8 +21,8 @@ interface AuthStore {
 }
 
 const DEFAULT_COLORS = [
-  "#7c3aed", "#0891b2", "#059669", "#d97706",
-  "#dc2626", "#db2777", "#4f46e5", "#0d9488",
+  "#3a4a66", "#bf9c45", "#5f8a6a", "#b4554a",
+  "#4a6aa0", "#8a6d3b", "#2c3a4f", "#7a6a8a",
 ];
 
 function pickDefaultColor(userId: string): string {
