@@ -51,7 +51,7 @@ interface GameStore {
   loadPuzzle: (puzzle: Puzzle) => void;
   dispatch: (action: GameAction) => void;
   clearGame: () => void;
-  recordWin: (difficulty: Difficulty, elapsed: number) => void;
+  recordWin: (difficulty: Difficulty, elapsed: number, mistakes?: number) => void;
 }
 
 function buildInitialState(puzzle: Puzzle): GameState {
@@ -90,11 +90,11 @@ export const useGameStore = create<GameStore>()(
         set({ game: next });
         // Auto-record win when game transitions to "won"
         if (game.status !== "won" && next.status === "won") {
-          get().recordWin(next.puzzle.difficulty, next.elapsed);
+          get().recordWin(next.puzzle.difficulty, next.elapsed, next.mistakes);
         }
       },
 
-      recordWin: (difficulty, elapsed) => {
+      recordWin: (difficulty, elapsed, mistakes) => {
         set((state) => {
           const stats = { ...state.stats };
           const ds = { ...stats.byDifficulty[difficulty] };
@@ -119,7 +119,8 @@ export const useGameStore = create<GameStore>()(
 
           // Check achievements (fire-and-forget to avoid blocking state update)
           const earned = state.earnedAchievements ?? new Set<string>();
-          const newKeys = checkAchievements(stats, { difficulty, timeSecs: elapsed, mistakes: 0 }, earned);
+          // Unknown mistake count (callers that don't track it) must not unlock "no mistakes" achievements.
+          const newKeys = checkAchievements(stats, { difficulty, timeSecs: elapsed, mistakes: mistakes ?? Number.POSITIVE_INFINITY }, earned);
           if (newKeys.length > 0) {
             setTimeout(async () => {
               const { triggerAchievementToast } = await import("@/components/AchievementToast");

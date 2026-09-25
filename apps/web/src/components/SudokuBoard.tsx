@@ -4,14 +4,33 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Board, CellValue } from "@sudoku-2026/core";
 import clsx from "clsx";
 
+/** What the coach wants drawn on the board. Cells are indexed 0–80, row-major. */
+export interface CoachOverlay {
+  /** Cells of the houses the step is about (tinted). */
+  houses: Set<number>;
+  /** Cells forming the pattern (gold ring). */
+  pattern: Set<number>;
+  /** Filled cells that justify the step (dashed ring). */
+  witnesses: Set<number>;
+  /** Cell about to be filled (pulses). */
+  target: number | null;
+  /** Digits to show as candidates in empty pattern cells (e.g. the pair's two digits). */
+  patternDigits: number[];
+  /** Candidates the step removes, per cell (struck through in red). */
+  eliminations: Map<number, number[]>;
+  /** Cells with a wrong value the coach wants fixed. */
+  issues: Set<number>;
+}
+
 interface SudokuBoardProps {
   board: Board;
   selectedCell: [number, number] | null;
   onCellClick: (row: number, col: number) => void;
   hintCell?: [number, number] | null;
+  coach?: CoachOverlay | null;
 }
 
-export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell }: SudokuBoardProps): React.ReactElement {
+export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell, coach }: SudokuBoardProps): React.ReactElement {
   const selVal = selectedCell ? board[selectedCell[0]][selectedCell[1]].value : 0;
 
   return (
@@ -38,7 +57,13 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
         {board.map((row, r) =>
           row.map((cell, c) => {
             const isSelected  = selectedCell?.[0] === r && selectedCell?.[1] === c;
-            const isHint      = hintCell?.[0] === r && hintCell?.[1] === c;
+            const idx         = r * 9 + c;
+            const isHint      = (hintCell?.[0] === r && hintCell?.[1] === c) || coach?.target === idx;
+            const inHouse     = coach?.houses.has(idx) ?? false;
+            const isPattern   = coach?.pattern.has(idx) ?? false;
+            const isWitness   = coach?.witnesses.has(idx) ?? false;
+            const isIssue     = coach?.issues.has(idx) ?? false;
+            const struck      = coach?.eliminations.get(idx);
             const isSameValue = !isSelected && selVal !== 0 && cell.value === selVal;
             const isPeer      = !isSelected && cell.highlighted;
 
@@ -55,6 +80,7 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
               <motion.button
                 key={`${r}-${c}`}
                 onClick={() => onCellClick(r, c)}
+                aria-label={`Rad ${r + 1}, kolonne ${c + 1}${cell.value !== 0 ? `, ${cell.value}` : ", tom"}`}
                 whileTap={{ scale: 0.85 }}
                 transition={{ type: "spring", stiffness: 700, damping: 25 }}
                 style={{
@@ -86,6 +112,29 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
                 {isPeer && !isSameValue && (
                   <span className="absolute inset-0"
                     style={{ background: "rgba(58,74,102,0.07)" }}
+                  />
+                )}
+                {inHouse && (
+                  <span className="absolute inset-0 pointer-events-none" style={{ background: "rgba(191,156,69,0.12)" }} />
+                )}
+                {isPattern && (
+                  <span
+                    className="absolute inset-[2px] rounded-md pointer-events-none z-10"
+                    style={{ boxShadow: "inset 0 0 0 2px #bf9c45", background: "rgba(224,200,115,0.20)" }}
+                  />
+                )}
+                {isWitness && (
+                  <span
+                    className="absolute inset-[3px] rounded-full pointer-events-none z-10"
+                    style={{ border: "1.5px dashed #33415a" }}
+                  />
+                )}
+                {isIssue && (
+                  <motion.span
+                    className="absolute inset-0 pointer-events-none z-10"
+                    style={{ boxShadow: "inset 0 0 0 2.5px var(--error)" }}
+                    animate={{ opacity: [1, 0.35, 1] }}
+                    transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
                   />
                 )}
                 {isHint && (
@@ -124,6 +173,11 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
                   ) : null}
                 </AnimatePresence>
 
+                {isPattern && cell.value === 0 && coach && coach.patternDigits.length > 0 && (
+                  <CandidateGrid digits={coach.patternDigits} color="#8a6d2a" />
+                )}
+                {struck && cell.value === 0 && <CandidateGrid digits={struck} color="var(--error)" struck />}
+
                 {/* Error flash */}
                 {cell.error && (
                   <motion.span
@@ -138,6 +192,27 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
           })
         )}
       </div>
+    </div>
+  );
+}
+
+/** Coach candidates drawn at their note position: the pattern's digits, or struck-out eliminations. */
+function CandidateGrid({ digits, color, struck }: { digits: number[]; color: string; struck?: boolean }) {
+  return (
+    <div className="absolute inset-0 z-20 grid grid-cols-3 p-[2px] pointer-events-none" aria-hidden="true">
+      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
+        <span
+          key={n}
+          className={clsx("flex items-center justify-center leading-none font-black", struck && "line-through")}
+          style={{
+            fontSize: "clamp(9px, 2.6vw, 13px)",
+            color: digits.includes(n) ? color : "transparent",
+            textDecorationThickness: struck ? "2px" : undefined,
+          }}
+        >
+          {n}
+        </span>
+      ))}
     </div>
   );
 }

@@ -13,7 +13,13 @@ const inter = Inter({
   weight: ["400", "500", "600", "700", "800", "900"],
 });
 
+/** Absolute base for OpenGraph URLs (share cards). */
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Sudoku 2026",
   description: "Modern Sudoku – guided hints, daily challenges, and streaks.",
   manifest: "/manifest.json",

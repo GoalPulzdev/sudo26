@@ -8,8 +8,9 @@ interface GameHeaderProps {
   mistakes: number;
   hintsUsed: number;
   isPlaying: boolean;
-  hint: Hint | null;
-  onDismissHint: () => void;
+  /** Legacy hint banner (pages not on GameShell). GameShell uses the coach panel instead. */
+  hint?: Hint | null;
+  onDismissHint?: () => void;
   onPause: () => void;
   title: string;
   filledCount: number;

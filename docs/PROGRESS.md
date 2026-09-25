@@ -132,9 +132,7 @@ pnpm type-check && pnpm lint && pnpm test && pnpm build
   bevisst standalone; ikke tvangs-migrert.
 - **Killer uniqueness for clueless puzzles**: solver kan treffe node-budsjett før
   unikhet bevises (`hasUniqueKillerSolution` returnerer false ved `exhausted`).
-- **Hint-tester**: dedikerte triggere for naked-pair/pointing-pair på craftede brett.
-- **Generator label-wiring**: `createMatchedPuzzle` finnes, men dailys/sidene bruker
-  fortsatt `createPuzzle`/`createDailyPuzzle` (clue-bucket). Kan byttes til matched.
+- ~~Hint-tester~~ ✅ (se Coach under) · ~~Generator label-wiring~~ ✅ (kuratert bank).
 - **Mobil-app Nordic-tema**: Expo har egen palett; synk til `packages/design`.
 - **Win-overlay-finpuss**: farger er Nordic, men layout/struktur kan løftes videre.
 - **Mistake policy** (docx 5.4): `MistakePolicy`-typer ikke implementert i reducer
@@ -174,3 +172,93 @@ pnpm type-check && pnpm lint && pnpm test && pnpm build
 
 Den beste veien videre er fortsatt å gjøre kjernen uangripelig før mer bygges —
 kjernen er nå bevist (71 tester), backend er skrevet og venter på provisjonering.
+
+---
+
+## 8. Økt 2026-09-25 — Coach, analyse, kuratert bank
+
+**Coach (`packages/core/src/coach.ts`)** — steg-for-steg-logikk som forklarer, ikke bare
+avslører. Hvert steg har teknikk, mønsterceller, «vitner» (sifrene som begrunner steget),
+elimineringer og norsk forklaring. `coachPlan` gir kjeden av elimineringer frem til neste
+plassering, og flagger feil verdier og notater som utelukker riktig siffer. `solvePath`
+løser hele brettet og sier hvilken teknikk hver rute krevde.
+
+**Hint-bug fikset**: gammel `getHint` kunne ved nakent par plassere et *feil* siffer og
+markere det som riktig. `getHint` bygger nå på coachen og gir alltid riktig verdi
+(testet mot mange delvis løste brett). Mobil arver fiksen.
+
+**Web-coach**: hint i tre nivåer — dytt (hvor du bør se) → forklaring tegnet på brettet
+(enheter, mønster, vitner, overstrøkne kandidater) → handling (sett inn / fjern notater
+og gå videre). Å åpne coachen teller som ett hint. Tastatur: `h`, `Esc`.
+
+**Analyse etter spillet (`analysis.ts` + `components/analysis/`)** — reduceren logger nå
+alle trekk (`moves`). Arket viser rangtittel, tempo-kurve med tenkepauser, varmekart over
+tenketid per rute, teknikkene brettet krevde og innsikter. Vises i classic og daily.
+
+**Kuratert bank (`bank.ts`, `curated.ts`, `transform.ts`)** — målt: `createPuzzle("hard")`
+var logisk løsbar i bare 7/12 tilfeller, og «extreme» krevde gjetting 12/12; matched-
+generatoren brukte ~11 s på hard. Nå: 220 brett generert offline
+(`scripts/build-bank.mjs`), hvert verifisert unikt, løsbart uten gjetting og vurdert til
+nøyaktig sitt nivå (`bank.test.ts`). Hver forespørsel velger et brett og en tilfeldig
+symmetri-transformasjon (≈10¹² varianter per brett) — øyeblikkelig og deterministisk.
+Daily følger ukedag: man enkel → lør ekstrem.
+
+**Fikset underveis (fantes fra før)**:
+- CSS-reset lå utenfor Tailwind v4-lagene og overstyrte *alle* padding/margin-utilities.
+- Klassisk: `[[...difficulty]]` er en array — sammenligningen feilet alltid, så spill ble
+  aldri gjenopptatt. I tillegg leste effekter hydrerings-snapshot (`game = null`), som
+  nullstilte både classic og dagens daily ved innlasting. Leser nå `getState()`.
+
+---
+
+## 9. Økt 2026-09-25 (del 2) — Daily som ritual
+
+**Resultat som lenke (`packages/core/src/share.ts`)** — et fullført daily pakkes i en
+kompakt kode (~45–65 tegn): dato, nivå, tid, feil, hint, streak, tittel, 9×9-mønster
+(gitt/egen logikk/hint/feil) og valgfritt navn. Ingen backend trengs. Koden er et
+«skryte-kort», ikke et bevis — verifiserte resultater kommer med leaderboardet.
+
+**`/d/<kode>`** — offentlig resultatside + `card.png` (1200×630, `next/og`) som
+OpenGraph/Twitter-bilde, så lenken vises som kort i meldingsapper. Besøkende får «Spill
+dagens brett» / «Spill samme brett»; har de spilt samme brett, vises tid mot tid.
+
+**Daily-flyt** — første løsning per dato lagres (`dailyStore`) og er den offisielle;
+omspill teller ikke. Seier-kortet viser resultatkort, deling (bilde + tekst på mobil,
+ellers tekst/lenke), analyse, nedtelling og ukestripe. Dagens løste brett viser
+resultat i stedet for brettet. `?date=` åpner arkivbrett (teller ikke på streak).
+Hjem viser dagens nivå, eller «Løst ✓ tid · tittel» + nedtelling, og ukestripen.
+
+**Farger** — resultatfargene er validert for fargeblindhet (alle par ΔE ≥ 19);
+emoji-rutenettet bruker samme betydning (🟦 egen logikk, 🟨 hint, 🟥 feil).
+
+**Fikset (fantes fra før)**: «Perfekt spill»-achievement ble låst opp også med feil —
+`recordWin` sendte alltid `mistakes: 0`. Sender nå faktisk antall (også fra mini).
+
+**Kjent gap**: hjemsidens «Streak» (vunnet et hvilket som helst spill per dag) og
+daily-streaken er to ulike tall — bør slås sammen til én definisjon.
+
+---
+
+## 10. Økt 2026-09-25 (del 3) — Spøkelse-dueller og replay
+
+**`packages/core/src/replay.ts`** — et helt parti (trekklogg + brett-referanse) kodes i
+en lenke. Kuraterte og daglige brett er deterministiske fra (nivå, seed) eller dato, så
+referansen er liten; et typisk parti blir ~250–400 tegn. Streng dekoding (versjon,
+lengder, celler 0–80, sifre 1–9, ingen etterslengte bytes). `ghostTimeline` /
+`ghostProgressAt` gir spøkelsets fremdrift; `replayFrameAt` gir brettet ved tid t.
+Felles binærhjelpere er flyttet til `codec.ts`.
+
+**`/duel/<kode>`** — spill samme brett mot vennens innspilte parti. Spøkelset følger
+din spilltimer (pause stopper begge). HUD viser fremdrift og fyllgrad per boks — aldri
+sifre. Resultat: tid mot tid, feil og hint på begge sider, revansj-lenke med ditt eget
+parti, lenker til begge replays. Omlasting gjenopptar duellen. Dueller teller ikke på
+streak eller daily (daily identifiseres nå på puzzle-id, ikke dato).
+
+**`/replay/<kode>`** — avspilling med play/pause, 1–64× hastighet og tidslinje med
+markører for feil og hint. «Spill mot …» går rett til duell med samme kode.
+
+**Deling** — «Utfordre en venn» på seier-kortene (classic, daily) og «Se replay» i
+analysearket. Duell/replay-lenker har eget OG-bilde med spøkelsets tempo-kurve.
+
+**Fikset**: analyse- og duellknappene på daily-siden kunne vise et *annet* vunnet spill
+(f.eks. en duell) — de er nå låst til dagens daily-brett.

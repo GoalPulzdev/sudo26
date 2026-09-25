@@ -1,19 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import type React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import type { Board } from "@sudoku-2026/core";
+import type { DailyResult } from "@sudoku-2026/core";
 import {
+  analyzeGame,
+  cellOutcomes,
   createDailyPuzzle,
-  todayString,
-  recordCompletion,
   createEmptyStreak,
+  dailyDifficulty,
+  levelName,
+  recordCompletion,
+  todayString,
 } from "@sudoku-2026/core";
 import { useGameStore } from "@/store/gameStore";
+import { useAuthStore } from "@/store/authStore";
+import { useDailyStore, type StoredDaily } from "@/store/dailyStore";
+import { useHydrated } from "@/lib/useHydrated";
+import { formatClock } from "@/lib/dailyFormat";
 import GameShell from "@/components/game/GameShell";
+import AnalysisLauncher from "@/components/analysis/AnalysisLauncher";
+import ResultCard from "@/components/daily/ResultCard";
+import ShareActions from "@/components/daily/ShareActions";
+import NextDailyCountdown from "@/components/daily/NextDailyCountdown";
+import WeekStrip from "@/components/daily/WeekStrip";
 import ChallengeButton from "@/components/ChallengeButton";
+import DuelInviteButton from "@/components/duel/DuelInviteButton";
 
 const STREAK_KEY = "sudoku-streak";
 
@@ -33,45 +48,100 @@ function saveStreak(data: ReturnType<typeof createEmptyStreak>) {
   }
 }
 
-export default function DailyPage(): React.ReactElement {
+/** `?date=YYYY-MM-DD` opens an earlier daily (archive); anything else means today. */
+function useDailyDate(): { date: string; today: string; isToday: boolean } {
+  const params = useSearchParams();
   const today = todayString();
+  const requested = params.get("date");
+  const date = requested && /^\d{4}-\d{2}-\d{2}$/.test(requested) && requested < today ? requested : today;
+  return { date, today, isToday: date === today };
+}
+
+export default function DailyPage(): React.ReactElement {
+  return (
+    <Suspense fallback={null}>
+      <DailyGame />
+    </Suspense>
+  );
+}
+
+function DailyGame(): React.ReactElement {
+  const { date, isToday } = useDailyDate();
   const { game, loadPuzzle } = useGameStore();
+  const stored = useDailyStore((s) => s.results[date]);
+  const record = useDailyStore((s) => s.record);
+  const username = useAuthStore((s) => s.profile?.username ?? null);
+  const hydrated = useHydrated();
   const [streak, setStreak] = useState(0);
-  const [errorCells, setErrorCells] = useState<Set<string>>(new Set());
+  const [replay, setReplay] = useState(false);
+  /** The completion this visit produced, and whether it was the first (official) one. */
+  const [finished, setFinished] = useState<{ official: boolean; elapsed: number } | null>(null);
 
   useEffect(() => {
-    const puzzle = createDailyPuzzle(today);
-    if (game?.puzzle.id !== puzzle.id) loadPuzzle(puzzle);
+    const puzzle = createDailyPuzzle(date);
+    // Live store, not the hydration snapshot — otherwise today's progress resets on reload.
+    if (useGameStore.getState().game?.puzzle.id !== puzzle.id) loadPuzzle(puzzle);
     setStreak(loadStreak("local").currentStreak);
+    setReplay(false);
+    setFinished(null);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [today]);
+  }, [date]);
 
-  // Record the daily completion and bump the streak.
+  // On a win: bump the streak (today only) and store the first completion as the official result.
   useEffect(() => {
-    if (game?.status === "won" && game.puzzle.date === today) {
-      const updated = recordCompletion(loadStreak("local"), today);
-      saveStreak(updated);
-      setStreak(updated.currentStreak);
+    // Match by id: a duel on a daily board shares the date but must not count as the daily.
+    if (!game || game.status !== "won" || game.puzzle.id !== `daily-${date}`) return;
+    const already = useDailyStore.getState().results[date];
+    if (already) {
+      // A replay finishing now. (Reloading an already-recorded win just shows the result view.)
+      if (replay) setFinished((f) => f ?? { official: false, elapsed: game.elapsed });
+      return;
     }
-  }, [game?.status, game?.puzzle.date, today]);
+    let currentStreak = 0;
+    if (isToday) {
+      const updated = recordCompletion(loadStreak("local"), date);
+      saveStreak(updated);
+      currentStreak = updated.currentStreak;
+      setStreak(currentStreak);
+    }
+    const analysis = analyzeGame({
+      clues: game.puzzle.clues,
+      moves: game.moves,
+      elapsed: game.elapsed,
+      mistakes: game.mistakes,
+      hintsUsed: game.hintsUsed,
+    });
+    const result: DailyResult = {
+      date,
+      level: dailyDifficulty(date),
+      elapsed: game.elapsed,
+      mistakes: game.mistakes,
+      hintsUsed: game.hintsUsed,
+      streak: currentStreak,
+      titleId: analysis.title.id,
+      cells: cellOutcomes(game.puzzle.clues, game.moves),
+      ...(username ? { name: username } : {}),
+    };
+    record(result);
+    setFinished({ official: true, elapsed: game.elapsed });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game?.status, game?.puzzle.id, date, replay]);
 
-  // Reset error tracking when a new puzzle loads.
-  useEffect(() => {
-    setErrorCells(new Set());
-  }, [game?.puzzle.id]);
+  const level = levelName(dailyDifficulty(date));
+  const [, mo, d] = date.split("-");
+  const title = isToday ? `Daglig · ${level}` : `Daglig ${d}.${mo} · ${level}`;
 
-  // Accumulate cells that ever had an error (for the share grid).
-  useEffect(() => {
-    if (!game?.board) return;
-    game.board.forEach((row, r) => row.forEach((cell, c) => {
-      if (cell.error) {
-        setErrorCells((prev) => (prev.has(`${r},${c}`) ? prev : new Set(prev).add(`${r},${c}`)));
-      }
-    }));
-  }, [game?.board]);
+  // Already solved (and not playing it again): show the result instead of a board.
+  const playingThisDaily = game?.puzzle.id === `daily-${date}` && game.status !== "won";
+  if (hydrated && stored && !replay && !finished && !(playingThisDaily && game.moves?.length)) {
+    return <DailyDone stored={stored} isToday={isToday} onReplay={() => {
+      loadPuzzle(createDailyPuzzle(date));
+      setReplay(true);
+    }} />;
+  }
 
   const streakBanner =
-    streak > 0 ? (
+    isToday && streak > 0 ? (
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -81,168 +151,110 @@ export default function DailyPage(): React.ReactElement {
         <span className="text-base">🔥</span>
         <span className="text-sm font-bold" style={{ color: "#3a6b73" }}>{streak} dager på rad!</span>
       </motion.div>
+    ) : !isToday ? (
+      <p className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+        Arkivbrett — teller ikke på streaken.
+      </p>
     ) : null;
 
   return (
     <GameShell
-      title={`Daglig utfordring · ${today}`}
+      title={title}
       aboveHeader={streakBanner}
       overlay={
-        game?.status === "won" ? (
-          <DailyWinOverlay
-            streak={streak}
-            elapsed={game.elapsed}
-            mistakes={game.mistakes}
-            board={game.board}
-            errorCells={errorCells}
-            today={today}
-          />
+        game?.status === "won" && game.puzzle.id === `daily-${date}` && stored && finished ? (
+          <DailyWinOverlay stored={stored} official={finished.official} elapsed={finished.elapsed} isToday={isToday} />
         ) : null
       }
     />
   );
 }
 
+function DailyDone({ stored, isToday, onReplay }: { stored: StoredDaily; isToday: boolean; onReplay: () => void }) {
+  return (
+    <main className="min-h-screen flex flex-col items-center gap-5 px-4 py-6">
+      <div className="w-full max-w-sm flex flex-col gap-5">
+        <Link href="/" className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          ← Hjem
+        </Link>
+        <div>
+          <h1 className="text-2xl font-black tracking-tight" style={{ color: "var(--text)" }}>
+            {isToday ? "Dagens brett er løst" : "Du har løst dette brettet"}
+          </h1>
+          {isToday && <NextDailyCountdown className="text-sm mt-1" />}
+        </div>
+        <ResultCard result={stored.result} />
+        <ShareActions stored={stored} />
+        <DuelInviteButton label="Utfordre en venn på samme brett" forPuzzleId={`daily-${stored.result.date}`} />
+        <AnalysisLauncher forPuzzleId={`daily-${stored.result.date}`} />
+        <section className="flex flex-col gap-2">
+          <h2 className="text-[11px] font-bold uppercase tracking-[0.15em]" style={{ color: "var(--text-dim)" }}>
+            Denne uken
+          </h2>
+          <WeekStrip />
+        </section>
+        <button
+          onClick={onReplay}
+          className="text-xs font-bold uppercase tracking-widest cursor-pointer"
+          style={{ color: "var(--text-muted)" }}
+        >
+          Spill brettet igjen (teller ikke)
+        </button>
+      </div>
+    </main>
+  );
+}
+
 function DailyWinOverlay({
-  streak,
+  stored,
+  official,
   elapsed,
-  mistakes,
-  board,
-  errorCells,
-  today,
+  isToday,
 }: {
-  streak: number;
+  stored: StoredDaily;
+  official: boolean;
   elapsed: number;
-  mistakes: number;
-  board: Board;
-  errorCells: Set<string>;
-  today: string;
+  isToday: boolean;
 }) {
-  const [shareState, setShareState] = useState<"idle" | "copied">("idle");
-  const m = Math.floor(elapsed / 60).toString().padStart(2, "0");
-  const s = (elapsed % 60).toString().padStart(2, "0");
-
-  function buildShareText(): string {
-    const [y, mo, d] = today.split("-");
-    const dateLabel = `${d}.${mo}.${y}`;
-    const timePart = `${m}:${s}`;
-    const mistakePart = mistakes === 0 ? "✨ Perfekt" : `${mistakes} feil`;
-    const streakPart = streak > 0 ? ` | 🔥 ${streak}` : "";
-    const grid = board
-      .map((row, r) =>
-        row.map((cell, c) => {
-          if (cell.given) return "⬛";
-          return errorCells.has(`${r},${c}`) ? "🟧" : "🟩";
-        }).join("")
-      ).join("\n");
-    const url = typeof window !== "undefined" ? window.location.origin : "";
-    return `🎯 Sudoku – Daglig ${dateLabel}\n⏱️ ${timePart} | ${mistakePart}${streakPart}\n\n${grid}${url ? `\n\n${url}` : ""}`;
-  }
-
-  async function handleShare() {
-    const text = buildShareText();
-    try {
-      if (typeof navigator.share === "function") {
-        await navigator.share({ text });
-      } else {
-        await navigator.clipboard.writeText(text);
-        setShareState("copied");
-        setTimeout(() => setShareState("idle"), 2000);
-      }
-    } catch {
-      // User cancelled or clipboard unavailable — ignore
-    }
-  }
-
-  const confetti = Array.from({ length: 16 }, (_, i) => {
-    const angle = (i / 16) * 360 + Math.random() * 22;
-    const dist  = 90 + Math.random() * 110;
-    const rad   = (angle * Math.PI) / 180;
-    const tx    = Math.round(Math.cos(rad) * dist);
-    const ty    = Math.round(Math.sin(rad) * dist + 60);
-    const tr    = Math.round((Math.random() - 0.5) * 540);
-    const colors = ["#3a4a66","#2c3a4f","#3a6b73","#d4b25a","#6f9a78","#c2615a","#9aa3bb"];
-    return { tx, ty, tr, color: colors[i % colors.length], size: 6 + Math.random() * 7 };
-  });
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50"
-      style={{ background: "rgba(90,70,150,0.22)" }}
+      className="fixed inset-0 backdrop-blur-sm flex items-start sm:items-center justify-center z-50 overflow-y-auto py-6"
+      style={{ background: "rgba(35,34,40,0.35)" }}
     >
-      {confetti.map((p, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-sm pointer-events-none"
-          style={{ width: p.size, height: p.size * 0.55, background: p.color, top: "50%", left: "50%", marginTop: -p.size / 2, marginLeft: -p.size / 2 }}
-          initial={{ x: 0, y: 0, rotate: 0, opacity: 1, scale: 0.6 }}
-          animate={{ x: p.tx, y: p.ty, rotate: p.tr, opacity: 0, scale: 1 }}
-          transition={{ duration: 0.9 + Math.random() * 0.4, delay: 0.1 + i * 0.025, ease: "easeOut" }}
-        />
-      ))}
-
       <motion.div
-        initial={{ scale: 0.82, opacity: 0, y: 24 }}
+        initial={{ scale: 0.9, opacity: 0, y: 24 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.82, opacity: 0, y: 24 }}
-        transition={{ type: "spring", stiffness: 380, damping: 26 }}
-        className="rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col overflow-hidden"
-        style={{ background: "var(--surface)", boxShadow: "0 24px 80px rgba(58,107,115,0.28), 0 0 0 1.5px rgba(58,107,115,0.20)" }}
+        exit={{ scale: 0.9, opacity: 0, y: 24 }}
+        transition={{ type: "spring", stiffness: 380, damping: 28 }}
+        className="rounded-3xl max-w-sm w-full mx-4 flex flex-col gap-4 p-5"
+        style={{ background: "var(--surface)", boxShadow: "0 24px 80px rgba(44,58,79,0.28)" }}
       >
-        {/* Header */}
-        <div className="px-7 pt-8 pb-5"
-          style={{ background: "linear-gradient(135deg, #3a6b73 0%, #2f5560 100%)" }}>
-          <div className="text-5xl mb-2">📅</div>
-          <h2 className="text-2xl font-black text-white">Dagens brett løst!</h2>
-          {streak > 0 && (
-            <p className="text-sm text-white/75 mt-1.5 font-semibold">
-              🔥 {streak} dag{streak === 1 ? "" : "er"} på rad
+        <div className="text-center">
+          <h2 className="text-2xl font-black" style={{ color: "var(--text)" }}>
+            {isToday ? "Dagens brett løst!" : "Arkivbrett løst!"}
+          </h2>
+          {isToday && <NextDailyCountdown className="text-xs mt-1" />}
+          {!official && (
+            <p className="text-xs mt-1.5" style={{ color: "var(--text-muted)" }}>
+              Omspill på {formatClock(elapsed)} teller ikke — kortet viser første løsning.
             </p>
           )}
         </div>
-
-        {/* Stats */}
-        <div className="px-6 py-5 grid grid-cols-3 gap-3">
-          {[
-            { label: "Tid",    value: `${m}:${s}`, accent: "#3a6b73" },
-            { label: "Feil",   value: String(mistakes), accent: mistakes === 0 ? "#5f8a6a" : "#b4554a" },
-            { label: "Streak", value: String(streak),   accent: "#bf9c45" },
-          ].map(({ label, value, accent }) => (
-            <div key={label} className="rounded-xl py-3 flex flex-col items-center gap-0.5 relative overflow-hidden"
-              style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
-              <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-xl" style={{ background: accent }} />
-              <span className="text-sm font-black tabular-nums" style={{ color: "var(--text)" }}>{value}</span>
-              <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>{label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Actions */}
-        <div className="px-6 pb-7 flex flex-col gap-3">
-          <button
-            onClick={handleShare}
-            className="w-full py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest text-center transition-all"
-            style={shareState === "copied"
-              ? { background: "linear-gradient(135deg, #5f8a6a, #4f7a5c)", color: "#fff", boxShadow: "0 4px 20px rgba(95,138,106,0.35), 0 2px 0 rgba(4,120,87,0.5)" }
-              : { background: "linear-gradient(135deg, #3a4a66, #2c3a4f)", color: "#fff", boxShadow: "0 4px 20px rgba(58,74,102,0.35), 0 2px 0 rgba(44,58,79,0.5)" }
-            }
-          >
-            {shareState === "copied" ? "✓ Kopiert!" : "📤 Del resultatet"}
-          </button>
-          <a
-            href="/stats"
-            className="block w-full py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest text-center"
-            style={{ background: "linear-gradient(135deg, #3a6b73, #2f5560)", color: "#fff", boxShadow: "0 4px 20px rgba(58,107,115,0.35), 0 2px 0 rgba(47,85,96,0.5)" }}
-          >
-            Se statistikk
-          </a>
-          <DailyChallengeRow elapsed={elapsed} />
-          <Link href="/" className="block text-xs font-bold uppercase tracking-widest transition-colors"
-            style={{ color: "var(--text-dim)" }}>
-            Tilbake til meny
+        <ResultCard result={stored.result} />
+        <ShareActions stored={stored} />
+        <DuelInviteButton label="Utfordre en venn på samme brett" forPuzzleId={`daily-${stored.result.date}`} />
+        <DailyChallenge elapsed={stored.result.elapsed} />
+        <AnalysisLauncher forPuzzleId={`daily-${stored.result.date}`} />
+        {isToday && <WeekStrip />}
+        <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
+          <Link href="/" style={{ color: "var(--text-dim)" }}>
+            Meny
+          </Link>
+          <Link href="/stats" style={{ color: "var(--text-dim)" }}>
+            Statistikk →
           </Link>
         </div>
       </motion.div>
@@ -250,7 +262,8 @@ function DailyWinOverlay({
   );
 }
 
-function DailyChallengeRow({ elapsed }: { elapsed: number }) {
+/** Supabase-backed challenge (renders nothing without a backend). */
+function DailyChallenge({ elapsed }: { elapsed: number }) {
   const puzzle = useGameStore((s) => s.game?.puzzle ?? null);
   if (!puzzle) return null;
   return <ChallengeButton puzzle={puzzle} elapsed={elapsed} />;

@@ -184,13 +184,6 @@ export function createPuzzle(
   };
 }
 
-/** Generate a deterministic daily puzzle based on the date string (YYYY-MM-DD) */
-export function createDailyPuzzle(date: string): Puzzle {
-  const seed = `daily-${date}`;
-  const id = `daily-${date}`;
-  return createPuzzle("daily", seed, id, date);
-}
-
 /**
  * Like `createPuzzle`, but attaches a technique-based `DifficultyRating` measured
  * by solving the puzzle with the logic engine. The `difficulty` label still comes
