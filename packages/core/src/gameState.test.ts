@@ -135,3 +135,50 @@ describe("gameReducer – win detection", () => {
     expect(s.status).toBe("won");
   });
 });
+
+describe("gameReducer – move log & coach actions", () => {
+  it("logs player input with correctness and time", () => {
+    let s = freshState();
+    const [r, c] = firstEmpty(s);
+    s = { ...s, elapsed: 42 };
+    s = gameReducer(s, { type: "SELECT_CELL", row: r, col: c });
+    const answer = s.board[r][c].solution;
+    s = gameReducer(s, { type: "INPUT_VALUE", value: answer });
+    expect(s.moves).toEqual([{ t: 42, cell: r * 9 + c, value: answer, correct: true, source: "player" }]);
+  });
+
+  it("APPLY_HINT logs a hint move and respects `counted`", () => {
+    let s = freshState();
+    const [r, c] = firstEmpty(s);
+    const value = s.board[r][c].solution;
+    s = gameReducer(s, { type: "USE_HINT" });
+    s = gameReducer(s, { type: "APPLY_HINT", row: r, col: c, value, counted: true });
+    expect(s.hintsUsed).toBe(1);
+    expect(s.moves?.[0]).toMatchObject({ cell: r * 9 + c, source: "hint", correct: true });
+    expect(s.board[r][c].value).toBe(value);
+  });
+
+  it("REMOVE_NOTES removes only the given marks", () => {
+    let s = freshState();
+    const [r, c] = firstEmpty(s);
+    s = gameReducer(s, { type: "SELECT_CELL", row: r, col: c });
+    s = gameReducer(s, { type: "TOGGLE_NOTE_MODE" });
+    s = gameReducer(s, { type: "TOGGLE_NOTE", value: 2 as CellValue });
+    s = gameReducer(s, { type: "TOGGLE_NOTE", value: 5 as CellValue });
+    s = gameReducer(s, { type: "REMOVE_NOTES", notes: [{ row: r, col: c, value: 2 as CellValue }] });
+    expect([...s.board[r][c].notes]).toEqual([5]);
+  });
+
+  it("CLEAR_CELL clears a player value but never a given", () => {
+    let s = freshState();
+    const [r, c] = firstEmpty(s);
+    s = gameReducer(s, { type: "SELECT_CELL", row: r, col: c });
+    s = gameReducer(s, { type: "INPUT_VALUE", value: s.board[r][c].solution });
+    s = gameReducer(s, { type: "CLEAR_CELL", row: r, col: c });
+    expect(s.board[r][c].value).toBe(0);
+
+    let gr = 0, gc = 0;
+    outer: for (gr = 0; gr < 9; gr++) for (gc = 0; gc < 9; gc++) if (s.board[gr][gc].given) break outer;
+    expect(gameReducer(s, { type: "CLEAR_CELL", row: gr, col: gc })).toBe(s);
+  });
+});

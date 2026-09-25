@@ -71,6 +71,21 @@ export interface GameState {
   noteMode: boolean;
   /** Stack of previous boards for undo (last entry = previous state) */
   history: Board[];
+  /**
+   * Append-only log of every digit placed (player input and hints), used for
+   * post-game analysis and replays. Optional so older saved games still load.
+   */
+  moves?: MoveRecord[];
+}
+
+export interface MoveRecord {
+  /** Elapsed seconds when the move was made. */
+  t: number;
+  /** Cell index 0–80, row-major. */
+  cell: number;
+  value: CellValue;
+  correct: boolean;
+  source: "player" | "hint";
 }
 
 // ─── Leaderboard ─────────────────────────────────────────────────────────────
@@ -136,6 +151,7 @@ export type HintStrategy =
   | "hidden_single"
   | "naked_pair"
   | "pointing_pair"
+  | "box_line_reduction"
   | "x_wing"
   /** Reveal of the solution value – NOT AI. Used as the final fallback. */
   | "solution_reveal";

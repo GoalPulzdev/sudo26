@@ -10,6 +10,8 @@ const KNOWN_STRATEGIES = [
   "hidden_single",
   "naked_pair",
   "pointing_pair",
+  "box_line_reduction",
+  "x_wing",
   "solution_reveal",
 ];
 

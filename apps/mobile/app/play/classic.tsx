@@ -4,7 +4,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import type { Difficulty, CellValue, Hint } from "@sudoku-2026/core";
-import { createPuzzle, getHint, boardToString } from "@sudoku-2026/core";
+import { createCuratedPuzzle, createPuzzle, getHint, boardToString, isCuratedDifficulty } from "@sudoku-2026/core";
 import { useGameStore } from "../../store/gameStore";
 import SudokuBoard from "../../components/SudokuBoard";
 import NumberPad from "../../components/NumberPad";
@@ -33,7 +33,10 @@ export default function ClassicScreen() {
 
   const startGame = useCallback((diff: Difficulty) => {
     setDifficulty(diff);
-    const puzzle = createPuzzle(diff, `${diff}-${randomId()}`, randomId());
+    const seed = `${diff}-${randomId()}`;
+    const puzzle = isCuratedDifficulty(diff)
+      ? createCuratedPuzzle(diff, seed, randomId())
+      : createPuzzle(diff, seed, randomId());
     loadPuzzle(puzzle);
   }, [loadPuzzle]);
 

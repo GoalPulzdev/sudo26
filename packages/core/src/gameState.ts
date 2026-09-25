@@ -3,7 +3,7 @@
  * Compatible with React useReducer or Zustand.
  */
 
-import type { GameState, CellValue } from "./types.js";
+import type { GameState, CellValue, MoveRecord } from "./types.js";
 import { cloneBoard, getCellSolution, boardToString } from "./board.js";
 
 export type GameAction =
@@ -16,8 +16,25 @@ export type GameAction =
   | { type: "TICK" }
   | { type: "PAUSE" }
   | { type: "RESUME" }
-  | { type: "APPLY_HINT"; row: number; col: number; value: CellValue }
+  /**
+   * Place a hinted value. Counts as a hint unless `counted` says the hint was
+   * already counted (e.g. by `USE_HINT` when the coach was opened).
+   */
+  | { type: "APPLY_HINT"; row: number; col: number; value: CellValue; counted?: boolean }
+  /** Count a hint without placing anything (the coach explains; the player places). */
+  | { type: "USE_HINT" }
+  /** Remove specific pencil marks (e.g. candidates the coach proved impossible). */
+  | { type: "REMOVE_NOTES"; notes: { row: number; col: number; value: CellValue }[] }
+  /** Clear a player-entered value at a specific cell, regardless of selection. */
+  | { type: "CLEAR_CELL"; row: number; col: number }
   | { type: "RESET" };
+
+/** Cap the move log so a pathological session can't grow storage unbounded. */
+const MAX_MOVES = 500;
+
+function logMove(state: GameState, move: MoveRecord): MoveRecord[] {
+  return [...(state.moves ?? []), move].slice(-MAX_MOVES);
+}
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
@@ -81,6 +98,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         mistakes: newMistakes,
         status: solved ? "won" : state.status,
         history: [...(state.history ?? []).slice(-19), cloneBoard(state.board)],
+        moves:
+          action.value !== 0
+            ? logMove(state, { t: state.elapsed, cell: row * 9 + col, value: action.value, correct: !cell.error, source: "player" })
+            : state.moves,
       };
     }
 
@@ -143,9 +164,34 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         board,
-        hintsUsed: state.hintsUsed + 1,
+        hintsUsed: action.counted ? state.hintsUsed : state.hintsUsed + 1,
         status: isComplete(board) ? "won" : state.status,
+        history: [...(state.history ?? []).slice(-19), cloneBoard(state.board)],
+        moves: logMove(state, { t: state.elapsed, cell: row * 9 + col, value, correct: true, source: "hint" }),
       };
+    }
+
+    case "USE_HINT":
+      return { ...state, hintsUsed: state.hintsUsed + 1 };
+
+    case "REMOVE_NOTES": {
+      const board = cloneBoard(state.board);
+      let changed = false;
+      for (const { row, col, value } of action.notes) {
+        if (board[row][col].notes.delete(value)) changed = true;
+      }
+      if (!changed) return state;
+      return { ...state, board, history: [...(state.history ?? []).slice(-19), cloneBoard(state.board)] };
+    }
+
+    case "CLEAR_CELL": {
+      const { row, col } = action;
+      const cell = state.board[row][col];
+      if (cell.given || cell.value === 0) return state;
+      const board = cloneBoard(state.board);
+      board[row][col].value = 0;
+      board[row][col].error = false;
+      return { ...state, board, history: [...(state.history ?? []).slice(-19), cloneBoard(state.board)] };
     }
 
     case "RESET": {
@@ -168,6 +214,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         status: "playing",
         selectedCell: null,
         history: [],
+        moves: [],
       };
     }
 
