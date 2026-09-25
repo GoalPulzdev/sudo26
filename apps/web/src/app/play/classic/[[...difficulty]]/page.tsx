@@ -12,6 +12,7 @@ import { createChallenge } from "@/lib/challenges";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import GameShell from "@/components/game/GameShell";
 import AnalysisLauncher from "@/components/analysis/AnalysisLauncher";
+import DuelInviteButton from "@/components/duel/DuelInviteButton";
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   easy: "Enkel", medium: "Middels", hard: "Vanskelig", extreme: "Ekstrem", daily: "Daglig", mini: "Mini 6×6",
@@ -227,6 +228,7 @@ function WinOverlay({
           </div>
 
           <AnalysisLauncher />
+          <DuelInviteButton />
 
           {/* CTA */}
           <div className="flex flex-col gap-2">

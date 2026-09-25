@@ -36,6 +36,7 @@ Pure TypeScript, no framework dependencies.
 | `analysis.ts` | Post-game analysis: tempo, think time per cell, stuck moments, rank title, insights |
 | `curated.ts` + `bank.ts` | Verified puzzle bank + symmetry transforms → exact technique level, instantly |
 | `share.ts` | Daily result ⇄ compact URL-safe code (~45–65 chars), Wordle-style share text |
+| `replay.ts` | Full game (move log + puzzle ref) ⇄ link code (~250–400 chars); ghost timeline; replay frames |
 | `mini.ts` | 6×6 generator with uniqueness check |
 | `killer.ts` | Killer cage generation/validation |
 | `samurai.ts` | 5×9×9 generator (prototype) |
@@ -74,6 +75,8 @@ Expo Router. Shares `@sudoku-2026/core` with web.
 | Leaderboard | 🟡 | env-gated: real Supabase when configured, seeded mock otherwise (`live` flag) |
 | Anti-cheat (submission validation) | ✅ | pure `validateSubmission` (accept/suspicious/reject) + tests |
 | Supabase schema + RLS | 🟡 | SQL migration ready (`supabase/migrations/`); not yet provisioned/deployed |
+| Ghost duels | ✅ | `/duel/<code>`: same board vs a friend's recorded game; progress per box (never digits); rematch link |
+| Replays | ✅ | `/replay/<code>`: play/pause, 1–64× speed, scrubber with mistake/hint ticks |
 | Multiplayer rooms | 🟡 | routing + server shell, not real-time |
 | PWA offline | ✅ | manifest + service worker |
 | Animated UI (Framer Motion) | ✅ | |

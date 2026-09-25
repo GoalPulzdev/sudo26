@@ -6,11 +6,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { analyzeGame } from "@sudoku-2026/core";
 import { useGameStore } from "@/store/gameStore";
 import GameAnalysisSheet from "./GameAnalysisSheet";
+import { useOwnReplayCode } from "@/lib/replayLink";
 
 /** Rank title + "see analysis" button for a finished game, with the analysis sheet. */
-export default function AnalysisLauncher(): React.ReactElement | null {
+export default function AnalysisLauncher({ forPuzzleId }: { forPuzzleId?: string } = {}): React.ReactElement | null {
   const game = useGameStore((s) => s.game);
   const [open, setOpen] = useState(false);
+  const replayCode = useOwnReplayCode(forPuzzleId);
 
   const analysis = useMemo(
     () =>
@@ -27,6 +29,7 @@ export default function AnalysisLauncher(): React.ReactElement | null {
   );
 
   if (!game || !analysis) return null;
+  if (forPuzzleId && game.puzzle.id !== forPuzzleId) return null;
 
   return (
     <>
@@ -49,7 +52,7 @@ export default function AnalysisLauncher(): React.ReactElement | null {
         </span>
       </motion.button>
       <AnimatePresence>
-        {open && <GameAnalysisSheet analysis={analysis} clues={game.puzzle.clues} onClose={() => setOpen(false)} />}
+        {open && <GameAnalysisSheet analysis={analysis} clues={game.puzzle.clues} replayCode={replayCode} onClose={() => setOpen(false)} />}
       </AnimatePresence>
     </>
   );

@@ -28,6 +28,7 @@ import ShareActions from "@/components/daily/ShareActions";
 import NextDailyCountdown from "@/components/daily/NextDailyCountdown";
 import WeekStrip from "@/components/daily/WeekStrip";
 import ChallengeButton from "@/components/ChallengeButton";
+import DuelInviteButton from "@/components/duel/DuelInviteButton";
 
 const STREAK_KEY = "sudoku-streak";
 
@@ -88,7 +89,8 @@ function DailyGame(): React.ReactElement {
 
   // On a win: bump the streak (today only) and store the first completion as the official result.
   useEffect(() => {
-    if (!game || game.status !== "won" || game.puzzle.date !== date) return;
+    // Match by id: a duel on a daily board shares the date but must not count as the daily.
+    if (!game || game.status !== "won" || game.puzzle.id !== `daily-${date}`) return;
     const already = useDailyStore.getState().results[date];
     if (already) {
       // A replay finishing now. (Reloading an already-recorded win just shows the result view.)
@@ -130,7 +132,7 @@ function DailyGame(): React.ReactElement {
   const title = isToday ? `Daglig · ${level}` : `Daglig ${d}.${mo} · ${level}`;
 
   // Already solved (and not playing it again): show the result instead of a board.
-  const playingThisDaily = game?.puzzle.date === date && game.status !== "won";
+  const playingThisDaily = game?.puzzle.id === `daily-${date}` && game.status !== "won";
   if (hydrated && stored && !replay && !finished && !(playingThisDaily && game.moves?.length)) {
     return <DailyDone stored={stored} isToday={isToday} onReplay={() => {
       loadPuzzle(createDailyPuzzle(date));
@@ -160,7 +162,7 @@ function DailyGame(): React.ReactElement {
       title={title}
       aboveHeader={streakBanner}
       overlay={
-        game?.status === "won" && game.puzzle.date === date && stored && finished ? (
+        game?.status === "won" && game.puzzle.id === `daily-${date}` && stored && finished ? (
           <DailyWinOverlay stored={stored} official={finished.official} elapsed={finished.elapsed} isToday={isToday} />
         ) : null
       }
@@ -183,7 +185,8 @@ function DailyDone({ stored, isToday, onReplay }: { stored: StoredDaily; isToday
         </div>
         <ResultCard result={stored.result} />
         <ShareActions stored={stored} />
-        <AnalysisLauncher />
+        <DuelInviteButton label="Utfordre en venn på samme brett" forPuzzleId={`daily-${stored.result.date}`} />
+        <AnalysisLauncher forPuzzleId={`daily-${stored.result.date}`} />
         <section className="flex flex-col gap-2">
           <h2 className="text-[11px] font-bold uppercase tracking-[0.15em]" style={{ color: "var(--text-dim)" }}>
             Denne uken
@@ -242,8 +245,9 @@ function DailyWinOverlay({
         </div>
         <ResultCard result={stored.result} />
         <ShareActions stored={stored} />
+        <DuelInviteButton label="Utfordre en venn på samme brett" forPuzzleId={`daily-${stored.result.date}`} />
         <DailyChallenge elapsed={stored.result.elapsed} />
-        <AnalysisLauncher />
+        <AnalysisLauncher forPuzzleId={`daily-${stored.result.date}`} />
         {isToday && <WeekStrip />}
         <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
           <Link href="/" style={{ color: "var(--text-dim)" }}>

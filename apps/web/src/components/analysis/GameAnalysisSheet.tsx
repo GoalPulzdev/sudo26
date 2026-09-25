@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import type { GameAnalysis, SolvingTechnique } from "@sudoku-2026/core";
 import { TECHNIQUE_INFO, cellName } from "@sudoku-2026/core";
@@ -36,10 +37,13 @@ const TECHNIQUE_ORDER: SolvingTechnique[] = [
 export default function GameAnalysisSheet({
   analysis,
   clues,
+  replayCode,
   onClose,
 }: {
   analysis: GameAnalysis;
   clues: string;
+  /** When set, links to `/replay/<code>`. */
+  replayCode?: string | null;
   onClose: () => void;
 }): React.ReactElement {
   useEffect(() => {
@@ -148,6 +152,16 @@ export default function GameAnalysisSheet({
             <SectionTitle>Teknikker brettet krevde</SectionTitle>
             <TechniqueBars analysis={analysis} />
           </section>
+
+          {replayCode && (
+            <Link
+              href={`/replay/${replayCode}`}
+              className="w-full py-3 rounded-2xl text-sm font-bold text-center"
+              style={{ background: "var(--surface-2)", color: "var(--text)", border: "1.5px solid var(--border-2)" }}
+            >
+              ▶ Se replay av partiet
+            </Link>
+          )}
         </div>
       </motion.div>
     </motion.div>

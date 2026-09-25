@@ -236,3 +236,29 @@ emoji-rutenettet bruker samme betydning (🟦 egen logikk, 🟨 hint, 🟥 feil)
 
 **Kjent gap**: hjemsidens «Streak» (vunnet et hvilket som helst spill per dag) og
 daily-streaken er to ulike tall — bør slås sammen til én definisjon.
+
+---
+
+## 10. Økt 2026-09-25 (del 3) — Spøkelse-dueller og replay
+
+**`packages/core/src/replay.ts`** — et helt parti (trekklogg + brett-referanse) kodes i
+en lenke. Kuraterte og daglige brett er deterministiske fra (nivå, seed) eller dato, så
+referansen er liten; et typisk parti blir ~250–400 tegn. Streng dekoding (versjon,
+lengder, celler 0–80, sifre 1–9, ingen etterslengte bytes). `ghostTimeline` /
+`ghostProgressAt` gir spøkelsets fremdrift; `replayFrameAt` gir brettet ved tid t.
+Felles binærhjelpere er flyttet til `codec.ts`.
+
+**`/duel/<kode>`** — spill samme brett mot vennens innspilte parti. Spøkelset følger
+din spilltimer (pause stopper begge). HUD viser fremdrift og fyllgrad per boks — aldri
+sifre. Resultat: tid mot tid, feil og hint på begge sider, revansj-lenke med ditt eget
+parti, lenker til begge replays. Omlasting gjenopptar duellen. Dueller teller ikke på
+streak eller daily (daily identifiseres nå på puzzle-id, ikke dato).
+
+**`/replay/<kode>`** — avspilling med play/pause, 1–64× hastighet og tidslinje med
+markører for feil og hint. «Spill mot …» går rett til duell med samme kode.
+
+**Deling** — «Utfordre en venn» på seier-kortene (classic, daily) og «Se replay» i
+analysearket. Duell/replay-lenker har eget OG-bilde med spøkelsets tempo-kurve.
+
+**Fikset**: analyse- og duellknappene på daily-siden kunne vise et *annet* vunnet spill
+(f.eks. en duell) — de er nå låst til dagens daily-brett.

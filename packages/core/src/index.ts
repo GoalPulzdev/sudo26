@@ -11,6 +11,7 @@ export * from "./transform.js";
 export * from "./curated.js";
 export * from "./bank.js";
 export * from "./share.js";
+export * from "./replay.js";
 export * from "./killer.js";
 export * from "./samurai.js";
 export * from "./streaks.js";

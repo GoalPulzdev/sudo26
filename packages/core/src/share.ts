@@ -22,6 +22,7 @@
 import type { MoveRecord } from "./types.js";
 import { CURATED_DIFFICULTIES, type CuratedDifficulty } from "./curated.js";
 import { RANK_TITLE_IDS, type RankTitleId } from "./analysis.js";
+import { clamp, dateFromIndex, dayIndex, fromBase64Url, nameBytes, toBase64Url, utf8Decode } from "./codec.js";
 
 /** Per-cell outcome of a finished game. */
 export type CellOutcome = "given" | "clean" | "hint" | "mistake";
@@ -50,98 +51,9 @@ export function cellOutcomes(clues: string, moves: MoveRecord[] | undefined): Ce
   return out;
 }
 
-// ─── Date <-> day index ────────────────────────────────────────────────────────
-
-const EPOCH = Date.UTC(2024, 0, 1);
-const DAY = 86_400_000;
-
-function dayIndex(date: string): number {
-  return Math.round((Date.parse(`${date}T00:00:00Z`) - EPOCH) / DAY);
-}
-
-function dateFromIndex(i: number): string {
-  return new Date(EPOCH + i * DAY).toISOString().slice(0, 10);
-}
-
-// ─── base64url (no Buffer / btoa, so it runs in any runtime) ───────────────────
-
-const B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-
-function toBase64Url(bytes: number[]): string {
-  let out = "";
-  for (let i = 0; i < bytes.length; i += 3) {
-    const n = (bytes[i] << 16) | ((bytes[i + 1] ?? 0) << 8) | (bytes[i + 2] ?? 0);
-    const chars = Math.min(4, Math.ceil(((bytes.length - i) * 8) / 6));
-    for (let k = 0; k < chars; k++) out += B64[(n >> (18 - 6 * k)) & 63];
-  }
-  return out;
-}
-
-function fromBase64Url(s: string): number[] | null {
-  const bytes: number[] = [];
-  let buf = 0;
-  let bits = 0;
-  for (const ch of s) {
-    const v = B64.indexOf(ch);
-    if (v < 0) return null;
-    buf = (buf << 6) | v;
-    bits += 6;
-    if (bits >= 8) {
-      bits -= 8;
-      bytes.push((buf >> bits) & 255);
-    }
-  }
-  return bytes;
-}
-
 // ─── Encode / decode ───────────────────────────────────────────────────────────
 
 const MAX_NAME_BYTES = 24;
-
-function clamp(n: number, max: number): number {
-  return Math.max(0, Math.min(max, Math.round(n)));
-}
-
-function utf8Encode(s: string): number[] {
-  const out: number[] = [];
-  for (const ch of s) {
-    const c = ch.codePointAt(0)!;
-    if (c < 0x80) out.push(c);
-    else if (c < 0x800) out.push(0xc0 | (c >> 6), 0x80 | (c & 63));
-    else if (c < 0x10000) out.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
-    else out.push(0xf0 | (c >> 18), 0x80 | ((c >> 12) & 63), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
-  }
-  return out;
-}
-
-/** Strict UTF-8 decode; null on malformed input. */
-function utf8Decode(bytes: number[]): string | null {
-  let out = "";
-  for (let i = 0; i < bytes.length; ) {
-    const b = bytes[i];
-    const n = b < 0x80 ? 0 : (b & 0xe0) === 0xc0 ? 1 : (b & 0xf0) === 0xe0 ? 2 : (b & 0xf8) === 0xf0 ? 3 : -1;
-    if (n < 0) return null;
-    let c = n === 0 ? b : b & (0x3f >> n);
-    for (let k = 1; k <= n; k++) {
-      const cont = bytes[i + k];
-      if (cont === undefined || (cont & 0xc0) !== 0x80) return null;
-      c = (c << 6) | (cont & 63);
-    }
-    const min = [0, 0x80, 0x800, 0x10000][n];
-    if (c < min || c > 0x10ffff || (c >= 0xd800 && c <= 0xdfff)) return null; // overlong / out of range / surrogate
-    out += String.fromCodePoint(c);
-    i += n + 1;
-  }
-  return out;
-}
-
-function utf8(name: string): number[] {
-  const bytes = utf8Encode(name.trim());
-  // Don't cut a multi-byte character in half.
-  let end = Math.min(bytes.length, MAX_NAME_BYTES);
-  while (end > 0 && end < bytes.length && (bytes[end] & 0xc0) === 0x80) end--;
-  return bytes.slice(0, end);
-}
 
 export function encodeDailyResult(r: DailyResult): string {
   const bytes: number[] = [1];
@@ -159,7 +71,7 @@ export function encodeDailyResult(r: DailyResult): string {
     for (let k = 0; k < 4; k++) b |= Math.max(0, OUTCOMES.indexOf(r.cells[i + k] ?? "clean")) << (6 - 2 * k);
     bytes.push(b);
   }
-  const name = r.name ? utf8(r.name) : [];
+  const name = r.name ? nameBytes(r.name, MAX_NAME_BYTES) : [];
   if (name.length > 0) bytes.push(name.length, ...name);
   return toBase64Url(bytes);
 }
