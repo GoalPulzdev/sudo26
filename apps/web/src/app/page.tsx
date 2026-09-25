@@ -5,6 +5,12 @@ import type React from "react";
 import { motion } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
 import { useAuthStore } from "@/store/authStore";
+import { useDailyStore } from "@/store/dailyStore";
+import { useHydrated } from "@/lib/useHydrated";
+import { formatClock } from "@/lib/dailyFormat";
+import { RANK_TITLES, dailyDifficulty, levelName, todayString } from "@sudoku-2026/core";
+import NextDailyCountdown from "@/components/daily/NextDailyCountdown";
+import WeekStrip from "@/components/daily/WeekStrip";
 
 /* ─── SVG icons ─────────────────────────────────────────────────────── */
 function IconChevronRight({ size = 16 }: { size?: number }) {
@@ -232,11 +238,7 @@ export default function HomePage(): React.JSX.Element {
                     {todayCapitalised}
                   </p>
                   <p className="text-xl font-black text-white leading-tight">Daglig utfordring</p>
-                  <p className="text-sm text-white/65 mt-1">
-                    {streak > 0
-                      ? `${streak} dag${streak === 1 ? "" : "er"} streak \u2014 hold det g\u00e5ende!`
-                      : "Nytt brett hver dag. Start streaken din."}
-                  </p>
+                  <DailyHeroStatus streak={streak} />
                 </div>
                 <span className="text-white/60 group-hover:text-white/90 group-hover:translate-x-1 transition-all flex-shrink-0">
                   <IconChevronRight size={20} />
@@ -244,6 +246,10 @@ export default function HomePage(): React.JSX.Element {
               </div>
             </div>
           </Link>
+        </motion.div>
+
+        <motion.div variants={item} className="w-full -mt-2">
+          <WeekStrip />
         </motion.div>
 
         {/* ── Quick play ── */}
@@ -407,5 +413,29 @@ function GameModeCard({ href, icon, label, desc, accent }: {
         <IconChevronRight size={14} />
       </span>
     </Link>
+  );
+}
+/** Under the daily title: today's level and streak, or the solved result + countdown. */
+function DailyHeroStatus({ streak }: { streak: number }) {
+  const hydrated = useHydrated();
+  const results = useDailyStore((s) => s.results);
+  if (!hydrated) return <p className="text-sm text-white/65 mt-1">Nytt brett hver dag.</p>;
+  const today = todayString();
+  const done = results[today];
+  if (done) {
+    return (
+      <div className="mt-1 flex flex-col gap-0.5">
+        <p className="text-sm text-white font-semibold">
+          Løst ✓ {formatClock(done.result.elapsed)} · {RANK_TITLES[done.result.titleId].name}
+        </p>
+        <NextDailyCountdown onDark className="text-xs" />
+      </div>
+    );
+  }
+  return (
+    <p className="text-sm text-white/65 mt-1">
+      I dag: <span className="text-white font-semibold">{levelName(dailyDifficulty(today))}</span>
+      {streak > 0 ? ` · ${streak} dag${streak === 1 ? "" : "er"} streak — hold det gående!` : " · Start streaken din."}
+    </p>
   );
 }

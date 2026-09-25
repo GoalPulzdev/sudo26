@@ -208,3 +208,31 @@ Daily følger ukedag: man enkel → lør ekstrem.
 - Klassisk: `[[...difficulty]]` er en array — sammenligningen feilet alltid, så spill ble
   aldri gjenopptatt. I tillegg leste effekter hydrerings-snapshot (`game = null`), som
   nullstilte både classic og dagens daily ved innlasting. Leser nå `getState()`.
+
+---
+
+## 9. Økt 2026-09-25 (del 2) — Daily som ritual
+
+**Resultat som lenke (`packages/core/src/share.ts`)** — et fullført daily pakkes i en
+kompakt kode (~45–65 tegn): dato, nivå, tid, feil, hint, streak, tittel, 9×9-mønster
+(gitt/egen logikk/hint/feil) og valgfritt navn. Ingen backend trengs. Koden er et
+«skryte-kort», ikke et bevis — verifiserte resultater kommer med leaderboardet.
+
+**`/d/<kode>`** — offentlig resultatside + `card.png` (1200×630, `next/og`) som
+OpenGraph/Twitter-bilde, så lenken vises som kort i meldingsapper. Besøkende får «Spill
+dagens brett» / «Spill samme brett»; har de spilt samme brett, vises tid mot tid.
+
+**Daily-flyt** — første løsning per dato lagres (`dailyStore`) og er den offisielle;
+omspill teller ikke. Seier-kortet viser resultatkort, deling (bilde + tekst på mobil,
+ellers tekst/lenke), analyse, nedtelling og ukestripe. Dagens løste brett viser
+resultat i stedet for brettet. `?date=` åpner arkivbrett (teller ikke på streak).
+Hjem viser dagens nivå, eller «Løst ✓ tid · tittel» + nedtelling, og ukestripen.
+
+**Farger** — resultatfargene er validert for fargeblindhet (alle par ΔE ≥ 19);
+emoji-rutenettet bruker samme betydning (🟦 egen logikk, 🟨 hint, 🟥 feil).
+
+**Fikset (fantes fra før)**: «Perfekt spill»-achievement ble låst opp også med feil —
+`recordWin` sendte alltid `mistakes: 0`. Sender nå faktisk antall (også fra mini).
+
+**Kjent gap**: hjemsidens «Streak» (vunnet et hvilket som helst spill per dag) og
+daily-streaken er to ulike tall — bør slås sammen til én definisjon.

@@ -35,6 +35,7 @@ Pure TypeScript, no framework dependencies.
 | `hints.ts` | `getHint` — placement hint folded from the coach's plan, reveal fallback |
 | `analysis.ts` | Post-game analysis: tempo, think time per cell, stuck moments, rank title, insights |
 | `curated.ts` + `bank.ts` | Verified puzzle bank + symmetry transforms → exact technique level, instantly |
+| `share.ts` | Daily result ⇄ compact URL-safe code (~45–65 chars), Wordle-style share text |
 | `mini.ts` | 6×6 generator with uniqueness check |
 | `killer.ts` | Killer cage generation/validation |
 | `samurai.ts` | 5×9×9 generator (prototype) |
@@ -62,6 +63,8 @@ Expo Router. Shares `@sudoku-2026/core` with web.
 | Mini 6×6 Sudoku | ✅ | generator with uniqueness; UI not yet on shared shell |
 | Coach (3-level hints) | ✅ | nudge → reasoning drawn on the board → action; singles, pairs, pointing, box/line, X-Wing |
 | Post-game analysis | ✅ | tempo curve, think-time heatmap, techniques required, rank title (web classic + daily) |
+| Daily result card + sharing | ✅ | `/d/<code>` page with 1200×630 OG image; native share with image on phones; text/link copy |
+| Daily archive & week strip | ✅ | `/play/daily?date=` replays earlier dailies (not counted); countdown to next board |
 | Structured solver (validate / uniqueness / logic) | ✅ | `solve`, `countSolutions`, `solveWithLogic` + tests |
 | X-Wing | ✅ | implemented in the solver/difficulty engine (`solver.ts`) |
 | Hint fallback | ✅ | `solution_reveal` — reveals the value; **not** AI, named honestly |

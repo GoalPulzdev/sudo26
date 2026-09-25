@@ -136,12 +136,12 @@ export default function MiniPage(): React.JSX.Element {
       if (checkComplete(next, solution)) {
         setBoard(next);
         setStatus("won");
-        recordWin("mini", elapsed);
+        recordWin("mini", elapsed, mistakes);
         return;
       }
     }
     setBoard(next);
-  }, [board, selected, status, noteMode, solution, elapsed, recordWin]);
+  }, [board, selected, status, noteMode, solution, elapsed, mistakes, recordWin]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (!selected || !board) return;
