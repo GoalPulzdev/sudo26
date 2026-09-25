@@ -24,7 +24,7 @@ describe("puzzle bank", () => {
         expect(solvePath(clues).solved).toBe(true);
         expect(rateDifficulty(clues).label).toBe(d);
       }
-    });
+    }, 60_000); // verifies every entry: several seconds for the harder buckets
   }
 });
 

@@ -39,8 +39,31 @@ export interface StuckMoment {
 }
 
 export interface RankTitle {
+  id: RankTitleId;
   name: string;
   description: string;
+}
+
+/**
+ * Stable title catalogue. The order is part of the share-link format
+ * (titles are encoded by index) — append only, never reorder.
+ */
+export const RANK_TITLES = {
+  steady: { name: "Stødig Løser", description: "Brettet er løst. Neste gang: færre feil, raskere tid." },
+  ice: { name: "Iskald Logiker", description: "Feilfritt, uten hint, og langt under forventet tid." },
+  xwing: { name: "X-Wing-pilot", description: "Du fant et X-Wing på egen hånd — og gjorde ingen feil." },
+  flawless: { name: "Feilfri Mester", description: "Ingen feil, ingen hint. Bare ren logikk." },
+  sharp: { name: "Skarp Hjerne", description: "Raskere enn forventet, helt uten hjelp." },
+  finisher: { name: "Sluttspurter", description: "Du fant rytmen og løste andre halvdel i rekordfart." },
+  learner: { name: "Nysgjerrig Elev", description: "Du brukte coachen for å lære — det er slik man blir god." },
+} as const;
+
+export type RankTitleId = keyof typeof RANK_TITLES;
+
+export const RANK_TITLE_IDS = Object.keys(RANK_TITLES) as RankTitleId[];
+
+export function rankTitle(id: RankTitleId): RankTitle {
+  return { id, ...RANK_TITLES[id] };
 }
 
 export interface GameAnalysis {
@@ -214,13 +237,13 @@ function pickTitle(a: {
 }): RankTitle {
   const clean = a.mistakes === 0 && a.hintsUsed === 0;
   const fast = a.elapsed <= a.expectedSeconds * 0.6;
-  if (clean && fast) return { name: "Iskald Logiker", description: "Feilfritt, uten hint, og langt under forventet tid." };
-  if (clean && a.hardestMastered === "x_wing") return { name: "X-Wing-pilot", description: "Du fant et X-Wing på egen hånd — og gjorde ingen feil." };
-  if (clean) return { name: "Feilfri Mester", description: "Ingen feil, ingen hint. Bare ren logikk." };
-  if (fast && a.hintsUsed === 0) return { name: "Skarp Hjerne", description: "Raskere enn forventet, helt uten hjelp." };
-  if (a.pace && a.pace.secondHalf < a.pace.firstHalf * 0.6) return { name: "Sluttspurter", description: "Du fant rytmen og løste andre halvdel i rekordfart." };
-  if (a.hintsUsed >= 3) return { name: "Nysgjerrig Elev", description: "Du brukte coachen for å lære — det er slik man blir god." };
-  return { name: "Stødig Løser", description: "Brettet er løst. Neste gang: færre feil, raskere tid." };
+  if (clean && fast) return rankTitle("ice");
+  if (clean && a.hardestMastered === "x_wing") return rankTitle("xwing");
+  if (clean) return rankTitle("flawless");
+  if (fast && a.hintsUsed === 0) return rankTitle("sharp");
+  if (a.pace && a.pace.secondHalf < a.pace.firstHalf * 0.6) return rankTitle("finisher");
+  if (a.hintsUsed >= 3) return rankTitle("learner");
+  return rankTitle("steady");
 }
 
 function buildInsights(a: {
