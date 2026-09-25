@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 import type React from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import type { CellValue, Hint } from "@sudoku-2026/core";
-import { getHint, boardToString } from "@sudoku-2026/core";
 import { useGameStore } from "@/store/gameStore";
 import SudokuBoard from "@/components/SudokuBoard";
 import NumberPad from "@/components/NumberPad";
 import GameHeader from "@/components/GameHeader";
+import CoachPanel from "@/components/game/CoachPanel";
+import { useCoach } from "@/lib/useCoach";
 
 interface GameShellProps {
   /** Header title, e.g. "Klassisk · Middels". */
@@ -17,8 +18,8 @@ interface GameShellProps {
   /** Optional content rendered above the header (e.g. a streak banner). */
   aboveHeader?: React.ReactNode;
   /**
-   * Custom board renderer. Receives the shell-owned `hint` so the board can
-   * highlight it. Defaults to the standard 9×9 `SudokuBoard`. Variants with a
+   * Custom board renderer. Receives the coach's target cell as a `Hint` so the
+   * board can highlight it. Defaults to the standard 9×9 `SudokuBoard`. Variants with a
    * bespoke board (e.g. Killer cages) supply their own.
    */
   board?: (hint: Hint | null) => React.ReactNode;
@@ -29,8 +30,8 @@ interface GameShellProps {
 }
 
 /**
- * Shared game shell: back-link, header (timer/mistakes/hints/pause/progress +
- * hint banner), board, number pad, keyboard input, and the per-second timer.
+ * Shared game shell: back-link, header (timer/mistakes/hints/pause/progress),
+ * coach panel, board, number pad, keyboard input, and the per-second timer.
  *
  * It owns all the chrome and the standard reducer wiring so variant pages only
  * load a puzzle and supply page-specific extras (`belowPad`, `overlay`). State
@@ -44,7 +45,7 @@ export default function GameShell({
   overlay,
 }: GameShellProps): React.ReactElement {
   const { game, dispatch } = useGameStore();
-  const [hint, setHint] = useState<Hint | null>(null);
+  const coach = useCoach();
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Per-second timer while playing.
@@ -70,12 +71,7 @@ export default function GameShell({
     [dispatch, game?.noteMode]
   );
 
-  const handleHint = useCallback(() => {
-    if (!game) return;
-    const h = getHint(boardToString(game.board), game.puzzle.solution);
-    setHint(h);
-    if (h) dispatch({ type: "APPLY_HINT", row: h.row, col: h.col, value: h.value });
-  }, [game, dispatch]);
+  const { advance: handleHint, close: closeCoach } = coach;
 
   const { filledCount, totalCells } = useMemo(() => {
     if (!game) return { filledCount: 0, totalCells: 81 };
@@ -92,7 +88,8 @@ export default function GameShell({
     return { filledCount: filled, totalCells: total };
   }, [game]);
 
-  // Keyboard support: digits input, backspace/delete erase, "n" toggles notes.
+  // Keyboard support: digits input, backspace/delete erase, "n" toggles notes,
+  // "h" asks the coach (again to go deeper), Escape closes it.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (!game) return;
@@ -100,10 +97,12 @@ export default function GameShell({
       if (num >= 1 && num <= 9) handleNumber(num);
       if (e.key === "Backspace" || e.key === "Delete") dispatch({ type: "ERASE" });
       if (e.key === "n") dispatch({ type: "TOGGLE_NOTE_MODE" });
+      if (e.key === "h") handleHint();
+      if (e.key === "Escape") closeCoach();
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [game, handleNumber, dispatch]);
+  }, [game, handleNumber, dispatch, handleHint, closeCoach]);
 
   if (!game) {
     return (
@@ -143,21 +142,27 @@ export default function GameShell({
         mistakes={game.mistakes}
         hintsUsed={game.hintsUsed}
         isPlaying={game.status === "playing"}
-        hint={hint}
-        onDismissHint={() => setHint(null)}
         onPause={() => dispatch({ type: game.status === "playing" ? "PAUSE" : "RESUME" })}
         filledCount={filledCount}
         totalCells={totalCells}
       />
 
+      <CoachPanel
+        view={coach.view}
+        missingNotes={coach.missingNotes}
+        onExplain={coach.explain}
+        onAct={coach.act}
+        onClose={coach.close}
+      />
+
       {board ? (
-        board(hint)
+        board(coach.hint)
       ) : (
         <SudokuBoard
           board={game.board}
           selectedCell={game.selectedCell}
           onCellClick={handleCellClick}
-          hintCell={hint ? [hint.row, hint.col] : null}
+          coach={coach.overlay}
         />
       )}
 

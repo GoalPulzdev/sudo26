@@ -66,8 +66,11 @@
   --shadow-card:          var(--shadow);
 }
 
-/* Reset */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* Reset — inside the base layer so Tailwind's utility classes (px-4, py-3, …)
+   can override it. Unlayered, it silently beat every padding/margin utility. */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+}
 html { height: 100%; font-size: 16px; }
 /* Never allow horizontal scroll/clipping from full-bleed decor or wide grids. */
 html, body { overflow-x: hidden; max-width: 100%; }

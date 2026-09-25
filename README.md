@@ -31,7 +31,10 @@ Pure TypeScript, no framework dependencies.
 | `generator.ts` | Classic generate/solve, seeded RNG, deterministic daily |
 | `board.ts` | Board model, clone, serialize |
 | `gameState.ts` | Pure reducer (select, input, notes, undo, timer, win) |
-| `hints.ts` | Hint pipeline (singles, pairs, pointing pair, reveal fallback) |
+| `coach.ts` | Step-by-step logic coach: every step with pattern, witnesses, eliminations, Norwegian explanation |
+| `hints.ts` | `getHint` — placement hint folded from the coach's plan, reveal fallback |
+| `analysis.ts` | Post-game analysis: tempo, think time per cell, stuck moments, rank title, insights |
+| `curated.ts` + `bank.ts` | Verified puzzle bank + symmetry transforms → exact technique level, instantly |
 | `mini.ts` | 6×6 generator with uniqueness check |
 | `killer.ts` | Killer cage generation/validation |
 | `samurai.ts` | 5×9×9 generator (prototype) |
@@ -52,15 +55,16 @@ Expo Router. Shares `@sudoku-2026/core` with web.
 | Feature | Status | Note |
 |---------|:------:|------|
 | Classic 9×9 Sudoku (all difficulties) | ✅ | seeded, unique-solution generator + tests |
-| Deterministic daily puzzle | ✅ | same board per date |
+| Deterministic daily puzzle | ✅ | same board per date; ramps easy (Mon) → extreme (Sat) |
+| Curated puzzles by technique | ✅ | bank of verified puzzles; every classic/daily board is logic-solvable at exactly its level |
 | Pure game reducer (input/notes/undo/win) | ✅ | unit-tested |
 | Streaks | ✅ | core math tested; storage app-side |
 | Mini 6×6 Sudoku | ✅ | generator with uniqueness; UI not yet on shared shell |
-| Hints — singles, pairs, pointing pair | ✅ | with explanations |
+| Coach (3-level hints) | ✅ | nudge → reasoning drawn on the board → action; singles, pairs, pointing, box/line, X-Wing |
+| Post-game analysis | ✅ | tempo curve, think-time heatmap, techniques required, rank title (web classic + daily) |
 | Structured solver (validate / uniqueness / logic) | ✅ | `solve`, `countSolutions`, `solveWithLogic` + tests |
 | X-Wing | ✅ | implemented in the solver/difficulty engine (`solver.ts`) |
 | Hint fallback | ✅ | `solution_reveal` — reveals the value; **not** AI, named honestly |
-| X-Wing surfaced as a play-UI hint | 🔜 | engine has it; placement hint pipeline shows singles/pairs |
 | Technique-based difficulty rating | ✅ | `rateDifficulty()`; `createRatedPuzzle()` attaches it to puzzles |
 | Killer Sudoku cages | ✅ | full coverage, connected, no-repeat, sum-checked + `validateKillerPuzzle` |
 | Samurai Sudoku | ✅ | real overlapping grids; corner⇄center boxes identical + `validateSamurai` |

@@ -132,9 +132,7 @@ pnpm type-check && pnpm lint && pnpm test && pnpm build
   bevisst standalone; ikke tvangs-migrert.
 - **Killer uniqueness for clueless puzzles**: solver kan treffe node-budsjett før
   unikhet bevises (`hasUniqueKillerSolution` returnerer false ved `exhausted`).
-- **Hint-tester**: dedikerte triggere for naked-pair/pointing-pair på craftede brett.
-- **Generator label-wiring**: `createMatchedPuzzle` finnes, men dailys/sidene bruker
-  fortsatt `createPuzzle`/`createDailyPuzzle` (clue-bucket). Kan byttes til matched.
+- ~~Hint-tester~~ ✅ (se Coach under) · ~~Generator label-wiring~~ ✅ (kuratert bank).
 - **Mobil-app Nordic-tema**: Expo har egen palett; synk til `packages/design`.
 - **Win-overlay-finpuss**: farger er Nordic, men layout/struktur kan løftes videre.
 - **Mistake policy** (docx 5.4): `MistakePolicy`-typer ikke implementert i reducer
@@ -174,3 +172,39 @@ pnpm type-check && pnpm lint && pnpm test && pnpm build
 
 Den beste veien videre er fortsatt å gjøre kjernen uangripelig før mer bygges —
 kjernen er nå bevist (71 tester), backend er skrevet og venter på provisjonering.
+
+---
+
+## 8. Økt 2026-09-25 — Coach, analyse, kuratert bank
+
+**Coach (`packages/core/src/coach.ts`)** — steg-for-steg-logikk som forklarer, ikke bare
+avslører. Hvert steg har teknikk, mønsterceller, «vitner» (sifrene som begrunner steget),
+elimineringer og norsk forklaring. `coachPlan` gir kjeden av elimineringer frem til neste
+plassering, og flagger feil verdier og notater som utelukker riktig siffer. `solvePath`
+løser hele brettet og sier hvilken teknikk hver rute krevde.
+
+**Hint-bug fikset**: gammel `getHint` kunne ved nakent par plassere et *feil* siffer og
+markere det som riktig. `getHint` bygger nå på coachen og gir alltid riktig verdi
+(testet mot mange delvis løste brett). Mobil arver fiksen.
+
+**Web-coach**: hint i tre nivåer — dytt (hvor du bør se) → forklaring tegnet på brettet
+(enheter, mønster, vitner, overstrøkne kandidater) → handling (sett inn / fjern notater
+og gå videre). Å åpne coachen teller som ett hint. Tastatur: `h`, `Esc`.
+
+**Analyse etter spillet (`analysis.ts` + `components/analysis/`)** — reduceren logger nå
+alle trekk (`moves`). Arket viser rangtittel, tempo-kurve med tenkepauser, varmekart over
+tenketid per rute, teknikkene brettet krevde og innsikter. Vises i classic og daily.
+
+**Kuratert bank (`bank.ts`, `curated.ts`, `transform.ts`)** — målt: `createPuzzle("hard")`
+var logisk løsbar i bare 7/12 tilfeller, og «extreme» krevde gjetting 12/12; matched-
+generatoren brukte ~11 s på hard. Nå: 220 brett generert offline
+(`scripts/build-bank.mjs`), hvert verifisert unikt, løsbart uten gjetting og vurdert til
+nøyaktig sitt nivå (`bank.test.ts`). Hver forespørsel velger et brett og en tilfeldig
+symmetri-transformasjon (≈10¹² varianter per brett) — øyeblikkelig og deterministisk.
+Daily følger ukedag: man enkel → lør ekstrem.
+
+**Fikset underveis (fantes fra før)**:
+- CSS-reset lå utenfor Tailwind v4-lagene og overstyrte *alle* padding/margin-utilities.
+- Klassisk: `[[...difficulty]]` er en array — sammenligningen feilet alltid, så spill ble
+  aldri gjenopptatt. I tillegg leste effekter hydrerings-snapshot (`game = null`), som
+  nullstilte både classic og dagens daily ved innlasting. Leser nå `getState()`.

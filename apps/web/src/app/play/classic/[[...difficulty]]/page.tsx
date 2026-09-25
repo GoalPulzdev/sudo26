@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import type React from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import type { Difficulty } from "@sudoku-2026/core";
-import { createPuzzle } from "@sudoku-2026/core";
+import type { CuratedDifficulty, Difficulty } from "@sudoku-2026/core";
+import { createCuratedPuzzle, isCuratedDifficulty } from "@sudoku-2026/core";
 import { useGameStore } from "@/store/gameStore";
 import { useAuthStore } from "@/store/authStore";
 import { createChallenge } from "@/lib/challenges";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import GameShell from "@/components/game/GameShell";
+import AnalysisLauncher from "@/components/analysis/AnalysisLauncher";
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   easy: "Enkel", medium: "Middels", hard: "Vanskelig", extreme: "Ekstrem", daily: "Daglig", mini: "Mini 6×6",
@@ -22,15 +23,21 @@ function randomId() {
 
 export default function ClassicGamePage(): React.ReactElement {
   const params = useParams();
-  const difficulty = (params?.difficulty as Difficulty | undefined) ?? "medium";
+  // Optional catch-all: `params.difficulty` is a string[] (e.g. ["hard"]), not a string.
+  const raw = params?.difficulty;
+  const requested = Array.isArray(raw) ? raw[0] : raw;
+  const difficulty: CuratedDifficulty = requested && isCuratedDifficulty(requested) ? requested : "medium";
 
   const { game, loadPuzzle } = useGameStore();
 
-  // Start a game if none loaded or difficulty changed.
+  // Start a game if none loaded or difficulty changed. Read the live store, not
+  // the render snapshot: during hydration the snapshot is the pre-persist
+  // initial state (game = null), which would discard a saved game.
   useEffect(() => {
-    if (!game || game.puzzle.difficulty !== difficulty) {
+    const current = useGameStore.getState().game;
+    if (!current || current.puzzle.difficulty !== difficulty) {
       const seed = `${difficulty}-${randomId()}`;
-      loadPuzzle(createPuzzle(difficulty, seed, randomId()));
+      loadPuzzle(createCuratedPuzzle(difficulty, seed, randomId()));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficulty]);
@@ -47,7 +54,7 @@ export default function ClassicGamePage(): React.ReactElement {
             difficulty={difficulty}
             onNewGame={() => {
               const seed = `${difficulty}-${randomId()}`;
-              loadPuzzle(createPuzzle(difficulty, seed, randomId()));
+              loadPuzzle(createCuratedPuzzle(difficulty, seed, randomId()));
             }}
           />
         ) : null
@@ -218,6 +225,8 @@ function WinOverlay({
               accent="var(--accent)"
             />
           </div>
+
+          <AnalysisLauncher />
 
           {/* CTA */}
           <div className="flex flex-col gap-2">

@@ -8,14 +8,18 @@ import type { Board } from "@sudoku-2026/core";
 import {
   createDailyPuzzle,
   todayString,
+  dailyDifficulty,
   recordCompletion,
   createEmptyStreak,
 } from "@sudoku-2026/core";
 import { useGameStore } from "@/store/gameStore";
 import GameShell from "@/components/game/GameShell";
 import ChallengeButton from "@/components/ChallengeButton";
+import AnalysisLauncher from "@/components/analysis/AnalysisLauncher";
 
 const STREAK_KEY = "sudoku-streak";
+
+const LEVEL_LABELS = { easy: "Enkel", medium: "Middels", hard: "Vanskelig", extreme: "Ekstrem" } as const;
 
 function loadStreak(userId: string) {
   if (typeof window === "undefined") return createEmptyStreak(userId);
@@ -41,7 +45,8 @@ export default function DailyPage(): React.ReactElement {
 
   useEffect(() => {
     const puzzle = createDailyPuzzle(today);
-    if (game?.puzzle.id !== puzzle.id) loadPuzzle(puzzle);
+    // Live store, not the hydration snapshot — otherwise today's progress resets on reload.
+    if (useGameStore.getState().game?.puzzle.id !== puzzle.id) loadPuzzle(puzzle);
     setStreak(loadStreak("local").currentStreak);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [today]);
@@ -85,7 +90,7 @@ export default function DailyPage(): React.ReactElement {
 
   return (
     <GameShell
-      title={`Daglig utfordring · ${today}`}
+      title={`Daglig · ${LEVEL_LABELS[dailyDifficulty(today)]}`}
       aboveHeader={streakBanner}
       overlay={
         game?.status === "won" ? (
@@ -222,6 +227,7 @@ function DailyWinOverlay({
 
         {/* Actions */}
         <div className="px-6 pb-7 flex flex-col gap-3">
+          <AnalysisLauncher />
           <button
             onClick={handleShare}
             className="w-full py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest text-center transition-all"
