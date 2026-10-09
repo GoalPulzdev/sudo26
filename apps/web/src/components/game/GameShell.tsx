@@ -59,16 +59,19 @@ export default function GameShell({
   }, [game?.status, dispatch]);
 
   const handleCellClick = useCallback(
-    (row: number, col: number) => dispatch({ type: "SELECT_CELL", row, col }),
-    [dispatch]
+    (row: number, col: number) => {
+      if (game?.status === "playing") dispatch({ type: "SELECT_CELL", row, col });
+    },
+    [dispatch, game?.status]
   );
 
   const handleNumber = useCallback(
     (value: CellValue) => {
-      if (game?.noteMode) dispatch({ type: "TOGGLE_NOTE", value });
+      if (game?.status !== "playing") return;
+      if (game.noteMode) dispatch({ type: "TOGGLE_NOTE", value });
       else dispatch({ type: "INPUT_VALUE", value });
     },
-    [dispatch, game?.noteMode]
+    [dispatch, game?.noteMode, game?.status]
   );
 
   const { advance: handleHint, close: closeCoach } = coach;
@@ -88,17 +91,26 @@ export default function GameShell({
     return { filledCount: filled, totalCells: total };
   }, [game]);
 
-  // Keyboard support: digits input, backspace/delete erase, "n" toggles notes,
-  // "h" asks the coach (again to go deeper), Escape closes it.
+  // Keyboard shortcuts apply only to an active board. Never intercept a form,
+  // modal, IME composition, browser shortcut, or an editable field.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (!game) return;
-      const num = parseInt(e.key, 10) as CellValue;
-      if (num >= 1 && num <= 9) handleNumber(num);
-      if (e.key === "Backspace" || e.key === "Delete") dispatch({ type: "ERASE" });
-      if (e.key === "n") dispatch({ type: "TOGGLE_NOTE_MODE" });
-      if (e.key === "h") handleHint();
-      if (e.key === "Escape") closeCoach();
+      const target = e.target;
+      if (e.isComposing || e.altKey || e.ctrlKey || e.metaKey ||
+          !(target instanceof HTMLElement) ||
+          target.isContentEditable ||
+          target.closest("input, textarea, select, [contenteditable], [role=dialog], [aria-modal=true]")) return;
+      if (e.key === "Escape") {
+        closeCoach();
+        return;
+      }
+      if (game?.status !== "playing") return;
+      if (/^[1-9]$/.test(e.key)) handleNumber(Number(e.key) as CellValue);
+      else if (e.key === "Backspace" || e.key === "Delete") {
+        e.preventDefault();
+        dispatch({ type: "ERASE" });
+      } else if (e.key.toLowerCase() === "n") dispatch({ type: "TOGGLE_NOTE_MODE" });
+      else if (e.key.toLowerCase() === "h") handleHint();
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -148,15 +160,23 @@ export default function GameShell({
         totalCells={totalCells}
       />
 
-      <CoachPanel
+      {game.status === "playing" && <CoachPanel
         view={coach.view}
         missingNotes={coach.missingNotes}
         onExplain={coach.explain}
         onAct={coach.act}
         onClose={coach.close}
-      />
+      />}
 
-      {board ? (
+      {game.status === "paused" ? (
+        <section className="obsidian-board obsidian-pause-screen flex flex-col items-center justify-center gap-5 text-center"
+          style={{ width: "min(92vw, 480px)", aspectRatio: "1" }} aria-live="polite" aria-label="Spillet er pauset">
+          <span className="obsidian-pause-symbol" aria-hidden="true">Ⅱ</span>
+          <h2 className="text-2xl font-semibold">Ta en pause.</h2>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>Klokken står stille. Brettet venter på deg.</p>
+          <button type="button" onClick={() => dispatch({ type: "RESUME" })} className="obsidian-resume-button">Fortsett spillet</button>
+        </section>
+      ) : board ? (
         board(coach.hint)
       ) : (
         <SudokuBoard
@@ -168,11 +188,12 @@ export default function GameShell({
       )}
 
       <NumberPad
+        disabled={game.status !== "playing"}
         noteMode={game.noteMode}
         onNumber={handleNumber}
-        onErase={() => dispatch({ type: "ERASE" })}
-        onNote={() => dispatch({ type: "TOGGLE_NOTE_MODE" })}
-        onHint={handleHint}
+        onErase={() => { if (game.status === "playing") dispatch({ type: "ERASE" }); }}
+        onNote={() => { if (game.status === "playing") dispatch({ type: "TOGGLE_NOTE_MODE" }); }}
+        onHint={() => { if (game.status === "playing") handleHint(); }}
       />
 
       {belowPad}
