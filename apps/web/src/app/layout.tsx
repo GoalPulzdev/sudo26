@@ -21,18 +21,18 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Sudoku 2026",
-  description: "Modern Sudoku – guided hints, daily challenges, and streaks.",
+  title: "Sudoku26 — Kunsten å tenke",
+  description: "Et premium Sudoku-univers med daglige utfordringer, logikkveiledning, Killer, Mini og personlige rekorder.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Sudoku 2026",
+    title: "Sudoku26",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#3a4a66",
+  themeColor: "#090d16",
   width: "device-width",
   initialScale: 1,
 };
