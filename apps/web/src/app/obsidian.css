@@ -245,3 +245,46 @@ body:has(.obsidian-arena), body:has(.obsidian-game) { background: #090d16; backg
   .obsidian-game .obsidian-hud-main > div { width:100%; justify-content:space-between; }
   .obsidian-game .obsidian-killer-board { width: min(88vw,480px) !important; }
 }
+
+
+/* Interaction polish: a real pause state and unambiguous disabled controls. */
+.obsidian-game .obsidian-pause-screen {
+  gap: 16px;
+  --text: #f3efe6;
+  background: radial-gradient(circle at 50% 28%, rgba(196,161,102,.15), transparent 62%), #131b29;
+}
+.obsidian-game .obsidian-pause-symbol {
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  border: 1px solid rgba(196,161,102,.48);
+  border-radius: 50%;
+  font: 400 30px Georgia,serif;
+  color: #e1bf87;
+}
+.obsidian-game .obsidian-resume-button {
+  margin-top: 10px;
+  border: 1px solid #d2b27e;
+  border-radius: 4px;
+  background: linear-gradient(110deg,#d9ba87,#b7935b);
+  color: #121824;
+  padding: 15px 24px;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.obsidian-game .obsidian-resume-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 26px rgba(196,161,102,.25);
+}
+.obsidian-game .obsidian-resume-button:focus-visible {
+  outline: 2px solid #f2d4a4;
+  outline-offset: 4px;
+}
+.obsidian-game button:disabled {
+  cursor: not-allowed !important;
+  opacity: .48;
+  pointer-events: none;
+}
