@@ -10,6 +10,7 @@ interface NumberPadProps {
   onNote: () => void;
   onHint: () => void;
   noteMode: boolean;
+  disabled?: boolean;
 }
 
 const NUMBERS: CellValue[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -49,6 +50,7 @@ export default function NumberPad({
   onNote,
   onHint,
   noteMode,
+  disabled = false,
 }: NumberPadProps) {
   return (
     <div className="obsidian-actions flex flex-col gap-3" style={{ width: "min(92vw, 480px)" }}>
@@ -59,6 +61,7 @@ export default function NumberPad({
             key={n}
             aria-label={`Sett inn ${n}`}
             onClick={() => onNumber(n)}
+            disabled={disabled}
             whileTap={{ scale: 0.88, y: 2 }}
             transition={{ type: "spring", stiffness: 700, damping: 22 }}
             className="key-press relative flex items-center justify-center rounded-xl
@@ -73,6 +76,7 @@ export default function NumberPad({
               transition: "background 0.1s, color 0.1s, box-shadow 0.1s, border-color 0.1s",
             }}
             onMouseEnter={(e) => {
+              if (disabled) return;
               const el = e.currentTarget as HTMLButtonElement;
               el.style.background = "rgba(58,74,102,0.08)";
               el.style.borderColor = "var(--accent)";
@@ -80,6 +84,7 @@ export default function NumberPad({
               el.style.boxShadow = "var(--key-shadow-hover)";
             }}
             onMouseLeave={(e) => {
+              if (disabled) return;
               const el = e.currentTarget as HTMLButtonElement;
               el.style.background = "var(--surface)";
               el.style.borderColor = "var(--border-2)";
@@ -94,9 +99,9 @@ export default function NumberPad({
 
       {/* Action buttons */}
       <div className="grid grid-cols-3 gap-2">
-        <ActionBtn onClick={onErase} icon={<IconBackspace />} label="Slett"    accent="#c2615a" />
-        <ActionBtn onClick={onNote}  icon={<IconPencil />}    label={noteMode ? "Notat ON" : "Notat"} accent="#3a6b73" active={noteMode} />
-        <ActionBtn onClick={onHint}  icon={<IconLightbulb />} label="Hint"     accent="#bf9c45" />
+        <ActionBtn disabled={disabled} onClick={onErase} icon={<IconBackspace />} label="Slett"    accent="#c2615a" />
+        <ActionBtn disabled={disabled} onClick={onNote}  icon={<IconPencil />}    label={noteMode ? "Notat ON" : "Notat"} accent="#3a6b73" active={noteMode} />
+        <ActionBtn disabled={disabled} onClick={onHint}  icon={<IconLightbulb />} label="Hint"     accent="#bf9c45" />
       </div>
     </div>
   );
@@ -108,18 +113,21 @@ function ActionBtn({
   label,
   accent,
   active,
+  disabled,
 }: {
   onClick: () => void;
   icon: React.ReactNode;
   label: string;
   accent: string;
   active?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <motion.button
       aria-pressed={active === undefined ? undefined : active}
       aria-label={label}
       onClick={onClick}
+      disabled={disabled}
       whileTap={{ scale: 0.94, y: 1 }}
       transition={{ type: "spring", stiffness: 600, damping: 24 }}
       className="key-press flex flex-col items-center justify-center gap-1.5 py-3
@@ -134,6 +142,7 @@ function ActionBtn({
         transition: "background 0.12s, color 0.12s, border-color 0.12s, box-shadow 0.12s",
       }}
       onMouseEnter={(e) => {
+        if (disabled) return;
         if (!active) {
           const el = e.currentTarget as HTMLButtonElement;
           el.style.background = accent + "10";
@@ -143,6 +152,7 @@ function ActionBtn({
         }
       }}
       onMouseLeave={(e) => {
+        if (disabled) return;
         if (!active) {
           const el = e.currentTarget as HTMLButtonElement;
           el.style.background = "var(--surface)";
