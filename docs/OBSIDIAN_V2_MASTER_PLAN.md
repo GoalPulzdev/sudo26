@@ -1,6 +1,6 @@
 # Sudoku 26 — Obsidian V2
 
-Status: **Implementation in progress**, isolated on `feat/obsidian-arena-v2`. This document distinguishes shipped code from future work; it is not a release declaration.
+Status: **UI polish implemented on `feat/obsidian-arena-v2`**, awaiting visual acceptance. PR #2 is a draft, not a release. Vercel preview and CI checks must match the latest commit before review.
 
 ## Design decision
 
@@ -16,10 +16,13 @@ The home arena visually invites the user to play. All metrics and today's result
 - **Classic win overlay:** neutral backdrop and an understated luxury victory symbol instead of oversized emoji; results, analysis, sharing and actions preserved.
 - **Theme isolation:** `apps/web/src/app/obsidian.css` is imported after the existing global stylesheet. Existing legacy surfaces and React Native consumers retain their colors. `packages/design/src/tokens.ts` now exports an Obsidian palette without breaking the original token contract.
 - **Accessibility:** motion-reduction CSS, visible keyboard focus, named board cells and number keys, progressbar value and high-contrast foregrounds.
+- **V2.1 polish:** reusable `ObsidianHallHeader`, unified stats/records/profile styling and navigation with real existing data; accessible profile modal and palette selection.
+- **Mini:** warm-paper 6×6 gameplay with pause/resume, guarded keyboard input, disabled controls while paused/finished, accessible selected-cell states, new calm completion UI.
+- **Samurai:** themed center game with separate outer-grid previews; explicitly indicates that only the center is playable. Number pad and hints are disabled for outer previews rather than silently modifying the wrong board.
 
 ## Current scope
 
-The actual shared core engine, puzzle generator, coach logic, replay/ghost duel engine, daily streaks, Supabase/auth, mobile app and multiplayer behavior remain **unchanged**. Mini/Samurai standalone game surfaces and account/statistics/leaderboard pages retain their earlier Nordic visual direction until a dedicated follow-up audit—do not suggest they are converted already.
+The actual shared core engine, puzzle generator, coach logic, replay/ghost duel engine, daily streaks, Supabase/auth, mobile app and multiplayer behavior remain **unchanged**. Mini, Samurai and account/statistics/leaderboard **now share Obsidian visual tokens and navigation**, but comprehensive end-to-end visual QA is still missing. The **four outer Samurai boards remain previews, not a completed five-board playable Samurai game**; that requires a separate game-state/integration milestone, not cosmetic CSS. Duel/Replay introductions, all variant-specific victory overlays, and the React Native application are not fully migrated.
 
 ## Design QA gate
 
@@ -34,9 +37,9 @@ The actual shared core engine, puzzle generator, coach logic, replay/ghost duel 
 
 ## Follow-up phases
 
-- **Obsidian V2.1**: Bring standalone Mini and Samurai screens into the same design system, including responsive Samurai zoom/focus.
-- **Obsidian V2.2**: Premium stats/profile/leaderboard and their empty/loading/error states, plus cohesive Duel/Replay intro screens and complete victory treatments.
-- **Obsidian V2.3**: Formal visual regression captures, automated contrast/performance checks, cross-device QA, and production rollout after approval.
+- **Obsidian V2.1**: Existing Mini and Samurai surfaces now themed, with Mini pause and Samurai's incomplete outer boards made explicit. Remaining: genuinely playable full-five-grid Samurai with overlap synchronization, completion logic, tracking and responsive focus/zoom (new feature scope).
+- **Obsidian V2.2**: Stats/profile/leaderboard base design implemented. Remaining: audited empty/loading/error states, finished responsive variations, Duel/Replay intro screens and all variant-specific victory treatments.
+- **Obsidian V2.3**: Formal real-browser visual regression captures, automated contrast/performance checks, cross-device QA, and production rollout after approval.
 
 ## Architecture guardrails
 
@@ -45,3 +48,10 @@ The actual shared core engine, puzzle generator, coach logic, replay/ghost duel 
 - Avoid breaking stored puzzles / user sessions.
 - Visual enhancements must not block interaction, override semantic game errors, or require expensive animations to play.
 - Dark shell and light board must be easy to tell apart. Gold is an accent, not a replacement for accessible text.
+
+
+## Quality evidence (scope-specific)
+
+A previous Obsidian commit passed full GitHub CI (build, type-check, lint, tests). The latest polish commit must pass CI independently. Vercel `READY` verifies a deployment build, **not** the appearance of every route or functional browser interaction. The rendering environment currently does not have network access to GitHub/Vercel for autonomous screenshot capture; therefore 375/768/1440 screenshots, color-contrast measurements and keyboard E2E are explicitly unverified. Do not merge this draft purely on the basis of compilation.
+
+The user-facing Samurai copy intentionally distinguishes preview-only exterior boards until the actual multi-grid game workflow exists. Avoid claiming 'full Samurai' gameplay in marketing or release notes.
