@@ -143,7 +143,7 @@ export default function StatsPage() {
           >
             <span>Nivå</span>
             <span className="text-center">Spill</span>
-            <span className="text-center">Fullført</span>
+            <span className="text-center">Seier %</span>
             <span className="text-center">Best tid</span>
             <span className="text-center">Tot. tid</span>
           </div>
