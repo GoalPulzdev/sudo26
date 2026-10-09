@@ -140,7 +140,7 @@ body:has(.obsidian-arena), body:has(.obsidian-game) { background: #090d16; backg
 .obsidian-game .obsidian-hud-progress { background: #30394a !important; }
 .obsidian-game .obsidian-board { --surface: #f7f3e9; --border: #d6cebd; --box-border: #263448; --given: #26344e; --player: #506d8e; --error: #b95f53; }
 .obsidian-game .obsidian-board { padding: 9px; border: 1px solid rgba(217,176,110,.58); border-radius: 10px; background: linear-gradient(135deg,#273247,#131a25 65%,#242f43); box-shadow: 0 2px 0 #05080d,0 15px 65px rgba(0,0,0,.62),0 0 42px rgba(196,161,102,.09); }
-.obsidian-game .obsidian-board-grid { border-radius: 3px !important; border: 2px solid #263448 !important; }
+.obsidian-game .obsidian-board-grid { border-radius: 3px !important; border: 2px solid #263448 !important; background: #f7f3e9 !important; }
 .obsidian-game .obsidian-cell { box-shadow: none !important; touch-action: manipulation; }
 .obsidian-game .obsidian-cell:focus-visible { outline: 2px solid #c4a166 !important; outline-offset: -3px; z-index: 25; }
 .obsidian-game .obsidian-cell:hover { background: rgba(195,171,122,.08) !important; }
@@ -178,7 +178,7 @@ body:has(.obsidian-arena), body:has(.obsidian-game) { background: #090d16; backg
   .obsidian-ritual-intro { grid-column: 1/-1; margin-bottom: 21px; }
   .obsidian-ritual-intro strong br { display:none; }
   .obsidian-metric { padding-left: 15px; }
-  .obsidian-metric:first-of-type { padding-left: 0; border-left: 0; }
+  .obsidian-metric:nth-child(2) { padding-left: 0; border-left: 0; }
   .obsidian-metric > span { font-size: 8px; }
   .obsidian-metric > strong { font-size: 36px; }
   .obsidian-metric > small { font-size: 9px; }
