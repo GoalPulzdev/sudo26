@@ -35,7 +35,7 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
 
   return (
     <div
-      className="relative select-none"
+      className="obsidian-board relative select-none"
       style={{ width: "min(92vw, 480px)", aspectRatio: "1" }}
     >
       {/* Outer glow ring */}
@@ -45,7 +45,7 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
       />
 
       <div
-        className="relative w-full h-full rounded-[14px] overflow-hidden"
+        className="obsidian-board-grid relative w-full h-full rounded-[14px] overflow-hidden"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(9, 1fr)",
@@ -81,7 +81,7 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
                 key={`${r}-${c}`}
                 onClick={() => onCellClick(r, c)}
                 aria-label={`Rad ${r + 1}, kolonne ${c + 1}${cell.value !== 0 ? `, ${cell.value}` : ", tom"}`}
-                whileTap={{ scale: 0.85 }}
+                whileTap={{ scale: 0.96 }}
                 transition={{ type: "spring", stiffness: 700, damping: 25 }}
                 style={{
                   borderRight,
@@ -90,7 +90,7 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.5)",
                 }}
                 className={clsx(
-                  "relative flex items-center justify-center font-bold cursor-pointer",
+                  "obsidian-cell relative flex items-center justify-center font-bold cursor-pointer",
                   "focus:outline-none",
                   "text-base sm:text-lg"
                 )}
