@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useId } from "react";
+import { memo, useId } from "react";
 import type { Board, CellValue } from "@sudoku-2026/core";
 import clsx from "clsx";
 
@@ -31,7 +31,7 @@ interface SudokuBoardProps {
   coach?: CoachOverlay | null;
 }
 
-export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell, coach }: SudokuBoardProps): React.ReactElement {
+function SudokuBoard({ board, selectedCell, onCellClick, hintCell, coach }: SudokuBoardProps): React.ReactElement {
   const instructionsId = useId();
   const selVal = selectedCell ? board[selectedCell[0]][selectedCell[1]].value : 0;
 
@@ -261,3 +261,5 @@ function NoteGrid({ notes }: { notes: Set<CellValue> }) {
     </div>
   );
 }
+/** The timer updates each second; avoid re-rendering 81 animated cells unless the board or focus changes. */
+export default memo(SudokuBoard);
