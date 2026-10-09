@@ -124,7 +124,7 @@ function WinOverlay({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50"
-      style={{ background: "rgba(90,70,150,0.22)" }}
+      style={{ background: "rgba(4,7,12,0.82)" }}
     >
       {/* Confetti burst */}
       {confetti.map((p, i) => (
@@ -154,7 +154,7 @@ function WinOverlay({
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.82, opacity: 0, y: 24 }}
         transition={{ type: "spring", stiffness: 380, damping: 26 }}
-        className="rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col overflow-hidden"
+        className="obsidian-victory-card rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col overflow-hidden"
         style={{
           background: "var(--surface)",
           border: "1.5px solid var(--border-2)",
@@ -169,12 +169,12 @@ function WinOverlay({
         <div className="p-8 flex flex-col gap-5">
           {/* Trophy */}
           <motion.div
-            className="text-7xl mx-auto"
+            className="obsidian-victory-symbol mx-auto"
             style={{ animation: "float 3s ease-in-out infinite" }}
             animate={{ scale: [0.5, 1.15, 0.95, 1] }}
             transition={{ duration: 0.55, delay: 0.15 }}
           >
-            {isPersonalBest ? "🥇" : "🏆"}
+            {isPersonalBest ? "✦" : "◈"}
           </motion.div>
 
           {/* Headline */}
