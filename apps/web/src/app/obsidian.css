@@ -741,3 +741,175 @@ body:has(.obsidian-hall) {
 @media(prefers-reduced-motion:reduce){
  .obsidian-v3 .obsidian-v3-art-board,.obsidian-v3 .obsidian-v3-mode,.obsidian-v3 .obsidian-v3-gold-button{transition:none;transform:none}
 }
+
+
+/* --------------------------------------------------------------------------
+   REFERENCE PARITY / DESKTOP PLAYER PAGES & PHOTO-INSPIRED SCENE
+   Original SVG atmospheric mountain — loaded locally, with gradient fallback.
+   -------------------------------------------------------------------------- */
+.obsidian-v3 .obsidian-v3-daily-panel{
+ background-image:
+ linear-gradient(95deg,rgba(8,15,22,.95),rgba(9,15,22,.69) 57%,rgba(11,19,25,.33)),
+ url("/obsidian/mountain-dusk.svg");
+ background-size:cover;background-position:center 52%;
+}
+.obsidian-v3 .obsidian-v3-daily-panel::before{background:linear-gradient(90deg,rgba(7,13,20,.32),transparent);opacity:.7}
+.obsidian-hall .obsidian-hall-header { max-width:1280px;width:min(100%,1280px) }
+.obsidian-hall .obsidian-hall-content{max-width:1280px !important;width:min(100%,1280px)}
+.obsidian-hall .obsidian-hall-title-wrap{
+ border-bottom:1px solid rgba(191,145,83,.27);border-radius:0;position:relative;
+ padding:66px 37px 50px;min-height:265px;margin-bottom:14px;
+ background-image:linear-gradient(90deg,#090e17 6%,rgba(9,14,23,.95) 31%,rgba(9,14,23,.35) 68%,rgba(9,14,23,.32)),
+ url("/obsidian/mountain-dusk.svg");
+ background-position:center 37%;background-size:cover;isolation:isolate;
+}
+.obsidian-hall .obsidian-hall-title-wrap::after{content:"THE ART OF FOCUS";position:absolute;right:3%;bottom:22px;letter-spacing:.3em;font-size:9px;font-weight:700;color:#cba36d;opacity:.78}
+.obsidian-hall .obsidian-hall-title-block{max-width:760px;position:relative;z-index:1}
+.obsidian-hall .obsidian-hall-title{font-family:Georgia,"Times New Roman",serif;font-size:clamp(49px,5.6vw,81px);font-weight:400;letter-spacing:-.06em;line-height:1.06;margin-top:19px}
+.obsidian-hall .obsidian-hall-description{font-size:clamp(13px,1.32vw,17px);max-width:640px;color:#c1c3c5;line-height:1.6;margin-top:17px}
+.obsidian-hall .obsidian-hall-nav{border-bottom:1px solid rgba(197,154,92,.35)}
+.obsidian-hall .obsidian-hall-nav-links a{font-size:12px;letter-spacing:.04em}
+.obsidian-hall .obsidian-hall-wordmark{font-family:Georgia,serif;font-size:clamp(19px,2.4vw,27px);font-weight:400;letter-spacing:.095em;color:#f0d7b0}
+.obsidian-hall .obsidian-hall-wordmark>span:last-child{color:#dfb17d}
+.obsidian-hall .obsidian-hall-table{background:linear-gradient(145deg,#111922,#0b121a)}
+.obsidian-hall .obsidian-hall-table>div:first-child{background:#10171e !important}
+.obsidian-hall .obsidian-hall-table>div:not(:first-child){background:transparent !important}
+.obsidian-hall .obsidian-hall-table>div:not(:first-child):hover{background:#1c2732 !important}
+.obsidian-hall .obsidian-hall-stat{background:linear-gradient(145deg,#1a222c,#111821) !important;border:1px solid rgba(189,150,94,.38) !important}
+.obsidian-hall .obsidian-hall-stat span.text-3xl{font-family:Georgia,serif;font-weight:400 !important;font-size:clamp(30px,3vw,41px) !important}
+.obsidian-v3-profile-content{max-width:1280px !important;gap:15px !important}
+.obsidian-profile-page .obsidian-v3-profile-content .obsidian-profile-identity{width:100%;padding:26px 35px !important;min-height:155px;background:linear-gradient(100deg,#141b24,#101720) !important;display:flex;gap:28px}
+.obsidian-profile-page .obsidian-profile-identity>.flex-1 p.text-xl{font:400 clamp(28px,3vw,40px)/1.14 Georgia,serif;letter-spacing:-.035em;margin:9px 0}
+.obsidian-v3-profile-overline{color:#c3a478;font-size:10px;letter-spacing:.19em;font-weight:700}
+.obsidian-v3-profile-quote{border:1px solid rgba(197,156,99,.3);padding:18px 25px;min-width:225px;text-align:center;font:italic 18px/1.65 Georgia,serif;color:#d7c1a5}
+.obsidian-v3-profile-quote em{color:#bd9c70}
+.obsidian-profile-page .obsidian-v3-profile-metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.obsidian-v3-profile-metric{display:grid;grid-template-columns:auto 1fr;grid-template-rows:1fr 1fr;column-gap:14px;align-items:center;text-align:left !important;padding:25px 17px !important;border:1px solid rgba(198,158,103,.37) !important;background:linear-gradient(135deg,#161e27,#0e151f) !important;min-height:118px;justify-items:start}
+.obsidian-v3-profile-metric>.obsidian-v3-profile-metric-glyph{grid-row:1/3;grid-column:1;display:grid;place-items:center;width:60px;height:60px;border:1px solid rgba(219,177,110,.64);border-radius:50%;font:400 32px Georgia,serif;color:#dbb482;background:radial-gradient(circle,#3d3329,#161b23);box-shadow:inset 0 0 0 4px #121b23}
+.obsidian-v3-profile-metric>.text-xl{font:400 clamp(25px,2.5vw,37px)/1.1 Georgia,serif;color:#f0ddc2;grid-column:2;grid-row:1;white-space:nowrap}
+.obsidian-v3-profile-metric>.text-\[9px\]{font:700 9px/1.4 sans-serif;letter-spacing:.17em;grid-column:2;grid-row:2;color:#b0b5bd}
+.obsidian-v3-profile-columns{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:15px;align-items:stretch}
+.obsidian-v3-profile-columns>.obsidian-hall-table,.obsidian-v3-profile-columns>.obsidian-v3-achievements{min-width:0;border:1px solid rgba(198,158,103,.29) !important;border-radius:8px !important;background:linear-gradient(145deg,#111923,#0b121a) !important;overflow:hidden}
+.obsidian-v3-profile-columns>.obsidian-hall-table>div{padding-inline:21px !important;grid-template-columns:1.3fr .65fr .72fr .83fr}
+.obsidian-v3-profile-card-heading{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 21px;border-bottom:1px solid rgba(199,156,100,.22);background:#131b25}
+.obsidian-v3-profile-card-heading h2{font:400 clamp(20px,2.25vw,29px)/1.1 Georgia,serif;letter-spacing:-.02em;color:#f4dfbf}
+.obsidian-v3-profile-card-heading a,.obsidian-v3-profile-card-heading span{color:#d1ac79;font-size:11px;white-space:nowrap}
+.obsidian-v3-achievements{gap:0 !important}
+.obsidian-v3-achievements-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:16px;align-content:start}
+.obsidian-v3-achievement{display:flex;flex-direction:column;justify-content:center;text-align:center;min-height:120px;border-radius:6px !important;background:linear-gradient(155deg,#17202b,#0b1118) !important;border:1px solid rgba(192,151,90,.31) !important;gap:12px}
+.obsidian-v3-achievement>span:first-child{font-size:28px !important;filter:grayscale(.4) sepia(.6) !important;display:grid;place-items:center;width:53px;height:53px;border:1px solid rgba(202,159,90,.48);background:linear-gradient(145deg,#392d22,#111923);border-radius:12px}
+.obsidian-v3-achievement p{overflow:visible;text-overflow:clip;white-space:normal;font-size:12px;line-height:1.3}
+.obsidian-v3-achievement p+p{color:#aeb5be;margin-top:5px}
+.obsidian-v3-stats-content{max-width:1120px !important}
+.obsidian-v3-stats-feature{display:flex;justify-content:space-between;align-items:center;gap:30px;min-height:265px;border:1px solid rgba(200,157,98,.4);border-radius:9px;background:
+ linear-gradient(105deg,#151d27 19%,rgba(20,29,36,.86) 55%,rgba(12,18,26,.66)),
+ url("/obsidian/mountain-dusk.svg") center 48%/cover;
+ padding:32px clamp(24px,4vw,60px);
+}
+.obsidian-v3-stats-feature-label{font:700 10px/1.5 sans-serif;letter-spacing:.24em;color:#d2ab78}
+.obsidian-v3-stats-feature-text{display:flex;flex-direction:column;gap:7px}
+.obsidian-v3-stats-feature-text strong{font:400 clamp(74px,8vw,117px)/1 Georgia,serif;letter-spacing:-.07em;color:#fff2df}
+.obsidian-v3-stats-feature-text>span:last-of-type{font:400 clamp(20px,2.6vw,30px)/1.2 Georgia,serif;color:#d7b995}
+.obsidian-v3-stats-feature-text p{max-width:420px;color:#adb4bd;font-size:12px;line-height:1.6;margin-top:4px}
+.obsidian-v3-stats-feature-right{min-width:185px;display:grid;place-items:center;gap:12px}
+.obsidian-v3-stats-donut{width:190px;height:190px;border-radius:50%;background:conic-gradient(#dfb579 var(--ring-value),#26313d 0);display:grid;place-items:center;position:relative;box-shadow:0 0 40px rgba(211,167,100,.11)}
+.obsidian-v3-stats-donut::before{content:"";position:absolute;inset:11px;background:radial-gradient(circle,#141c27,#080f17);border-radius:50%}
+.obsidian-v3-stats-donut>div{z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.obsidian-v3-stats-donut strong{font:400 47px/1 Georgia,serif;color:#efd5b0}
+.obsidian-v3-stats-donut span{font:400 13px/1.35 Georgia,serif;color:#d5c7b5}
+.obsidian-v3-stats-feature-caution{font-size:10px;color:#9fa9b4}
+.obsidian-v3-stats-content .obsidian-stats-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.obsidian-v3-stats-content .obsidian-hall-stat{min-height:125px}
+.obsidian-v3-stats-section-label{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:13px 0 -11px}
+.obsidian-v3-stats-section-label span{font-size:10px;font-weight:700;color:#d1aa7b;letter-spacing:.22em}
+.obsidian-v3-stats-section-label a{font-size:11px;color:#d3b68b}
+.obsidian-mini-page{background:
+ linear-gradient(105deg,rgba(6,10,17,.82),rgba(6,10,17,.93) 30%,rgba(6,10,17,.95) 75%,rgba(6,10,17,.82)),
+ url("/obsidian/mountain-dusk.svg") center top/cover fixed,#090d16;
+ min-height:100svh;padding-bottom:80px;
+}
+.obsidian-mini-page-heading{width:min(100%,1100px);position:relative;display:flex;flex-direction:column;text-align:center;align-items:center;margin:2px 0 9px;gap:7px}
+.obsidian-mini-page-heading .obsidian-mini-back{position:absolute;left:0;top:8px;font-size:10px;letter-spacing:.1em;color:#d3bc93}
+.obsidian-mini-page-edition{border:1px solid rgba(203,161,101,.39);padding:5px 11px;color:#d0ab78;font-size:10px;font-weight:700;letter-spacing:.16em;border-radius:4px}
+.obsidian-mini-page-heading h1{font:400 clamp(42px,4.5vw,66px)/1.05 Georgia,serif;letter-spacing:-.06em;color:#f0dabc}
+.obsidian-mini-page-heading h1 em{font-weight:400;color:#d3ad78}
+.obsidian-mini-page-heading p{color:#b9b9ba;font:400 clamp(13px,1.3vw,17px)/1.6 Georgia,serif}
+.obsidian-mini-play-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,310px);max-width:950px;width:100%;gap:32px;align-items:center;justify-items:center;margin:5px 0 15px}
+.obsidian-mini-play-surface{display:grid;place-items:center;min-width:0;min-height:525px;width:100%;position:relative}
+.obsidian-mini-play-surface::before{content:"";position:absolute;width:min(100%,560px);height:100%;background:radial-gradient(ellipse at center,rgba(172,125,72,.16),transparent 70%);pointer-events:none}
+.obsidian-mini-page .obsidian-mini-board{position:relative;z-index:1;width:min(100%,485px) !important;max-width:485px;margin:0 !important;background:linear-gradient(135deg,#fdf5e7,#e9dbc7) !important;border:2px solid #27303b !important;border-radius:9px !important;box-shadow:0 0 0 7px #1d2430,0 0 0 9px rgba(205,163,95,.68),0 17px 70px rgba(0,0,0,.75),0 0 40px rgba(188,142,79,.17) !important}
+.obsidian-mini-board .obsidian-mini-cell{font:600 clamp(20px,3vw,36px)/1 Georgia,serif}
+.obsidian-mini-board .obsidian-mini-cell span{font-family:Georgia,serif}
+.obsidian-mini-aside{min-width:0;width:100%;display:flex;flex-direction:column;gap:15px;padding:25px 19px;background:linear-gradient(160deg,#171e28,#0d131b);border:1px solid rgba(204,162,106,.32);box-shadow:0 15px 39px rgba(0,0,0,.29);border-radius:12px}
+.obsidian-mini-page .obsidian-mini-hud{width:100% !important;max-width:100%}
+.obsidian-mini-page .obsidian-mini-hud>div:first-child{display:flex;flex-wrap:wrap;gap:9px;background:transparent !important;border:none !important;border-bottom:1px solid rgba(198,160,104,.26) !important;border-radius:0 !important;box-shadow:none !important;min-height:83px;align-content:center;padding:8px 0 20px !important}
+.obsidian-mini-page .obsidian-mini-hud>div:first-child>a{display:none}
+.obsidian-mini-page .obsidian-mini-hud>div:first-child>span:nth-child(2){flex-basis:100%;order:-1;color:#ddbd8c !important;letter-spacing:.12em;font:400 19px Georgia,serif}
+.obsidian-mini-page .obsidian-mini-hud>div:first-child>div{font:400 30px/1 Georgia,serif;color:#f2dbc0 !important;justify-content:space-between;width:100%}
+.obsidian-mini-page .obsidian-mini-hud>div:nth-child(2){order:3;margin-top:12px}
+.obsidian-mini-page .obsidian-mini-hud>div:nth-child(2) button{min-height:44px;font-weight:700}
+.obsidian-mini-page .obsidian-mini-hud>div:nth-child(3){order:2;height:7px;margin-top:8px}
+.obsidian-mini-page .obsidian-mini-pause-trigger{align-self:flex-start;order:2;background:transparent;border-color:rgba(202,165,112,.5);min-height:43px;padding:10px 20px;color:#e3c69a}
+.obsidian-mini-aside-caption{border-top:1px solid rgba(201,160,106,.22);margin:8px 0 0;padding-top:20px;font:400 14px/1.7 Georgia,serif;letter-spacing:.19em;color:#b4a189;text-align:center}
+.obsidian-mini-aside-caption em{color:#d2a66d}
+.obsidian-mini-page .obsidian-mini-keypad{width:min(100%,920px) !important;max-width:920px;padding:18px;border:1px solid rgba(204,167,113,.43);border-radius:15px;background:linear-gradient(140deg,#151d27,#0b1118);box-shadow:0 23px 58px rgba(0,0,0,.33);gap:11px}
+.obsidian-mini-page .obsidian-mini-keypad>div:first-child{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.obsidian-mini-page .obsidian-mini-keypad>div:first-child button{height:69px !important;font:400 clamp(25px,3vw,38px)/1 Georgia,serif;border:1px solid #3b4452 !important;border-radius:8px !important;background:linear-gradient(155deg,#252a31,#161a21) !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 13px rgba(0,0,0,.35) !important;color:#f4eadd !important}
+.obsidian-mini-page .obsidian-mini-keypad>div:first-child button:hover{border-color:#c79a61 !important;background:linear-gradient(155deg,#473a2d,#221e1c) !important}
+.obsidian-mini-page .obsidian-mini-keypad>div:nth-child(2) button{min-height:49px}
+@media(max-width:1100px){
+ .obsidian-mini-play-layout{grid-template-columns:minmax(0,1fr) minmax(245px,290px);max-width:850px;gap:25px}
+ .obsidian-mini-play-surface{min-height:450px}
+ .obsidian-mini-page .obsidian-mini-board{width:min(100%,420px) !important}
+ .obsidian-v3-profile-metric>.obsidian-v3-profile-metric-glyph{width:45px;height:45px;font-size:25px}
+ .obsidian-v3-profile-metric{column-gap:10px;padding:17px 12px !important}
+ .obsidian-v3-profile-metric>.text-xl{font-size:26px}
+}
+@media(max-width:850px){
+ .obsidian-mini-play-layout{grid-template-columns:1fr;gap:12px;max-width:530px;margin:0}
+ .obsidian-mini-play-surface{min-height:unset;padding:23px 0}
+ .obsidian-mini-page .obsidian-mini-board{width:min(84vw,480px) !important}
+ .obsidian-mini-aside{padding:19px 20px}
+ .obsidian-mini-page .obsidian-mini-hud>div:first-child{min-height:72px}
+ .obsidian-mini-aside-caption{display:none}
+ .obsidian-mini-page .obsidian-mini-keypad{max-width:530px}
+ .obsidian-mini-page-heading{margin-bottom:10px}
+ .obsidian-mini-page-heading .obsidian-mini-back{align-self:flex-start;position:static;margin:6px 0 8px}
+ .obsidian-v3-profile-columns{grid-template-columns:1fr}
+ .obsidian-profile-page .obsidian-v3-profile-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .obsidian-v3-stats-content .obsidian-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+ .obsidian-hall .obsidian-hall-title-wrap{min-height:200px;padding:36px 20px 49px}
+ .obsidian-hall .obsidian-hall-title{font-size:clamp(43px,9.5vw,64px)}
+ .obsidian-hall .obsidian-hall-title-wrap::after{right:20px;bottom:12px;font-size:8px}
+ .obsidian-hall .obsidian-hall-title-wrap .obsidian-hall-description{font-size:12px}
+ .obsidian-profile-page .obsidian-v3-profile-content .obsidian-profile-identity{flex-wrap:wrap;gap:16px;padding:20px !important}
+ .obsidian-v3-profile-quote{display:none}
+ .obsidian-v3-profile-metric{min-height:98px}
+ .obsidian-v3-stats-feature{padding:26px 23px;min-height:0;gap:13px}
+ .obsidian-v3-stats-feature-text strong{font-size:62px}
+ .obsidian-v3-stats-feature-text p{display:none}
+ .obsidian-v3-stats-feature-text>span:last-of-type{font-size:16px}
+ .obsidian-v3-stats-feature-right{min-width:122px}
+ .obsidian-v3-stats-donut{height:116px;width:116px}
+ .obsidian-v3-stats-donut::before{inset:7px}
+ .obsidian-v3-stats-donut strong{font-size:28px}
+ .obsidian-v3-stats-donut span{font-size:10px}
+ .obsidian-v3-stats-feature-label{font-size:8px;letter-spacing:.11em}
+ .obsidian-mini-page{padding:18px 13px 50px}
+ .obsidian-mini-page-heading h1{font-size:47px}
+ .obsidian-mini-play-surface{padding:18px 0 10px}
+ .obsidian-mini-page .obsidian-mini-board{width:min(82vw,420px) !important}
+ .obsidian-mini-page .obsidian-mini-keypad{padding:12px;gap:8px}
+ .obsidian-mini-page .obsidian-mini-keypad>div:first-child{gap:4px}
+ .obsidian-mini-page .obsidian-mini-keypad>div:first-child button{height:56px !important;font-size:28px}
+}
+@media(max-width:410px){
+ .obsidian-v3-profile-metric>.obsidian-v3-profile-metric-glyph{width:38px;height:38px;font-size:22px}
+ .obsidian-v3-profile-metric>.text-xl{font-size:23px}
+ .obsidian-v3-stats-feature{flex-direction:column;align-items:stretch}
+ .obsidian-v3-stats-feature-right{display:none}
+ .obsidian-mini-page .obsidian-mini-board{width:min(81vw,375px) !important}
+ .obsidian-mini-page-heading h1{font-size:43px}
+}
