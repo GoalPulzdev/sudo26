@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMid slice">
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#070c17"/><stop offset=".37" stop-color="#131f2a"/><stop offset=".7" stop-color="#2d2b2d"/><stop offset="1" stop-color="#0b121d"/></linearGradient>
+  <radialGradient id="sun"><stop stop-color="#d4a669" stop-opacity=".82"/><stop offset=".17" stop-color="#b88a55" stop-opacity=".35"/><stop offset=".6" stop-color="#b68a56" stop-opacity=".06"/><stop offset="1" stop-color="#b68a56" stop-opacity="0"/></radialGradient>
+  <linearGradient id="front" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#243341"/><stop offset="1" stop-color="#060c14"/></linearGradient>
+  <linearGradient id="lit" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b68c57"/><stop offset=".5" stop-color="#664e3a"/><stop offset="1" stop-color="#232c37"/></linearGradient>
+  <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#090e17"/><stop offset=".29" stop-color="#090e17" stop-opacity=".8"/><stop offset=".7" stop-color="#090e17" stop-opacity=".15"/><stop offset="1" stop-color="#090e17" stop-opacity=".5"/></linearGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="32"/></filter>
+</defs>
+<rect width="1440" height="520" fill="url(#sky)"/>
+<circle cx="1015" cy="165" r="270" fill="url(#sun)" />
+<path d="M0 355 130 294 228 321 354 262 480 321 620 240 716 278 844 188 940 265 1098 142 1210 230 1310 197 1440 280V520H0Z" fill="#17212b"/>
+<path d="M0 419 210 298 301 370 490 265 602 321 725 204 848 293 968 246 1063 123 1145 227 1255 175 1440 291V520H0Z" fill="#202a32"/>
+<path d="M725 204 778 246 800 254 757 246 742 217Z M1063 123 1090 170 1145 227 1077 186 1061 147 1026 180Z M1255 175 1300 210 1328 222 1263 198Z" fill="url(#lit)" opacity=".7"/>
+<path d="M860 285 961 244 1063 123 1086 180 1101 204 1138 230 1157 265 1082 226 1068 200 1033 225 996 267 949 293Z" fill="#2e343a"/>
+<path d="M1013 249 1063 123 1081 180 1074 184 1057 161 1042 191 1028 231Z" fill="#dbb077" opacity=".82"/>
+<path d="M1083 200 1145 227 1127 215 1101 204Z" fill="#b88d59" opacity=".5"/>
+<path d="M0 456 193 389 301 401 413 342 540 382 643 320 719 367 861 300 963 361 1035 311 1123 359 1240 289 1440 372V520H0Z" fill="url(#front)"/>
+<path d="M0 481 201 416 333 452 455 387 590 431 751 383 862 427 1052 355 1214 423 1378 349 1440 378V520H0Z" fill="#0a111b"/>
+<path d="M200 393 400 380 620 396 780 378 980 391 1200 372" stroke="#af966e" opacity=".1" stroke-width="27" filter="url(#blur)"/>
+<rect width="1440" height="520" fill="url(#fade)" opacity=".7"/>
+</svg>
