@@ -65,7 +65,7 @@ export default function SamuraiPage(): React.ReactElement {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center gap-5 px-4 py-6">
+    <main className="obsidian-game obsidian-samurai-page min-h-screen flex flex-col items-center gap-5 px-4 py-6">
       <GameHeader
         title="Samurai Sudoku"
         elapsed={game.elapsed}
@@ -84,11 +84,12 @@ export default function SamuraiPage(): React.ReactElement {
         {GRID_LABELS.map((label, i) => (
           <button
             key={i}
-            onClick={() => setActiveGrid(i)}
+            aria-pressed={activeGrid === i}
+            onClick={() => { setActiveGrid(i); setHint(null); }}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               activeGrid === i
-                ? "bg-amber-600 text-white"
-                : "bg-[var(--surface)] text-slate-400 border border-[var(--border)] hover:text-white"
+                ? "obsidian-samurai-tab-active"
+                : "obsidian-samurai-tab-inactive"
             }`}
           >
             {label}
@@ -96,8 +97,8 @@ export default function SamuraiPage(): React.ReactElement {
         ))}
       </div>
 
-      <p className="text-slate-500 text-xs">
-        Hvert brett er uavhengig, men i full Samurai deler de boks-overlapp.
+      <p className="obsidian-samurai-description text-xs" role="status">
+        {activeGrid === 2 ? "Senterbrettet er spillbart. De fire ytterbrettene kan utforskes som forhåndsvisning." : "Forhåndsvisning: dette ytterbrettet kan ikke redigeres ennå. Velg Senter for å spille."}
       </p>
 
       {/* Active sub-grid */}
@@ -112,12 +113,11 @@ export default function SamuraiPage(): React.ReactElement {
 
       <NumberPad
         noteMode={game.noteMode}
-        onNumber={(v: CellValue) =>
-          dispatch(game.noteMode ? { type: "TOGGLE_NOTE", value: v } : { type: "INPUT_VALUE", value: v })
-        }
-        onErase={() => dispatch({ type: "ERASE" })}
-        onNote={() => dispatch({ type: "TOGGLE_NOTE_MODE" })}
-        onHint={handleHint}
+        disabled={activeGrid !== 2 || game.status !== "playing"}
+        onNumber={(v: CellValue) => { if (activeGrid === 2 && game.status === "playing") dispatch(game.noteMode ? { type: "TOGGLE_NOTE", value: v } : { type: "INPUT_VALUE", value: v }); }}
+        onErase={() => { if (activeGrid === 2 && game.status === "playing") dispatch({ type: "ERASE" }); }}
+        onNote={() => { if (activeGrid === 2 && game.status === "playing") dispatch({ type: "TOGGLE_NOTE_MODE" }); }}
+        onHint={() => { if (activeGrid === 2 && game.status === "playing") handleHint(); }}
       />
     </main>
   );
