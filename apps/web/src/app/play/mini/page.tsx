@@ -301,7 +301,7 @@ export default function MiniPage(): React.JSX.Element {
                     {cell.value}
                   </motion.span>
                 ) : cell.notes.size > 0 ? (
-                  <div className="grid grid-cols-3" style={{ fontSize: "7px", lineHeight: 1, color: "var(--text-dim)", gap: 0 }}>
+                  <div className="grid grid-cols-3" style={{ fontSize: "clamp(9px, 2.5vw, 12px)", lineHeight: 1, color: "var(--text-dim)", gap: 0 }}>
                     {([1, 2, 3, 4, 5, 6] as Val[]).map((n) => (
                       <span key={n} style={{ opacity: cell.notes.has(n) ? 1 : 0, textAlign: "center" }}>{n}</span>
                     ))}
