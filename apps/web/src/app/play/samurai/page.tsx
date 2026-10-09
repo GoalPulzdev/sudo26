@@ -101,15 +101,25 @@ export default function SamuraiPage(): React.ReactElement {
         {activeGrid === 2 ? "Senterbrettet er spillbart. De fire ytterbrettene kan utforskes som forhåndsvisning." : "Forhåndsvisning: dette ytterbrettet kan ikke redigeres ennå. Velg Senter for å spille."}
       </p>
 
-      {/* Active sub-grid */}
-      <SudokuBoard
-        board={boards[activeGrid]}
-        selectedCell={activeGrid === 2 ? game.selectedCell : null}
-        onCellClick={(r, c) => {
-          if (activeGrid === 2) dispatch({ type: "SELECT_CELL", row: r, col: c });
-        }}
-        hintCell={hint ? [hint.row, hint.col] : null}
-      />
+      {/* Never expose the active puzzle while paused. Outer grids remain previews. */}
+      {game.status === "paused" ? (
+        <section className="obsidian-board obsidian-pause-screen flex flex-col items-center justify-center gap-5 text-center"
+          style={{ width: "min(92vw, 480px)", aspectRatio: "1" }} aria-label="Samurai er pauset" aria-live="polite">
+          <span className="obsidian-pause-symbol" aria-hidden="true">Ⅱ</span>
+          <h2 className="text-2xl font-semibold">Ta en pause.</h2>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>Tiden står stille. Brettet venter på deg.</p>
+          <button type="button" className="obsidian-resume-button" onClick={() => dispatch({ type: "RESUME" })}>Fortsett spillet</button>
+        </section>
+      ) : (
+        <SudokuBoard
+          board={boards[activeGrid]}
+          selectedCell={activeGrid === 2 ? game.selectedCell : null}
+          onCellClick={(r, c) => {
+            if (activeGrid === 2 && game.status === "playing") dispatch({ type: "SELECT_CELL", row: r, col: c });
+          }}
+          hintCell={activeGrid === 2 && hint ? [hint.row, hint.col] : null}
+        />
+      )}
 
       <NumberPad
         noteMode={game.noteMode}
