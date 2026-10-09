@@ -106,18 +106,6 @@ function WinOverlay({
   const LABELS: Record<Difficulty, string> = { easy: "Enkel", medium: "Middels", hard: "Vanskelig", extreme: "Ekstrem", daily: "Daglig", mini: "Mini 6×6" };
   const isPersonalBest = ds.bestTime !== null && elapsed <= ds.bestTime;
 
-  // Confetti particle config
-  const confetti = Array.from({ length: 16 }, (_, i) => {
-    const angle = (i / 16) * 360 + Math.random() * 22;
-    const dist  = 90 + Math.random() * 110;
-    const rad   = (angle * Math.PI) / 180;
-    const tx    = Math.round(Math.cos(rad) * dist);
-    const ty    = Math.round(Math.sin(rad) * dist + 60);
-    const tr    = Math.round((Math.random() - 0.5) * 540);
-    const colors = ["#3a4a66","#2c3a4f","#3a6b73","#d4b25a","#6f9a78","#c2615a","#9aa3bb"];
-    return { tx, ty, tr, color: colors[i % colors.length], size: 6 + Math.random() * 7 };
-  });
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -126,28 +114,6 @@ function WinOverlay({
       className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50"
       style={{ background: "rgba(4,7,12,0.82)" }}
     >
-      {/* Confetti burst */}
-      {confetti.map((p, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-sm pointer-events-none"
-          style={{
-            width: p.size, height: p.size * 0.55,
-            background: p.color,
-            top: "50%", left: "50%",
-            marginTop: -p.size / 2, marginLeft: -p.size / 2,
-          }}
-          initial={{ x: 0, y: 0, rotate: 0, opacity: 1, scale: 0.6 }}
-          animate={{
-            x: p.tx, y: p.ty,
-            rotate: p.tr,
-            opacity: 0,
-            scale: 1,
-          }}
-          transition={{ duration: 0.9 + Math.random() * 0.4, delay: 0.1 + i * 0.025, ease: "easeOut" }}
-        />
-      ))}
-
       {/* Card  */}
       <motion.div
         initial={{ scale: 0.82, opacity: 0, y: 24 }}
@@ -170,8 +136,7 @@ function WinOverlay({
           {/* Trophy */}
           <motion.div
             className="obsidian-victory-symbol mx-auto"
-            style={{ animation: "float 3s ease-in-out infinite" }}
-            animate={{ scale: [0.5, 1.15, 0.95, 1] }}
+            animate={{ scale: [0.88, 1.02, 1] }}
             transition={{ duration: 0.55, delay: 0.15 }}
           >
             {isPersonalBest ? "✦" : "◈"}
