@@ -5,6 +5,7 @@ import type React from "react";
 import { useGameStore } from "@/store/gameStore";
 import type { Difficulty } from "@sudoku-2026/core";
 import Link from "next/link";
+import ObsidianHallHeader from "@/components/ObsidianHallHeader";
 import { motion } from "framer-motion";
 
 function IconFlame() {
@@ -97,46 +98,15 @@ export default function StatsPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center gap-8 px-4 py-10">
-      {/* Back */}
-      <div className="w-full max-w-lg">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest transition-colors"
-          style={{ color: "var(--text-muted)" }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)"; }}
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-          Hjem
-        </Link>
-      </div>
-
-      <div className="w-full max-w-lg flex flex-col gap-7">
-        {/* Heading */}
-        <div>
-          <h1
-            className="text-4xl font-black tracking-tight"
-            style={{
-              background: "linear-gradient(120deg, #3a4a66 0%, #2c3a4f 55%, #3a6b73 100%)",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-            }}
-          >
-            Statistikk
-          </h1>
-          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
-            {totalPlayed} spill — {totalWon} seire
-          </p>
-        </div>
-
+    <main className="obsidian-hall obsidian-stats min-h-screen flex flex-col items-center gap-8 px-4 py-10">
+      <ObsidianHallHeader chapter="01" eyebrow="THE NUMBERS" title="Din progresjon." description={`${totalWon} løste brett · ${totalPlayed} registrerte spill. Dine resultater, i ditt eget tempo.`} />
+      <div className="obsidian-hall-content w-full max-w-lg flex flex-col gap-7">
         {/* Big stat cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="obsidian-stats-grid grid grid-cols-2 sm:grid-cols-4 gap-3">
           <BigStat label="Streak"  value={animStreak} unit="" suffix=" dager" accent="#bf9c45" icon={<IconFlame />} />
-          <BigStat label="Beste"   value={animBest}   unit="" suffix=" dager" accent="#3a6b73" />
-          <BigStat label="Vunnet"  value={animWinPct} unit="" suffix="%"      accent="#5f8a6a" note={`${totalWon}/${totalPlayed}`} />
-          <BigStatText label="Totaltid" value={fmtTotal(totalTimeSec)} accent="#3a4a66" />
+          <BigStat label="Beste"   value={animBest}   unit="" suffix=" dager" accent="#9eb6a1" />
+          <BigStat label="Vunnet"  value={animWinPct} unit="" suffix="%"      accent="#92b2a0" note={`${totalWon}/${totalPlayed}`} />
+          <BigStatText label="Totaltid" value={fmtTotal(totalTimeSec)} accent="#b6a17d" />
         </div>
 
         {/* Per-difficulty table */}
@@ -144,7 +114,7 @@ export default function StatsPage() {
           variants={container}
           initial="hidden"
           animate="show"
-          className="rounded-2xl overflow-hidden"
+          className="obsidian-hall-table rounded-2xl overflow-hidden"
           style={{ border: "1.5px solid var(--border-2)", boxShadow: "var(--shadow)" }}
         >
           {/* Header */}
@@ -158,7 +128,7 @@ export default function StatsPage() {
           >
             <span>Nivå</span>
             <span className="text-center">Spill</span>
-            <span className="text-center">Vunnet</span>
+            <span className="text-center">Fullført</span>
             <span className="text-center">Best tid</span>
             <span className="text-center">Tot. tid</span>
           </div>
@@ -203,7 +173,7 @@ export default function StatsPage() {
         {/* CTA */}
         <Link
           href="/play/classic"
-          className="w-full py-4 rounded-2xl text-center font-black text-sm tracking-wide"
+          className="obsidian-hall-cta w-full py-4 rounded-2xl text-center font-black text-sm tracking-wide"
           style={{
             background: "linear-gradient(135deg, #3a4a66, #2c3a4f)",
             color: "#fff",
@@ -224,7 +194,7 @@ function BigStat({
 }) {
   return (
     <div
-      className="rounded-2xl p-4 flex flex-col items-center gap-1 text-center relative overflow-hidden"
+      className="obsidian-hall-stat rounded-2xl p-4 flex flex-col items-center gap-1 text-center relative overflow-hidden"
       style={{
         background: "var(--surface)",
         border: "1.5px solid var(--border-2)",
