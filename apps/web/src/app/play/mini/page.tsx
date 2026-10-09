@@ -80,7 +80,7 @@ export default function MiniPage(): React.JSX.Element {
   const [noteMode, setNoteMode] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [mistakes, setMistakes] = useState(0);
-  const [status, setStatus] = useState<"playing" | "won">("playing");
+  const [status, setStatus] = useState<"playing" | "paused" | "won">("playing");
   const [currentPuzzle, setCurrentPuzzle] = useState<import("@sudoku-2026/core").Puzzle | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -110,7 +110,7 @@ export default function MiniPage(): React.JSX.Element {
   }, [status]);
 
   const handleInput = useCallback((val: Val) => {
-    if (!board || !selected || status === "won") return;
+    if (!board || !selected || status !== "playing") return;
     const [r, c] = selected;
     if (board[r][c].given) return;
 
@@ -144,7 +144,7 @@ export default function MiniPage(): React.JSX.Element {
   }, [board, selected, status, noteMode, solution, elapsed, mistakes, recordWin]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (!selected || !board) return;
+    if (!selected || !board || status !== "playing" || e.altKey || e.ctrlKey || e.metaKey || e.nativeEvent.isComposing || (e.target instanceof HTMLElement && e.target.closest("input,textarea,select,[contenteditable],[role=dialog]"))) return;
     const [r, c] = selected;
     const key = e.key;
     if (key >= "1" && key <= "6") { handleInput(Number(key) as Val); return; }
@@ -153,7 +153,7 @@ export default function MiniPage(): React.JSX.Element {
     if (key === "ArrowDown"  && r < 5) { setSelected([r + 1, c]); e.preventDefault(); }
     if (key === "ArrowLeft"  && c > 0) { setSelected([r, c - 1]); e.preventDefault(); }
     if (key === "ArrowRight" && c < 5) { setSelected([r, c + 1]); e.preventDefault(); }
-  }, [selected, board, handleInput]);
+  }, [selected, board, status, handleInput]);
 
   if (!board) {
     return (
@@ -175,17 +175,17 @@ export default function MiniPage(): React.JSX.Element {
 
   return (
     <main
-      className="min-h-screen flex flex-col items-center gap-5 px-4 py-6"
+      className="obsidian-game obsidian-mini-page min-h-screen flex flex-col items-center gap-5 px-4 py-6"
       onKeyDown={handleKeyDown}
       tabIndex={-1}
     >
       {/* Header */}
-      <div className="flex flex-col gap-2" style={{ width: "min(92vw, 420px)" }}>
+      <div className="obsidian-mini-hud flex flex-col gap-2" style={{ width: "min(92vw, 420px)" }}>
         <div className="flex items-center justify-between px-4 py-3 rounded-2xl"
           style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}>
           <Link href="/" className="text-xs font-bold uppercase tracking-widest"
             style={{ color: "var(--text-dim)" }}>← Hjem</Link>
-          <span className="text-sm font-black" style={{ color: "var(--text)" }}>Mini Sudoku</span>
+          <span className="text-sm font-black" style={{ color: "var(--text)" }}>Mini Sudoku <span className="obsidian-mini-edition">/ 06</span></span>
           <div className="flex items-center gap-2 text-xs tabular-nums font-bold" style={{ color: "var(--text-muted)" }}>
             <span>{m}:{s}</span>
             {mistakes > 0 && <span style={{ color: "var(--error)" }}>✕{mistakes}</span>}
@@ -197,11 +197,13 @@ export default function MiniPage(): React.JSX.Element {
           {(["easy", "medium", "hard"] as MiniDifficulty[]).map((d) => (
             <button
               key={d}
+              type="button"
+              aria-pressed={difficulty === d}
               onClick={() => startNewGame(d)}
               className="flex-1 py-1.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all"
               style={{
-                background: difficulty === d ? "var(--accent)" : "var(--surface)",
-                color: difficulty === d ? "#fff" : "var(--text-muted)",
+                background: difficulty === d ? "#c4a166" : "var(--surface)",
+                color: difficulty === d ? "#121b2a" : "var(--text-muted)",
                 border: `1.5px solid ${difficulty === d ? "var(--accent)" : "var(--border)"}`,
               }}
             >
@@ -211,14 +213,16 @@ export default function MiniPage(): React.JSX.Element {
         </div>
 
         {/* Progress bar */}
-        <div className="h-1 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+        <div className="h-1 rounded-full overflow-hidden" role="progressbar" aria-label="Brett fullført" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} style={{ background: "var(--border)" }}>
           <motion.div className="h-full rounded-full"
-            style={{ background: "linear-gradient(90deg, #5f8a6a, #6f9a78)", width: `${pct}%` }}
+            style={{ background: "linear-gradient(90deg, #b89055, #dfc08b)", width: `${pct}%` }}
             animate={{ width: `${pct}%` }}
             transition={{ type: "spring", stiffness: 80 }}
           />
         </div>
       </div>
+
+      <button type="button" className="obsidian-mini-pause-trigger" aria-label={status === "paused" ? "Fortsett" : "Pause"} disabled={status === "won"} onClick={() => setStatus(status === "paused" ? "playing" : "paused")}>{status === "paused" ? "▶ Fortsett" : "Ⅱ Pause"}</button>
 
       {/* 6×6 Grid */}
       <div
@@ -232,7 +236,8 @@ export default function MiniPage(): React.JSX.Element {
           overflow: "hidden",
           background: "var(--surface)",
         }}
-        className="select-none"
+        className="obsidian-mini-board select-none"
+        aria-label="Mini Sudoku-brett"
       >
         {board.map((row, r) =>
           row.map((cell, c) => {
@@ -259,19 +264,23 @@ export default function MiniPage(): React.JSX.Element {
             return (
               <motion.button
                 key={`${r}-${c}`}
+                type="button"
+                disabled={status !== "playing"}
+                aria-pressed={Boolean(isSelected)}
+                aria-label={`Rad ${r + 1}, kolonne ${c + 1}${cell.value ? `, ${cell.value}` : ", tom"}`}
                 onClick={() => setSelected([r, c])}
                 whileTap={{ scale: 0.92 }}
                 className={clsx(
-                  "relative flex items-center justify-center text-xl font-semibold",
+                  "obsidian-mini-cell relative flex items-center justify-center text-xl font-semibold",
                   "cursor-pointer transition-colors focus:outline-none",
                 )}
                 style={{
                   borderRight,
                   borderBottom,
                   background: isSelected
-                    ? "rgba(95,138,106,0.25)"
+                    ? "rgba(196,161,102,0.42)"
                     : isSameVal
-                    ? "rgba(95,138,106,0.12)"
+                    ? "rgba(196,161,102,0.20)"
                     : isPeer
                     ? "var(--surface-2)"
                     : "transparent",
@@ -305,11 +314,13 @@ export default function MiniPage(): React.JSX.Element {
       </div>
 
       {/* Number Pad 1–6 */}
-      <div className="flex flex-col gap-2" style={{ width: "min(92vw, 360px)" }}>
+      <div className="obsidian-mini-keypad flex flex-col gap-2" style={{ width: "min(92vw, 360px)" }}>
         <div className="grid grid-cols-6 gap-1.5">
           {([1, 2, 3, 4, 5, 6] as Val[]).map((n) => (
             <motion.button
               key={n}
+              aria-label={`Sett inn ${n}`}
+              disabled={status !== "playing"}
               onClick={() => handleInput(n)}
               whileTap={{ scale: 0.91 }}
               className="flex items-center justify-center rounded-xl text-xl font-black"
@@ -330,6 +341,7 @@ export default function MiniPage(): React.JSX.Element {
           {/* Erase */}
           <motion.button
             onClick={() => handleInput(0)}
+            disabled={status !== "playing"}
             whileTap={{ scale: 0.91 }}
             className="flex items-center justify-center gap-1.5 rounded-xl text-xs font-bold uppercase tracking-widest"
             style={{ height: "44px", background: "var(--surface)", border: "1.5px solid var(--border-2)", color: "var(--text-muted)", boxShadow: "var(--key-shadow)" }}
@@ -343,13 +355,15 @@ export default function MiniPage(): React.JSX.Element {
           {/* Notes */}
           <motion.button
             onClick={() => setNoteMode((n) => !n)}
+            aria-pressed={noteMode}
+            disabled={status !== "playing"}
             whileTap={{ scale: 0.91 }}
             className="flex items-center justify-center gap-1.5 rounded-xl text-xs font-bold uppercase tracking-widest"
             style={{
               height: "44px",
-              background: noteMode ? "rgba(95,138,106,0.15)" : "var(--surface)",
-              border: `1.5px solid ${noteMode ? "#5f8a6a" : "var(--border-2)"}`,
-              color: noteMode ? "#5f8a6a" : "var(--text-muted)",
+              background: noteMode ? "rgba(196,161,102,0.21)" : "var(--surface)",
+              border: `1.5px solid ${noteMode ? "#c4a166" : "var(--border-2)"}`,
+              color: noteMode ? "#e4c58e" : "var(--text-muted)",
               boxShadow: "var(--key-shadow)",
             }}
           >
@@ -375,6 +389,14 @@ export default function MiniPage(): React.JSX.Element {
         </div>
       </div>
 
+      {status === "paused" && (
+        <section className="obsidian-mini-pause" aria-live="polite" aria-label="Mini Sudoku er pauset">
+          <div className="obsidian-pause-symbol" aria-hidden="true">Ⅱ</div>
+          <h2>Et lite pusterom.</h2>
+          <p>Tiden er stoppet. Brettet ditt er her når du er klar.</p>
+          <button type="button" className="obsidian-resume-button" onClick={() => setStatus("playing")}>Fortsett spillet</button>
+        </section>
+      )}
       {/* Win overlay */}
       <AnimatePresence>
         {status === "won" && (
@@ -409,50 +431,28 @@ function MiniWinOverlay({
   const m = Math.floor(elapsed / 60).toString().padStart(2, "0");
   const s = (elapsed % 60).toString().padStart(2, "0");
 
-  const confetti = Array.from({ length: 16 }, (_, i) => {
-    const angle = (i / 16) * 360 + Math.random() * 22;
-    const dist  = 80 + Math.random() * 100;
-    const rad   = (angle * Math.PI) / 180;
-    const tx    = Math.round(Math.cos(rad) * dist);
-    const ty    = Math.round(Math.sin(rad) * dist + 50);
-    const tr    = Math.round((Math.random() - 0.5) * 540);
-    const colors = ["#5f8a6a","#6f9a78","#8fb89a","#b6d4bd","#d4b25a","#3a4a66","#c2615a"];
-    return { tx, ty, tr, color: colors[i % colors.length], size: 6 + Math.random() * 7 };
-  });
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50"
-      style={{ background: "rgba(95,138,106,0.15)" }}
+      style={{ background: "rgba(4,7,12,0.86)" }}
     >
-      {confetti.map((p, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-sm pointer-events-none"
-          style={{ width: p.size, height: p.size * 0.55, background: p.color, top: "50%", left: "50%", marginTop: -p.size / 2, marginLeft: -p.size / 2 }}
-          initial={{ x: 0, y: 0, rotate: 0, opacity: 1, scale: 0.6 }}
-          animate={{ x: p.tx, y: p.ty, rotate: p.tr, opacity: 0, scale: 1 }}
-          transition={{ duration: 0.9 + Math.random() * 0.4, delay: 0.1 + i * 0.025, ease: "easeOut" }}
-        />
-      ))}
-
       <motion.div
         initial={{ scale: 0.82, opacity: 0, y: 24 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.82, opacity: 0, y: 24 }}
         transition={{ type: "spring", stiffness: 380, damping: 26 }}
-        className="rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col overflow-hidden"
+        className="obsidian-victory-card rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col overflow-hidden"
         style={{ background: "var(--surface)", boxShadow: "0 24px 80px rgba(95,138,106,0.28), 0 0 0 1.5px rgba(95,138,106,0.2)" }}
       >
         {/* Header */}
         <div className="px-7 pt-8 pb-5"
-          style={{ background: "linear-gradient(135deg, #5f8a6a 0%, #3a6b73 100%)" }}>
-          <div className="text-5xl mb-2">⚡</div>
+          style={{ background: "linear-gradient(135deg, #293448 0%, #151f2c 100%)", borderBottom: "1px solid rgba(196,161,102,.25)" }}>
+          <div className="obsidian-victory-symbol mb-2" aria-hidden="true">✦</div>
           <h2 className="text-2xl font-black text-white">Mini løst!</h2>
-          <p className="text-sm text-white/70 mt-1">{DIFFICULTY_LABELS[difficulty]} — godt jobbet!</p>
+          <p className="text-sm text-white/70 mt-1">{DIFFICULTY_LABELS[difficulty]} — skarpt tenkt.</p>
         </div>
 
         {/* Stats */}
