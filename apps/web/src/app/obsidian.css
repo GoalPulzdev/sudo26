@@ -89,7 +89,7 @@ body:has(.obsidian-arena), body:has(.obsidian-game) { background: #090d16; backg
 .obsidian-section-heading h2 { font-family: var(--obsidian-serif); font-size: clamp(32px,3vw,48px); font-weight: 400; letter-spacing: -.065em; }
 .obsidian-week-panel { margin-top: 44px; }
 .obsidian-week-inner { padding: 22px clamp(15px,2.5vw,30px); border: 1px solid rgba(196,161,102,.17); background: #121b2a; border-radius: 8px; }
-.obsidian-week-inner { --surface: #1b2535; --text: #eee8db; --text-muted: #c9c9c5; --text-dim: #9aa0aa; --border: #2b3544; --border-2: #3b4757; --accent: #b99257; --accent-light: #263443; }
+.obsidian-week-inner { --surface: #1b2535; --text: #eee8db; --text-muted: #c9c9c5; --text-dim: #9aa0aa; --border: #2b3544; --border-2: #3b4757; --accent: #79613f; --accent-light: #263443; --accent-2: #d2ac70; }
 .obsidian-modes { padding: 68px 0 80px; }
 .obsidian-section-aside { color: #858995; }
 .obsidian-mode-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; }
