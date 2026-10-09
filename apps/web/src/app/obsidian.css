@@ -1002,3 +1002,60 @@ body:has(.obsidian-hall) {
   .obsidian-hall-mobile-tabs a.is-active{color:#e9c18b}
   .obsidian-hall-mobile-tabs a:focus-visible{outline:2px solid #e8c18b;outline-offset:-2px;border-radius:4px}
 }
+
+/* Final genuine-browser screenshot fixes: aligned profile hero, visible edit CTA
+   and a responsive win-rate header that describes actual values. */
+.obsidian-hall .obsidian-hall-header{
+  max-width:1280px !important;
+  width:min(100%,1280px) !important;
+}
+.obsidian-profile-page .obsidian-profile-identity button{
+  background:rgba(205,160,91,.14) !important;
+  border-color:rgba(205,160,91,.52) !important;
+  color:#f1d6aa !important;
+  min-height:41px;
+  padding-inline:19px;
+}
+.obsidian-v3-record-footer{
+  padding:27px 25px 29px;
+  margin-top:auto;
+  border-top:1px solid rgba(205,166,110,.27);
+  background:radial-gradient(ellipse at 70% 0,rgba(201,151,84,.12),transparent 74%),#101722;
+}
+.obsidian-v3-record-eyebrow{
+  display:block;
+  color:#c9a36f;
+  font:700 9px/1.5 sans-serif;
+  letter-spacing:.24em;
+}
+.obsidian-v3-record-footer h3{
+  margin:10px 0 7px;
+  font:400 clamp(21px,2vw,27px)/1.3 Georgia,serif;
+  color:#f1dcc0;
+}
+.obsidian-v3-record-footer p{
+  color:#a8b3be;
+  font-size:11px;
+  line-height:1.6;
+  margin-bottom:16px;
+}
+.obsidian-v3-record-footer a{
+  display:inline-flex;
+  align-items:center;
+  gap:15px;
+  border:1px solid rgba(221,180,120,.62);
+  color:#efd3a8;
+  padding:10px 15px;
+  border-radius:4px;
+  font-size:11px;
+  font-weight:700;
+  transition:background .18s ease;
+}
+.obsidian-v3-record-footer a:hover{background:rgba(205,160,91,.14)}
+@media(max-width:430px){
+  .obsidian-stats .obsidian-hall-table > div:first-child span{
+    letter-spacing:0 !important;
+    font-size:9px !important;
+    white-space:nowrap;
+  }
+}
