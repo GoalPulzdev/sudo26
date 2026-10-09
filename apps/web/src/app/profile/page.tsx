@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import ObsidianHallHeader from "@/components/ObsidianHallHeader";
@@ -188,13 +188,6 @@ export default function ProfilePage(): React.JSX.Element {
   const stats = useGameStore((s) => s.stats);
   const earnedAchievements = useGameStore((s) => s.earnedAchievements);
   const [showSetup, setShowSetup] = useState(false);
-
-  useEffect(() => {
-    // Auto-open setup if user has no username yet
-    if (!isLoading && profile && !profile.username) {
-      setShowSetup(true);
-    }
-  }, [isLoading, profile]);
 
   const handleSave = async (username: string, color: string) => {
     await updateProfile(username, color);
