@@ -5,6 +5,7 @@ import AuthBootstrap from "@/components/AuthBootstrap";
 import AchievementToastContainer from "@/components/AchievementToast";
 import MotionProvider from "@/components/MotionProvider";
 import "./globals.css";
+import "./obsidian.css";
 
 const inter = Inter({
   subsets: ["latin"],
