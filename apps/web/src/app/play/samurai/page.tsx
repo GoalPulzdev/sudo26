@@ -64,6 +64,11 @@ export default function SamuraiPage(): React.ReactElement {
     );
   }
 
+  // The center is the one grid wired to the game reducer. Draw from that live
+  // state, not the immutable startup preview; otherwise player moves vanish.
+  const editableCenterCells = game.board.flat().filter((cell) => !cell.given);
+  const centerFilled = editableCenterCells.filter((cell) => cell.value !== 0).length;
+
   return (
     <main className="obsidian-game obsidian-samurai-page min-h-screen flex flex-col items-center gap-5 px-4 py-6">
       <GameHeader
@@ -75,8 +80,8 @@ export default function SamuraiPage(): React.ReactElement {
         hint={hint}
         onDismissHint={() => setHint(null)}
         onPause={() => dispatch({ type: game.status === "playing" ? "PAUSE" : "RESUME" })}
-        filledCount={0}
-        totalCells={81}
+        filledCount={centerFilled}
+        totalCells={editableCenterCells.length}
       />
 
       {/* Grid picker */}
@@ -112,7 +117,7 @@ export default function SamuraiPage(): React.ReactElement {
         </section>
       ) : (
         <SudokuBoard
-          board={boards[activeGrid]}
+          board={activeGrid === 2 ? game.board : boards[activeGrid]}
           selectedCell={activeGrid === 2 ? game.selectedCell : null}
           onCellClick={(r, c) => {
             if (activeGrid === 2 && game.status === "playing") dispatch({ type: "SELECT_CELL", row: r, col: c });
