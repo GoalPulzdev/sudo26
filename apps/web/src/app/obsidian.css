@@ -954,3 +954,17 @@ body:has(.obsidian-hall) {
  .obsidian-mini-page { background-attachment:scroll; }
  .obsidian-v3 .obsidian-v3-hero-scene {background-position:center,center,center}
 }
+
+/* Browser-reviewed corrections (desktop + 390px screenshots). */
+.obsidian-mini-page .obsidian-mini-mistakes{font-family:var(--font-inter),sans-serif !important;font-weight:650;font-size:11px;letter-spacing:.02em}
+@media(max-width:410px){
+ .obsidian-v3-stats-feature{flex-direction:row;align-items:center;gap:10px}
+ .obsidian-v3-stats-feature-text{min-width:0;flex:1}
+ .obsidian-v3-stats-feature-text strong{font-size:61px}
+ .obsidian-v3-stats-feature-right{display:grid;min-width:112px;gap:8px}
+ .obsidian-v3-stats-donut{width:112px;height:112px}
+ .obsidian-v3-stats-feature-caution{font-size:8px;text-align:center}
+ .obsidian-stats .obsidian-hall-table>div.grid-cols-5{grid-template-columns:minmax(75px,1.6fr) repeat(4,minmax(0,1fr));gap:3px}
+ .obsidian-stats .obsidian-hall-table>div.grid-cols-5 .text-sm{font-size:10px !important}
+ .obsidian-stats .obsidian-hall-table>div.grid-cols-5>div:first-child span:last-child{overflow-wrap:normal;word-break:normal;letter-spacing:-.04em}
+}
