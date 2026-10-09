@@ -223,7 +223,7 @@ export default function ProfilePage(): React.JSX.Element {
   return (
     <main className="obsidian-hall obsidian-profile-page min-h-screen flex flex-col items-center gap-6 px-4 py-6">
       <ObsidianHallHeader chapter="03" eyebrow="PLAYER IDENTITY" title="Din profil." description="Resultatene dine. Måten du spiller på. Fremgangen du skaper." />
-      <div className="obsidian-hall-content flex flex-col gap-6 w-full" style={{ maxWidth: 720 }}>
+      <div className="obsidian-hall-content obsidian-v3-profile-content flex flex-col gap-6 w-full">
 
         {/* Profile header */}
         <motion.div
@@ -234,6 +234,7 @@ export default function ProfilePage(): React.JSX.Element {
         >
           <Avatar username={profile?.username ?? null} color={displayColor} size={64} />
           <div className="flex-1 min-w-0">
+            <span className="obsidian-v3-profile-overline">SPILLERPROFIL · SUDOKU26</span>
             <p className="text-xl font-black truncate" style={{ color: "var(--text)" }}>{displayName}</p>
             {profile?.username ? (
               <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
@@ -243,6 +244,7 @@ export default function ProfilePage(): React.JSX.Element {
               <p className="text-xs mt-0.5" style={{ color: "var(--accent)" }}>Legg til brukernavn →</p>
             )}
           </div>
+          <div className="obsidian-v3-profile-quote" aria-hidden="true">Samme tall.<br /><em>Dypere tanker.</em></div>
           <motion.button
             onClick={() => setShowSetup(true)}
             whileHover={{ scale: 1.05 }}
@@ -263,21 +265,24 @@ export default function ProfilePage(): React.JSX.Element {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="grid grid-cols-3 gap-3"
+          className="obsidian-v3-profile-metrics grid grid-cols-4 gap-3"
         >
           {[
-            { label: "Spilt",     value: totalPlayed.toString() },
-            { label: "Vunnet",    value: totalWon.toString() },
-            { label: "Total tid", value: fmtTotal(totalTime) },
-          ].map(({ label, value }) => (
-            <div key={label} className="rounded-2xl py-4 flex flex-col items-center gap-0.5"
+            { label: "Fullførte brett", value: totalWon.toString(), glyph: "▥" },
+            { label: "Spilltid", value: fmtTotal(totalTime), glyph: "◷" },
+            { label: "Dagens rekke", value: stats.currentStreak.toString(), glyph: "✧" },
+            { label: "Beste rekke", value: stats.bestStreak.toString(), glyph: "✦" },
+          ].map(({ label, value, glyph }) => (
+            <div key={label} className="obsidian-v3-profile-metric rounded-2xl py-4 flex flex-col items-center gap-0.5"
               style={{ background: "var(--surface)", border: "1.5px solid var(--border-2)", boxShadow: "var(--shadow-sm)" }}>
+              <span className="obsidian-v3-profile-metric-glyph" aria-hidden="true">{glyph}</span>
               <span className="text-xl font-black tabular-nums" style={{ color: "var(--text)" }}>{value}</span>
               <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>{label}</span>
             </div>
           ))}
         </motion.div>
 
+        <section className="obsidian-v3-profile-columns" aria-label="Dine rekorder og prestasjoner">
         {/* Per-difficulty stats */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -286,6 +291,7 @@ export default function ProfilePage(): React.JSX.Element {
           className="obsidian-hall-table rounded-2xl overflow-hidden"
           style={{ background: "var(--surface)", border: "1.5px solid var(--border-2)", boxShadow: "var(--shadow-sm)" }}
         >
+          <div className="obsidian-v3-profile-card-heading"><h2>Personlige rekorder</h2><Link href="/leaderboard">Alle rekorder →</Link></div>
           {/* Header */}
           <div className="grid grid-cols-4 px-4 py-2"
             style={{ background: "var(--surface-2)", borderBottom: "1px solid var(--border-2)" }}>
@@ -317,13 +323,12 @@ export default function ProfilePage(): React.JSX.Element {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="flex flex-col gap-3"
+          className="obsidian-v3-achievements flex flex-col gap-3"
         >
-          <p className="text-xs font-black uppercase tracking-widest px-1" style={{ color: "var(--text-dim)" }}>
-            Prestasjoner
-          </p>
+          <div className="obsidian-v3-profile-card-heading"><h2>Prestasjoner</h2><span>{earnedAchievements.size} oppnådd</span></div>
           <AchievementsGrid earnedKeys={earnedAchievements} />
         </motion.div>
+        </section>
 
       </div>
 
@@ -338,12 +343,12 @@ export default function ProfilePage(): React.JSX.Element {
 
 function AchievementsGrid({ earnedKeys }: { earnedKeys: Set<string> }) {
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="obsidian-v3-achievements-grid grid grid-cols-2 gap-2">
       {ACHIEVEMENT_DEFS.map(({ key, emoji, name, desc }) => {
         const earned = earnedKeys.has(key);
         return (
           <div key={key}
-            className="flex items-center gap-3 p-3 rounded-xl"
+            className="obsidian-v3-achievement flex items-center gap-3 p-3 rounded-xl"
             style={{
               background: earned ? "var(--surface)" : "var(--surface-2)",
               border: `1.5px solid ${earned ? "var(--border-2)" : "var(--border)"}`,
