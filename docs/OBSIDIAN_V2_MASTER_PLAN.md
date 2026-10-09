@@ -18,7 +18,7 @@ The home arena visually invites the user to play. All metrics and today's result
 - **Accessibility:** motion-reduction CSS, visible keyboard focus, named board cells and number keys, progressbar value and high-contrast foregrounds.
 - **V2.1 polish:** reusable `ObsidianHallHeader`, unified stats/records/profile styling and navigation with real existing data; accessible profile modal and palette selection.
 - **Mini:** warm-paper 6×6 gameplay with pause/resume, guarded keyboard input, disabled controls while paused/finished, accessible selected-cell states, new calm completion UI.
-- **Samurai:** themed center game with separate outer-grid previews; explicitly indicates that only the center is playable. Number pad and hints are disabled for outer previews rather than silently modifying the wrong board.
+- **Samurai:** themed center game with separate outer-grid previews; explicitly indicates that only the center is playable. The playable center now renders live reducer state (not a frozen startup copy), the progress count reflects center editable cells, and paused games hide the board. Number pad and hints are disabled for outer previews rather than silently modifying the wrong board.
 
 ## Current scope
 
