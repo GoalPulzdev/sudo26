@@ -178,50 +178,28 @@ function KillerWinOverlay({
   const m = Math.floor(elapsed / 60).toString().padStart(2, "0");
   const s = (elapsed % 60).toString().padStart(2, "0");
 
-  const confetti = Array.from({ length: 16 }, (_, i) => {
-    const angle = (i / 16) * 360 + Math.random() * 22;
-    const dist  = 90 + Math.random() * 110;
-    const rad   = (angle * Math.PI) / 180;
-    const tx    = Math.round(Math.cos(rad) * dist);
-    const ty    = Math.round(Math.sin(rad) * dist + 60);
-    const tr    = Math.round((Math.random() - 0.5) * 540);
-    const colors = ["#3a4a66","#2c3a4f","#3a6b73","#d4b25a","#6f9a78","#c2615a","#9aa3bb"];
-    return { tx, ty, tr, color: colors[i % colors.length], size: 6 + Math.random() * 7 };
-  });
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50"
-      style={{ background: "rgba(90,70,150,0.22)" }}
+      style={{ background: "rgba(4,7,12,0.82)" }}
     >
-      {confetti.map((p, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-sm pointer-events-none"
-          style={{ width: p.size, height: p.size * 0.55, background: p.color, top: "50%", left: "50%", marginTop: -p.size / 2, marginLeft: -p.size / 2 }}
-          initial={{ x: 0, y: 0, rotate: 0, opacity: 1, scale: 0.6 }}
-          animate={{ x: p.tx, y: p.ty, rotate: p.tr, opacity: 0, scale: 1 }}
-          transition={{ duration: 0.9 + Math.random() * 0.4, delay: 0.1 + i * 0.025, ease: "easeOut" }}
-        />
-      ))}
-
       <motion.div
         initial={{ scale: 0.82, opacity: 0, y: 24 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.82, opacity: 0, y: 24 }}
         transition={{ type: "spring", stiffness: 380, damping: 26 }}
-        className="rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col overflow-hidden"
+        className="obsidian-victory-card rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col overflow-hidden"
         style={{ background: "var(--surface)", boxShadow: "0 24px 80px rgba(58,74,102,0.28), 0 0 0 1.5px rgba(58,74,102,0.18)" }}
       >
         {/* Header bar */}
         <div className="px-7 pt-8 pb-5"
-          style={{ background: "linear-gradient(135deg, #3a4a66 0%, #3a6b73 100%)" }}>
-          <div className="text-5xl mb-2">🔪</div>
-          <h2 className="text-2xl font-black text-white">Killer Sudoku løst!</h2>
-          <p className="text-sm text-white/70 mt-1">Imponerende</p>
+          style={{ background: "linear-gradient(145deg,#263247,#15202f 100%)", borderBottom: "1px solid rgba(196,161,102,.22)" }}>
+          <div className="obsidian-victory-symbol mb-2" aria-hidden="true">✦</div>
+          <h2 className="text-2xl font-black text-white">Killer fullført</h2>
+          <p className="text-sm text-white/70 mt-1">Et mesterstykke i logikk.</p>
         </div>
 
         {/* Stats */}
