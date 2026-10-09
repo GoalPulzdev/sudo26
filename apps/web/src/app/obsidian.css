@@ -149,7 +149,7 @@ body:has(.obsidian-arena), body:has(.obsidian-game) { background: #090d16; backg
 .obsidian-game .obsidian-actions button:hover { border-color: #c4a166 !important; }
 .obsidian-game .obsidian-game-caption { font-size: 10px; letter-spacing:.16em; color: #86909d; text-transform:uppercase; text-align:center; margin-top: 4px; }
 .obsidian-game .obsidian-game-caption strong { color: #bda16f; font-weight: 600; }
-.obsidian-game .obsidian-hud .font-mono { color: #e6cd9f !important; }
+.obsidian-game .obsidian-hud .font-mono { font-variant-numeric: tabular-nums; }
 .obsidian-game .key-press:active { box-shadow: 0 1px 0 rgba(0,0,0,.3) !important; }
 @media (max-width: 1024px) {
   .obsidian-hero { min-height: 510px; }
@@ -206,4 +206,42 @@ body:has(.obsidian-arena), body:has(.obsidian-game) { background: #090d16; backg
   .obsidian-arena *, .obsidian-game * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
   .obsidian-preview-frame { transform:none; }
   .obsidian-preview-frame:hover { transform:none; }
+}
+
+/* Killer: cage geometry is expressed by borders, not arbitrary per-cage hues. */
+.obsidian-game .obsidian-killer-board {
+  --surface: #f8f5ed;
+  --border: #d7d0c1;
+  --box-border: #263448;
+  --given: #26344e;
+  --player: #375c80;
+  --error: #b44f45;
+  border: 2px solid #263448 !important;
+  border-radius: 3px !important;
+  background: #f8f5ed !important;
+  box-shadow: 0 0 0 9px #1b2535,0 0 0 10px rgba(196,161,102,.55),0 18px 65px rgba(0,0,0,.6);
+}
+.obsidian-game .obsidian-killer-cell { background: #f8f5ed !important; }
+.obsidian-game .obsidian-killer-cell-even { background: #f2eee5 !important; }
+.obsidian-game .obsidian-killer-cell-selected { background: #e3cda6 !important; }
+.obsidian-game .obsidian-killer-cell:focus-visible { outline: 2px solid #bc914e; outline-offset: -2px; z-index: 30; }
+.obsidian-game .obsidian-killer-cell:hover { background: #e9dec9 !important; }
+.obsidian-game .obsidian-killer-cage-sum { color: #795d31 !important; background: rgba(248,245,237,.85); padding: 0 2px; border-radius: 2px; z-index: 2; }
+.obsidian-game .obsidian-victory-card {
+  --surface: #151f2d; --surface-2: #202b3b; --text: #f3eee4;
+  --text-muted: #b5bdc6; --text-dim: #a4aeba; --border: #3a4656;
+  --border-2: #465467; --accent: #d4af73; --accent-light: #2a3544;
+  --error: #e5a395;
+  background: linear-gradient(160deg,#1e2939,#101825) !important;
+  border: 1px solid rgba(196,161,102,.43) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 28px 90px rgba(0,0,0,.68),0 0 50px rgba(196,161,102,.12) !important;
+}
+.obsidian-game .obsidian-victory-symbol { color: #d1ae74; font-family: Georgia,"Times New Roman",serif; font-size: 72px; line-height: 1; }
+.obsidian-game .obsidian-victory-card button:focus-visible { outline:2px solid #d1ae74; outline-offset:3px; }
+@media(max-width:430px) {
+  .obsidian-game .obsidian-hud-main { flex-wrap:wrap; gap:11px; }
+  .obsidian-game .obsidian-hud-main > h2 { flex-basis:100%; text-align:left; }
+  .obsidian-game .obsidian-hud-main > div { width:100%; justify-content:space-between; }
+  .obsidian-game .obsidian-killer-board { width: min(88vw,480px) !important; }
 }
