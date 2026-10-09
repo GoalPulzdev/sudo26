@@ -9,6 +9,7 @@ interface GameHeaderProps {
   mistakes: number;
   hintsUsed: number;
   isPlaying: boolean;
+  canPause?: boolean;
   /** Legacy hint banner (pages not on GameShell). GameShell uses the coach panel instead. */
   hint?: Hint | null;
   onDismissHint?: () => void;
@@ -46,6 +47,7 @@ export default function GameHeader({
   mistakes,
   hintsUsed,
   isPlaying,
+  canPause = true,
   hint,
   onDismissHint,
   onPause,
@@ -78,7 +80,8 @@ export default function GameHeader({
           <Div />
           <button
             onClick={onPause}
-            aria-label={isPlaying ? "Pause" : "Fortsett"}
+            disabled={!canPause}
+            aria-label={!canPause ? "Spillet er fullført" : isPlaying ? "Pause" : "Fortsett"}
             className="w-8 h-8 rounded-lg flex items-center justify-center
                        transition-all duration-150 cursor-pointer focus:outline-none"
             style={{
