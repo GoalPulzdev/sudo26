@@ -14,13 +14,6 @@ function randomId() {
   return Math.random().toString(36).slice(2, 10);
 }
 
-// Assign a color per cage index for visual grouping (light-theme friendly)
-const CAGE_COLORS = [
-  "bg-violet-100",  "bg-cyan-100",    "bg-rose-100",
-  "bg-emerald-100", "bg-amber-100",   "bg-sky-100",
-  "bg-pink-100",    "bg-teal-100",    "bg-indigo-100",
-];
-
 export default function KillerPage(): React.ReactElement {
   const { game, loadPuzzle } = useGameStore();
   const [cages, setCages] = useState<KillerCage[]>([]);
@@ -86,7 +79,7 @@ function KillerBoard({ cages, hint }: { cages: KillerCage[]; hint: Hint | null }
         overflow: "hidden",
         background: "var(--surface)",
       }}
-      className="select-none"
+      className="obsidian-killer-board select-none"
     >
       {game.board.map((row, r) =>
         row.map((cell, c) => {
@@ -103,6 +96,12 @@ function KillerBoard({ cages, hint }: { cages: KillerCage[]; hint: Hint | null }
             (c + 1) % 3 === 0 && c !== 8
               ? "2px solid var(--box-border)"
               : "1px solid var(--border)";
+          const cageEdges = cageInfo ? {
+            top: r === 0 || !cageInfo.cage.cells.some(([nr, nc]) => nr === r - 1 && nc === c),
+            right: c === 8 || !cageInfo.cage.cells.some(([nr, nc]) => nr === r && nc === c + 1),
+            bottom: r === 8 || !cageInfo.cage.cells.some(([nr, nc]) => nr === r + 1 && nc === c),
+            left: c === 0 || !cageInfo.cage.cells.some(([nr, nc]) => nr === r && nc === c - 1),
+          } : null;
           const borderBottom =
             (r + 1) % 3 === 0 && r !== 8
               ? "2px solid var(--box-border)"
@@ -111,20 +110,27 @@ function KillerBoard({ cages, hint }: { cages: KillerCage[]; hint: Hint | null }
           return (
             <motion.button
               key={key}
+              aria-label={`Rad ${r + 1}, kolonne ${c + 1}${cell.value ? `, ${cell.value}` : ", tom"}`}
               onClick={() => dispatch({ type: "SELECT_CELL", row: r, col: c })}
               whileTap={{ scale: 0.95 }}
               style={{ borderRight, borderBottom }}
               className={clsx(
-                "relative flex items-center justify-center text-lg font-semibold",
+                "obsidian-killer-cell relative flex items-center justify-center text-lg font-semibold",
                 "cursor-pointer transition-colors focus:outline-none",
-                cageInfo ? CAGE_COLORS[cageInfo.idx % CAGE_COLORS.length] : "",
-                isSelected && "!bg-violet-300/60",
+                cageInfo && cageInfo.idx % 2 === 0 && "obsidian-killer-cell-even",
+                isSelected && "obsidian-killer-cell-selected",
                 cell.error || isInvalid ? "text-[var(--error)]" : "text-[var(--player)]",
                 cell.given && "!text-[var(--given)] font-extrabold"
               )}
             >
+              {cageEdges && <span aria-hidden="true" className="absolute inset-[2px] pointer-events-none z-[1]" style={{
+                borderTop: cageEdges.top ? "1px dashed #b8945d" : "none",
+                borderRight: cageEdges.right ? "1px dashed #b8945d" : "none",
+                borderBottom: cageEdges.bottom ? "1px dashed #b8945d" : "none",
+                borderLeft: cageEdges.left ? "1px dashed #b8945d" : "none",
+              }} />}
               {cageInfo && isTopLeft(r, c, cageInfo.cage) && (
-                <span className="absolute top-0.5 left-0.5 text-[8px] font-bold text-amber-400 leading-none pointer-events-none">
+                <span className="obsidian-killer-cage-sum absolute top-0.5 left-0.5 text-[8px] font-bold leading-none pointer-events-none">
                   {cageInfo.cage.sum}
                 </span>
               )}
