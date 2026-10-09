@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { useId } from "react";
 import type { Board, CellValue } from "@sudoku-2026/core";
 import clsx from "clsx";
 
@@ -31,17 +32,22 @@ interface SudokuBoardProps {
 }
 
 export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell, coach }: SudokuBoardProps): React.ReactElement {
+  const instructionsId = useId();
   const selVal = selectedCell ? board[selectedCell[0]][selectedCell[1]].value : 0;
 
   return (
     <div
       className="obsidian-board relative select-none"
+      role="group"
+      aria-label="Sudoku-brett"
+      aria-describedby={instructionsId}
       style={{ width: "min(92vw, 480px)", aspectRatio: "1" }}
     >
+      <p id={instructionsId} className="sr-only">Bruk piltastene for å flytte mellom rutene. Trykk 1 til 9 for å fylle inn et tall. N for notater, H for hint, og Delete for å slette.</p>
       {/* Outer glow ring */}
       <div
         className="absolute inset-0 rounded-[18px] pointer-events-none"
-        style={{ boxShadow: "0 0 0 2px rgba(109,40,217,0.25), var(--shadow-lg)" }}
+        style={{ boxShadow: "0 0 0 2px rgba(196,161,102,0.38), var(--shadow-lg)" }}
       />
 
       <div
@@ -51,7 +57,7 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
           gridTemplateColumns: "repeat(9, 1fr)",
           background: "var(--surface)",
           border: "2.5px solid var(--box-border)",
-          boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(109,40,217,0.05)",
+          boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(196,161,102,0.09)",
         }}
       >
         {board.map((row, r) =>
@@ -80,6 +86,26 @@ export default function SudokuBoard({ board, selectedCell, onCellClick, hintCell
               <motion.button
                 key={`${r}-${c}`}
                 onClick={() => onCellClick(r, c)}
+                onFocus={() => { if (!isSelected) onCellClick(r, c); }}
+                onKeyDown={(event) => {
+                  const delta: Record<string, [number, number]> = {
+                    ArrowUp: [-1, 0], ArrowDown: [1, 0],
+                    ArrowLeft: [0, -1], ArrowRight: [0, 1],
+                  };
+                  const direction = delta[event.key];
+                  if (!direction) return;
+                  event.preventDefault();
+                  const nextRow = Math.max(0, Math.min(8, r + direction[0]));
+                  const nextCol = Math.max(0, Math.min(8, c + direction[1]));
+                  const target = event.currentTarget.parentElement?.querySelector<HTMLButtonElement>(
+                    `[data-cell-index="${nextRow * 9 + nextCol}"]`
+                  );
+                  target?.focus();
+                }}
+                data-cell-index={idx}
+                tabIndex={isSelected || (!selectedCell && r === 0 && c === 0) ? 0 : -1}
+                aria-pressed={isSelected}
+                aria-invalid={cell.error ? true : undefined}
                 aria-label={`Rad ${r + 1}, kolonne ${c + 1}${cell.value !== 0 ? `, ${cell.value}` : ", tom"}`}
                 whileTap={{ scale: 0.96 }}
                 transition={{ type: "spring", stiffness: 700, damping: 25 }}
