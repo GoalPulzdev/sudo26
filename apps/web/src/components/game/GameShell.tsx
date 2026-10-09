@@ -118,8 +118,8 @@ export default function GameShell({
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-start gap-4 px-4 py-6 relative">
-      <div style={{ width: "min(92vw, 480px)" }} className="self-start">
+    <main className="obsidian-game flex flex-col items-center justify-start gap-4 px-4 py-6 relative">
+      <div style={{ width: "min(92vw, 480px)" }} className="obsidian-game-top">
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest transition-colors"
@@ -130,8 +130,9 @@ export default function GameShell({
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
-          Hjem
+          Tilbake til arenaen
         </Link>
+        <span className="obsidian-game-edition">SUDOKU 26 / OBSIDIAN</span>
       </div>
 
       {aboveHeader}
@@ -175,6 +176,7 @@ export default function GameShell({
       />
 
       {belowPad}
+      <p className="obsidian-game-caption">THE ART OF <strong>LOGIC</strong></p>
 
       <AnimatePresence>{overlay}</AnimatePresence>
     </main>
