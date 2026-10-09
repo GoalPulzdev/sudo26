@@ -51,12 +51,13 @@ export default function NumberPad({
   noteMode,
 }: NumberPadProps) {
   return (
-    <div className="flex flex-col gap-3" style={{ width: "min(92vw, 480px)" }}>
+    <div className="obsidian-actions flex flex-col gap-3" style={{ width: "min(92vw, 480px)" }}>
       {/* Number buttons */}
       <div className="grid grid-cols-9 gap-1.5">
         {NUMBERS.map((n) => (
           <motion.button
             key={n}
+            aria-label={`Sett inn ${n}`}
             onClick={() => onNumber(n)}
             whileTap={{ scale: 0.88, y: 2 }}
             transition={{ type: "spring", stiffness: 700, damping: 22 }}
@@ -116,6 +117,8 @@ function ActionBtn({
 }) {
   return (
     <motion.button
+      aria-pressed={active ?? false}
+      aria-label={label}
       onClick={onClick}
       whileTap={{ scale: 0.94, y: 1 }}
       transition={{ type: "spring", stiffness: 600, damping: 24 }}
