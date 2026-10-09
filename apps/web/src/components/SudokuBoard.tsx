@@ -225,7 +225,7 @@ function NoteGrid({ notes }: { notes: Set<CellValue> }) {
           key={n}
           className="flex items-center justify-center leading-none font-semibold"
           style={{
-            fontSize: "clamp(6px, 1.6vw, 9px)",
+            fontSize: "clamp(8px, 1.6vw, 10px)",
             color: notes.has(n) ? "#2c3a4f" : "transparent",
           }}
         >
