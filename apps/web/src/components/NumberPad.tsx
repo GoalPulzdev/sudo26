@@ -117,7 +117,7 @@ function ActionBtn({
 }) {
   return (
     <motion.button
-      aria-pressed={active ?? false}
+      aria-pressed={active === undefined ? undefined : active}
       aria-label={label}
       onClick={onClick}
       whileTap={{ scale: 0.94, y: 1 }}
