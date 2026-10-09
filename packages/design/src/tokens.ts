@@ -5,8 +5,8 @@
  * `:root` mirrors these values). Mobile will consume them directly via
  * StyleSheet (roadmap Fase 6). Keep this file and the web `:root` block in sync.
  *
- * "Nordic premium puzzle" identity: violet brand, cyan accent, warm gold for
- * achievements, on calm light surfaces.
+ * Legacy light-theme tokens are retained for standalone/mobile screens.
+ * The scoped Obsidian theme is exposed separately below.
  */
 
 export const colors = {
@@ -66,3 +66,29 @@ export const space = {
 export const tokens = { colors, radius, shadow, space } as const;
 
 export type Tokens = typeof tokens;
+
+
+/** Obsidian V2: scoped dark arena + warm paper puzzle board.
+ * Keep in sync with apps/web/src/app/obsidian.css.
+ * The original tokens remain stable for existing light-theme consumers.
+ */
+export const obsidian = {
+  colors: {
+    void: "#090d16",
+    ink: "#101726",
+    panel: "#141d2c",
+    panelRaised: "#1e2939",
+    gold: "#c4a166",
+    cream: "#f2eee5",
+    muted: "#a7acb6",
+    gamePaper: "#f7f3e9",
+    gameInk: "#263448",
+    success: "#7ea897",
+    danger: "#b44f45",
+  },
+  radius: {
+    panel: "8px",
+    board: "10px",
+    action: "4px",
+  },
+} as const;
