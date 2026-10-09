@@ -913,3 +913,44 @@ body:has(.obsidian-hall) {
  .obsidian-mini-page .obsidian-mini-board{width:min(81vw,375px) !important}
  .obsidian-mini-page-heading h1{font-size:43px}
 }
+
+
+/* Atmospheric image layer: optimized editorial landscape with a local original
+   SVG underneath as a resilient fallback. Unsplash license permits product use.
+   Keep photos decorative; no puzzle content is baked into images. */
+.obsidian-v3 .obsidian-v3-hero-scene {
+ background-image:
+   linear-gradient(100deg,#080d14 0%,rgba(12,17,26,.6) 55%,rgba(9,13,19,.85)),
+   url("https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=70"),
+   url("/obsidian/mountain-dusk.svg");
+ background-position:center,center 54%,center;
+ background-size:cover;
+}
+.obsidian-v3 .obsidian-v3-daily-panel {
+ background-image:
+   linear-gradient(100deg,rgba(8,15,22,.95),rgba(9,15,22,.76) 56%,rgba(11,19,25,.44)),
+   url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1000&q=75"),
+   url("/obsidian/mountain-dusk.svg");
+}
+.obsidian-hall .obsidian-hall-title-wrap {
+ background-image:
+  linear-gradient(90deg,#090e17 4%,rgba(9,14,23,.96) 26%,rgba(9,14,23,.44) 70%,rgba(9,14,23,.35)),
+  url("https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1500&q=70"),
+  url("/obsidian/mountain-dusk.svg");
+}
+.obsidian-v3-stats-feature {
+ background-image:
+  linear-gradient(105deg,#151d27 19%,rgba(20,29,36,.88) 55%,rgba(12,18,26,.66)),
+  url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1300&q=72"),
+  url("/obsidian/mountain-dusk.svg");
+}
+.obsidian-mini-page {
+ background-image:
+  linear-gradient(105deg,rgba(6,10,17,.93),rgba(6,10,17,.90) 30%,rgba(6,10,17,.96) 75%,rgba(6,10,17,.88)),
+  url("https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1400&q=70"),
+  url("/obsidian/mountain-dusk.svg");
+}
+@media (max-width: 750px) {
+ .obsidian-mini-page { background-attachment:scroll; }
+ .obsidian-v3 .obsidian-v3-hero-scene {background-position:center,center,center}
+}
