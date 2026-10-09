@@ -968,3 +968,37 @@ body:has(.obsidian-hall) {
  .obsidian-stats .obsidian-hall-table>div.grid-cols-5 .text-sm{font-size:10px !important}
  .obsidian-stats .obsidian-hall-table>div.grid-cols-5>div:first-child span:last-child{overflow-wrap:normal;word-break:normal;letter-spacing:-.04em}
 }
+
+
+/* Genuine tab navigation for player pages: desktop header, mobile bottom bar. */
+.obsidian-hall-mobile-tabs{display:none}
+.obsidian-v3-achievement>span:first-child {
+  border-radius:0 !important;
+  clip-path:polygon(50% 0,95% 22%,95% 78%,50% 100%,5% 78%,5% 22%);
+  background:linear-gradient(155deg,#342a20,#111b28) !important;
+  box-shadow:inset 0 0 0 1px rgba(226,188,125,.65);
+}
+@media(max-width:650px) {
+  .obsidian-hall{padding-bottom:115px !important}
+  .obsidian-hall .obsidian-hall-nav-links{display:none}
+  .obsidian-hall-mobile-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    position:fixed;
+    z-index:49;
+    bottom:0;
+    left:0;
+    right:0;
+    padding:12px 16px max(14px,env(safe-area-inset-bottom));
+    background:linear-gradient(180deg,rgba(11,18,27,.97),rgba(5,10,17,.99));
+    border-top:1px solid rgba(202,158,95,.35);
+    backdrop-filter:blur(14px);
+    box-shadow:0 -18px 35px rgba(0,0,0,.37);
+    gap:4px;
+  }
+  .obsidian-hall-mobile-tabs a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:51px;color:#868b93}
+  .obsidian-hall-mobile-tabs a>span{font:400 25px/1.1 Georgia,serif}
+  .obsidian-hall-mobile-tabs a>small{font-size:10px;letter-spacing:.025em}
+  .obsidian-hall-mobile-tabs a.is-active{color:#e9c18b}
+  .obsidian-hall-mobile-tabs a:focus-visible{outline:2px solid #e8c18b;outline-offset:-2px;border-radius:4px}
+}
