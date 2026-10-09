@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type React from "react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "@/store/authStore";
 import { useDailyStore } from "@/store/dailyStore";
