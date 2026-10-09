@@ -2,6 +2,7 @@
 
 import type React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface ObsidianHallHeaderProps {
   chapter: string;
@@ -19,6 +20,7 @@ export default function ObsidianHallHeader({
   description,
   children,
 }: ObsidianHallHeaderProps): React.ReactElement {
+  const pathname = usePathname();
   return (
     <header className="obsidian-hall-header w-full">
       <nav className="obsidian-hall-nav" aria-label="Kontonavigasjon">
@@ -43,6 +45,19 @@ export default function ObsidianHallHeader({
         </div>
         {children && <div className="obsidian-hall-title-side">{children}</div>}
       </div>
+      <nav className="obsidian-hall-mobile-tabs" aria-label="Hovedmeny mobil">
+        {[
+          { href: "/", label: "Spill", glyph: "⌂" },
+          { href: "/stats", label: "Statistikk", glyph: "▥" },
+          { href: "/leaderboard", label: "Rekorder", glyph: "✦" },
+          { href: "/profile", label: "Profil", glyph: "◉" },
+        ].map((item) => (
+          <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined} className={pathname === item.href ? "is-active" : ""}>
+            <span aria-hidden="true">{item.glyph}</span>
+            <small>{item.label}</small>
+          </Link>
+        ))}
+      </nav>
     </header>
   );
 }
