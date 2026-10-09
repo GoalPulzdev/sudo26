@@ -68,7 +68,7 @@ function DifficultyPicker({ current }: { current: Difficulty }) {
   const levels: Difficulty[] = ["easy", "medium", "hard", "extreme"];
   const LABELS: Record<Difficulty, string> = { easy: "Enkel", medium: "Middels", hard: "Vanskelig", extreme: "Ekstrem", daily: "Daglig", mini: "Mini 6×6" };
   return (
-    <div className="flex gap-2" style={{ width: "min(92vw, 480px)" }}>
+    <div className="flex gap-2" style={{ width: "var(--game-w, min(92vw, 480px))" }}>
       {levels.map((d) => (
         <a
           key={d}

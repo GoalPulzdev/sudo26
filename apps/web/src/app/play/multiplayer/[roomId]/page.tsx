@@ -369,7 +369,7 @@ export default function MultiplayerGamePage(): React.JSX.Element {
   return (
     <main className="min-h-screen flex flex-col items-center gap-4 px-4 py-4">
       {/* Progress panel */}
-      <div style={{ width: "min(92vw, 480px)" }} className="space-y-1.5">
+      <div style={{ width: "var(--game-w, min(92vw, 480px))" }} className="space-y-1.5">
         <PlayerProgressBar
           username={username}
           progress={progressPct}

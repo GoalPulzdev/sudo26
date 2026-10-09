@@ -131,7 +131,7 @@ export default function GameShell({
 
   return (
     <main className="obsidian-game flex flex-col items-center justify-start gap-4 px-4 py-6 relative">
-      <div style={{ width: "min(92vw, 480px)" }} className="obsidian-game-top">
+      <div style={{ width: "var(--game-w, min(92vw, 480px))" }} className="obsidian-game-top">
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest transition-colors"
@@ -171,7 +171,7 @@ export default function GameShell({
 
       {game.status === "paused" ? (
         <section className="obsidian-board obsidian-pause-screen flex flex-col items-center justify-center gap-5 text-center"
-          style={{ width: "min(92vw, 480px)", aspectRatio: "1" }} aria-live="polite" aria-label="Spillet er pauset">
+          style={{ width: "var(--game-w, min(92vw, 480px))", aspectRatio: "1" }} aria-live="polite" aria-label="Spillet er pauset">
           <span className="obsidian-pause-symbol" aria-hidden="true">Ⅱ</span>
           <h2 className="text-2xl font-semibold">Ta en pause.</h2>
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>Klokken står stille. Brettet venter på deg.</p>

@@ -30,7 +30,7 @@ export default function CoachPanel({ view, missingNotes, onExplain, onAct, onClo
           exit={{ opacity: 0, y: -8, height: 0 }}
           className="rounded-2xl overflow-hidden"
           style={{
-            width: "min(92vw, 480px)",
+            width: "var(--game-w, min(92vw, 480px))",
             background: "var(--surface)",
             border: "1.5px solid rgba(191,156,69,0.45)",
             boxShadow: "0 6px 24px rgba(191,156,69,0.14), var(--shadow-sm)",

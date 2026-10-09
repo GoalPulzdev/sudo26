@@ -58,7 +58,7 @@ export default function GameHeader({
   const pct = totalCells > 0 ? Math.round((filledCount / totalCells) * 100) : 0;
 
   return (
-    <div className="obsidian-hud flex flex-col gap-2" style={{ width: "min(92vw, 480px)" }}>
+    <div className="obsidian-hud flex flex-col gap-2" style={{ width: "var(--game-w, min(92vw, 480px))" }}>
       {/* HUD stats bar */}
       <div
         className="obsidian-hud-main flex items-center justify-between px-4 py-3 rounded-2xl"

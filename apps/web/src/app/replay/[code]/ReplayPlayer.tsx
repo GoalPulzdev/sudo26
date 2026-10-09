@@ -80,7 +80,7 @@ export default function ReplayPlayer({ code }: { code: string }): React.ReactEle
 
   return (
     <main className="min-h-screen flex flex-col items-center gap-4 px-4 py-6">
-      <div className="flex flex-col gap-1 self-center" style={{ width: "min(92vw, 480px)" }}>
+      <div className="flex flex-col gap-1 self-center" style={{ width: "var(--game-w, min(92vw, 480px))" }}>
         <Link href="/" className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>← Hjem</Link>
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] mt-3" style={{ color: "var(--accent-2)" }}>
           Replay · {label} · {level}
@@ -90,7 +90,7 @@ export default function ReplayPlayer({ code }: { code: string }): React.ReactEle
         </h1>
       </div>
 
-      <div className="flex justify-between items-baseline text-sm" style={{ width: "min(92vw, 480px)", color: "var(--text-muted)" }}>
+      <div className="flex justify-between items-baseline text-sm" style={{ width: "var(--game-w, min(92vw, 480px))", color: "var(--text-muted)" }}>
         <span className="font-mono font-bold tabular-nums" style={{ color: "var(--text)" }}>
           {formatClock(second)} <span style={{ color: "var(--text-dim)" }}>/ {formatClock(end)}</span>
         </span>
@@ -99,7 +99,7 @@ export default function ReplayPlayer({ code }: { code: string }): React.ReactEle
 
       <SudokuBoard board={board} selectedCell={null} onCellClick={() => {}} hintCell={lastCell === null ? null : [Math.floor(lastCell / 9), lastCell % 9]} />
 
-      <div className="flex flex-col gap-3" style={{ width: "min(92vw, 480px)" }}>
+      <div className="flex flex-col gap-3" style={{ width: "var(--game-w, min(92vw, 480px))" }}>
         <div className="relative h-6 flex items-center">
           {/* Mistake / hint ticks under the scrubber */}
           <div className="absolute inset-x-[8px] top-1/2 h-3 -translate-y-1/2 pointer-events-none" aria-hidden="true">

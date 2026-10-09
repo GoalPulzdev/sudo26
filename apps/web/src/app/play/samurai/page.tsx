@@ -109,7 +109,7 @@ export default function SamuraiPage(): React.ReactElement {
       {/* Never expose the active puzzle while paused. Outer grids remain previews. */}
       {game.status === "paused" ? (
         <section className="obsidian-board obsidian-pause-screen flex flex-col items-center justify-center gap-5 text-center"
-          style={{ width: "min(92vw, 480px)", aspectRatio: "1" }} aria-label="Samurai er pauset" aria-live="polite">
+          style={{ width: "var(--game-w, min(92vw, 480px))", aspectRatio: "1" }} aria-label="Samurai er pauset" aria-live="polite">
           <span className="obsidian-pause-symbol" aria-hidden="true">Ⅱ</span>
           <h2 className="text-2xl font-semibold">Ta en pause.</h2>
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>Tiden står stille. Brettet venter på deg.</p>

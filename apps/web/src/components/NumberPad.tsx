@@ -53,7 +53,7 @@ export default function NumberPad({
   disabled = false,
 }: NumberPadProps) {
   return (
-    <div className="obsidian-actions flex flex-col gap-3" style={{ width: "min(92vw, 480px)" }}>
+    <div className="obsidian-actions flex flex-col gap-3" style={{ width: "var(--game-w, min(92vw, 480px))" }}>
       {/* Number buttons */}
       <div className="grid grid-cols-9 gap-1.5">
         {NUMBERS.map((n) => (

@@ -41,7 +41,7 @@ function SudokuBoard({ board, selectedCell, onCellClick, hintCell, coach }: Sudo
       role="group"
       aria-label="Sudoku-brett"
       aria-describedby={instructionsId}
-      style={{ width: "min(92vw, 480px)", aspectRatio: "1" }}
+      style={{ width: "var(--game-w, min(92vw, 480px))", aspectRatio: "1" }}
     >
       <p id={instructionsId} className="sr-only">Bruk piltastene for å flytte mellom rutene. Trykk 1 til 9 for å fylle inn et tall. N for notater, H for hint, og Delete for å slette.</p>
       {/* Outer glow ring */}

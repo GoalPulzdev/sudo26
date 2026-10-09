@@ -39,7 +39,7 @@ export default function GhostBar({
     <section
       aria-label="Duell"
       className="rounded-2xl px-4 py-3 flex items-center gap-4"
-      style={{ width: "min(92vw, 480px)", background: "var(--surface)", border: "1.5px solid var(--border-2)", boxShadow: "var(--shadow-sm)" }}
+      style={{ width: "var(--game-w, min(92vw, 480px))", background: "var(--surface)", border: "1.5px solid var(--border-2)", boxShadow: "var(--shadow-sm)" }}
     >
       <div className="flex-1 min-w-0 flex flex-col gap-2">
         <Lane label={`👻 ${ghostName}`} filled={ghostDone ? timeline.total : ghost.filled} total={timeline.total} color="var(--accent-2)" />

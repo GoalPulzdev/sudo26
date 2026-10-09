@@ -72,7 +72,7 @@ function KillerBoard({ cages, hint }: { cages: KillerCage[]; hint: Hint | null }
       style={{
         display: "grid",
         gridTemplateColumns: "repeat(9, 1fr)",
-        width: "min(95vw, 500px)",
+        width: "var(--game-w, min(95vw, 500px))",
         aspectRatio: "1",
         border: "2px solid var(--box-border)",
         borderRadius: "12px",
