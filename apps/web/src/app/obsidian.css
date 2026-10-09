@@ -426,3 +426,105 @@ body:has(.obsidian-hall) {
   .obsidian-hall-table > div .text-sm { font-size:10px !important; }
   .obsidian-hall-table > div.grid-cols-5 > span, .obsidian-hall-table > div.grid-cols-5 > div { overflow-wrap:anywhere; }
 }
+
+
+/* Mini / Samurai: variant-aware polish within the same high-contrast family. */
+.obsidian-mini-page, .obsidian-samurai-page {
+  min-height: 100svh;
+  padding-top: 42px;
+  padding-bottom: 65px;
+  background: radial-gradient(ellipse at 50% -12%,rgba(196,161,102,.15),transparent 48%),#090d16;
+}
+.obsidian-mini-hud { max-width: 420px; }
+.obsidian-mini-hud > div:first-child {
+  background: #182233 !important;
+  border: 1px solid rgba(196,161,102,.35) !important;
+  border-radius: 7px !important;
+  min-height: 62px;
+}
+.obsidian-mini-edition { color: #c4a166; font-weight: 550; letter-spacing: .1em; font-size: 10px; }
+.obsidian-mini-page .obsidian-mini-hud > div:nth-child(2) button {
+  border-radius: 5px !important;
+  min-height: 39px;
+  transition: transform .18s,background .18s, color .18s;
+}
+.obsidian-mini-page .obsidian-mini-hud > div:nth-child(2) button:hover { transform: translateY(-1px); }
+.obsidian-mini-board {
+  --surface: #f8f5ed;
+  --surface-2: #eee6d7;
+  --border: #d8cebc;
+  --box-border: #2e3d52;
+  --text: #263448;
+  --text-dim: #586779;
+  --given: #25344b;
+  --player: #3a678b;
+  --error: #b45348;
+  border-radius: 5px !important;
+  background: #f8f5ed !important;
+  box-shadow: 0 0 0 9px #1c2636,0 0 0 10px rgba(196,161,102,.56),0 18px 55px rgba(0,0,0,.6);
+  margin: 14px 0 17px;
+}
+.obsidian-mini-board .obsidian-mini-cell {
+  outline-offset: -3px;
+  font-size: clamp(17px,4.5vw,25px);
+  touch-action: manipulation;
+}
+.obsidian-mini-board .obsidian-mini-cell:focus-visible { outline: 2px solid #b98d4b; z-index: 5; }
+.obsidian-mini-board .obsidian-mini-cell:disabled { opacity:1; }
+.obsidian-mini-keypad button {
+  border-radius: 5px !important;
+  transition: border-color .15s ease, transform .15s ease, background .15s ease;
+}
+.obsidian-mini-keypad button:hover:not(:disabled) { border-color: #c4a166 !important; }
+.obsidian-mini-page button:focus-visible, .obsidian-samurai-page button:focus-visible {
+  outline: 2px solid #e1b979 !important; outline-offset: 3px;
+}
+.obsidian-mini-page button:disabled, .obsidian-samurai-page button:disabled {
+  cursor: not-allowed; opacity: .45; pointer-events:none;
+}
+.obsidian-mini-page .obsidian-mini-board button:disabled { opacity:1; }
+.obsidian-mini-pause-trigger {
+  border: 1px solid rgba(196,161,102,.37);
+  color: #d5c3a3;
+  background: #1a2635;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-size: 12px;
+  min-height: 38px;
+  align-self: center;
+}
+.obsidian-mini-pause-trigger:hover { color: #f3ead9; border-color: #d4b786; }
+.obsidian-mini-pause {
+  position: fixed; inset: 0; z-index: 40;
+  display: flex; align-items:center; justify-content:center;
+  flex-direction: column; gap: 17px; text-align: center;
+  padding: 28px; background: radial-gradient(ellipse at center,rgba(36,47,66,.96),rgba(6,10,18,.985) 65%);
+}
+.obsidian-mini-pause h2 { font-family:Georgia,"Times New Roman",serif; font-size: 34px; font-weight:400; color:#f4ecdf; }
+.obsidian-mini-pause p { color:#abb5c3; font-size:13px; line-height:1.7; }
+.obsidian-mini-pause .obsidian-resume-button { min-width:210px; }
+.obsidian-samurai-page .obsidian-hud { margin-bottom:3px; }
+.obsidian-samurai-page .obsidian-samurai-tab-active {
+  background:linear-gradient(125deg,#dab982,#b6935c);
+  color:#101824; border:1px solid #e2c38c; font-weight:750;
+}
+.obsidian-samurai-page .obsidian-samurai-tab-inactive {
+  background:#192436; color:#c4cbda; border:1px solid #344258;
+}
+.obsidian-samurai-page .obsidian-samurai-tab-inactive:hover { color:#f2e3c7; border-color:#be9c65; }
+.obsidian-samurai-page button[aria-pressed] { min-height:40px; }
+.obsidian-samurai-description {
+  max-width:480px; padding: 12px 17px;
+  color:#c4b9a6; background:rgba(196,161,102,.09);
+  border:1px solid rgba(196,161,102,.2); border-radius:6px;
+  text-align:center; line-height:1.6;
+}
+.obsidian-samurai-page .obsidian-board { margin:13px 0; }
+@media(max-width:430px) {
+  .obsidian-mini-page, .obsidian-samurai-page { padding: 23px 13px 65px; }
+  .obsidian-mini-board { width:min(86vw,360px) !important; }
+  .obsidian-mini-hud { width:min(94vw,420px) !important; }
+  .obsidian-mini-page .obsidian-mini-hud > div:first-child { padding: 11px !important; }
+  .obsidian-samurai-page .obsidian-hud-main { flex-wrap:wrap; }
+  .obsidian-samurai-page .obsidian-hud-main > h2 { flex-basis:100%; }
+}
