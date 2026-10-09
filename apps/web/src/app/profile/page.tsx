@@ -309,6 +309,12 @@ export default function ProfilePage(): React.JSX.Element {
               </div>
             );
           })}
+          <div className="obsidian-v3-record-footer">
+            <span className="obsidian-v3-record-eyebrow">DIN NESTE UTFORDRING</span>
+            <h3>{totalWon > 0 ? "En rekord kan alltid slås." : "Din første rekord venter."}</h3>
+            <p>{totalWon > 0 ? "Et nytt brett. En ny mulighet til å slå din beste tid." : "Start med dagens Sudoku og la resultatene vokse."}</p>
+            <Link href="/play/daily">Spill dagens utfordring <span aria-hidden="true">→</span></Link>
+          </div>
         </motion.div>
 
         {/* Achievements grid */}
