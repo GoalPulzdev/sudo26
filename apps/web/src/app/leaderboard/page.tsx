@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
 import type { Difficulty } from "@sudoku-2026/core";
 import Link from "next/link";
+import ObsidianHallHeader from "@/components/ObsidianHallHeader";
 
 const LABELS: Record<Difficulty, string> = {
   easy: "Enkel", medium: "Middels", hard: "Vanskelig", extreme: "Ekstrem", daily: "Daglig", mini: "Mini 6×6",
@@ -57,51 +58,20 @@ export default function LeaderboardPage(): React.ReactElement {
   });
 
   // Medal for top 3 by best time (only if actually played)
-  const medals = ["🥇", "🥈", "🥉"];
+  const medals = ["Ⅰ", "Ⅱ", "Ⅲ"];
 
   const totalPlayed = ORDER.reduce((a, d) => a + stats.byDifficulty[d].played, 0);
 
   return (
-    <main className="min-h-screen flex flex-col items-center gap-8 px-4 py-10">
-      {/* Back */}
-      <div className="w-full max-w-lg">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest transition-colors"
-          style={{ color: "var(--text-muted)" }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)"; }}
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-          Hjem
-        </Link>
-      </div>
-
-      <div className="w-full max-w-lg flex flex-col gap-7">
-        {/* Heading */}
-        <div>
-          <h1
-            className="text-4xl font-black tracking-tight"
-            style={{
-              background: "linear-gradient(120deg, #3a4a66 0%, #2c3a4f 55%, #3a6b73 100%)",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-            }}
-          >
-            Mine rekorder
-          </h1>
-          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
-            {totalPlayed > 0 ? `${totalPlayed} spill fullført` : "Ingen spill fullført ennå – start spilling!"}
-          </p>
-        </div>
-
+    <main className="obsidian-hall obsidian-leaderboard min-h-screen flex flex-col items-center gap-8 px-4 py-10">
+      <ObsidianHallHeader chapter="02" eyebrow="YOUR PERSONAL BESTS" title="Dine rekorder." description={totalPlayed > 0 ? `${totalPlayed} registrerte spill. En rekord er bare starten på den neste.` : "Din første rekord venter. Velg et brett og begynn."} />
+      <div className="obsidian-hall-content w-full max-w-lg flex flex-col gap-7">
         {/* Per-difficulty records */}
         <motion.div
           variants={container}
           initial="hidden"
           animate="show"
-          className="rounded-2xl overflow-hidden"
+          className="obsidian-hall-table rounded-2xl overflow-hidden"
           style={{ border: "1.5px solid var(--border-2)", boxShadow: "var(--shadow)" }}
         >
           {/* Header */}
@@ -111,7 +81,7 @@ export default function LeaderboardPage(): React.ReactElement {
           >
             <span>Nivå</span>
             <span className="text-center">Spill</span>
-            <span className="text-center">Vunnet</span>
+            <span className="text-center">Fullført</span>
             <span className="text-center">Beste tid</span>
           </div>
 
@@ -175,12 +145,12 @@ export default function LeaderboardPage(): React.ReactElement {
             className="text-center py-12"
             style={{ color: "var(--text-dim)" }}
           >
-            <div className="text-4xl mb-3">🎮</div>
+            <div className="obsidian-empty-glyph" aria-hidden="true">◈</div>
             <p className="text-sm font-semibold">Ingen rekorder ennå</p>
             <p className="text-xs mt-1" style={{ color: "var(--text-dim)" }}>Fullfør et spill for å se rekordene dine her</p>
             <Link
               href="/"
-              className="inline-block mt-4 px-5 py-2.5 rounded-xl text-sm font-bold"
+              className="obsidian-hall-cta inline-block mt-4 px-5 py-2.5 rounded-xl text-sm font-bold"
               style={{ background: "var(--accent)", color: "#fff" }}
             >
               Start spilling
