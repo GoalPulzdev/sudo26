@@ -289,7 +289,7 @@ export default function MiniPage(): React.JSX.Element {
           <span className="text-sm font-black" style={{ color: "var(--text)" }}>Mini Sudoku <span className="obsidian-mini-edition">/ 06</span></span>
           <div className="flex items-center gap-2 text-xs tabular-nums font-bold" style={{ color: "var(--text-muted)" }}>
             <span>{m}:{s}</span>
-            {mistakes > 0 && <span style={{ color: "var(--error)" }}>✕{mistakes}</span>}
+            <span className="obsidian-mini-mistakes" style={{ color: mistakes > 0 ? "var(--error)" : "var(--text-dim)" }}>Feil {mistakes}</span>
           </div>
         </div>
 
