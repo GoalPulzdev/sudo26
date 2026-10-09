@@ -100,7 +100,21 @@ export default function StatsPage() {
   return (
     <main className="obsidian-hall obsidian-stats min-h-screen flex flex-col items-center gap-8 px-4 py-10">
       <ObsidianHallHeader chapter="01" eyebrow="THE NUMBERS" title="Din progresjon." description={`${totalWon} løste brett · ${totalPlayed} registrerte spill. Dine resultater, i ditt eget tempo.`} />
-      <div className="obsidian-hall-content w-full max-w-lg flex flex-col gap-7">
+      <div className="obsidian-hall-content obsidian-v3-stats-content w-full flex flex-col gap-7">
+        <section className="obsidian-v3-stats-feature" aria-label="Oversikt over fremgang">
+          <div className="obsidian-v3-stats-feature-text">
+            <span className="obsidian-v3-stats-feature-label">OVERALL PROGRESS / DINE RESULTATER</span>
+            <strong>{totalWon.toLocaleString("no-NO")}</strong>
+            <span>Fullførte brett</span>
+            <p>Hvert fullførte brett er et øyeblikk av mestring. Dette er din dokumenterte spillhistorikk.</p>
+          </div>
+          <div className="obsidian-v3-stats-feature-right">
+            <div className="obsidian-v3-stats-donut" style={{ "--ring-value": `${winPct}%` } as React.CSSProperties}>
+              <div><strong>{winPct}%</strong><span>Vunnet av<br />registrerte spill</span></div>
+            </div>
+            <span className="obsidian-v3-stats-feature-caution">{totalPlayed} registrerte spill</span>
+          </div>
+        </section>
         {/* Big stat cards */}
         <div className="obsidian-stats-grid grid grid-cols-2 sm:grid-cols-4 gap-3">
           <BigStat label="Streak"  value={animStreak} unit="" suffix=" dager" accent="#bf9c45" icon={<IconFlame />} />
@@ -109,6 +123,7 @@ export default function StatsPage() {
           <BigStatText label="Totaltid" value={fmtTotal(totalTimeSec)} accent="#b6a17d" />
         </div>
 
+        <div className="obsidian-v3-stats-section-label"><span>RESULTATER ETTER NIVÅ</span><Link href="/leaderboard">Mine rekorder →</Link></div>
         {/* Per-difficulty table */}
         <motion.div
           variants={container}
