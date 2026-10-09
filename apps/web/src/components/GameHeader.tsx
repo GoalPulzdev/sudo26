@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import type { Hint } from "@sudoku-2026/core";
+import { Rich } from "@/lib/rich";
 
 interface GameHeaderProps {
   elapsed: number;
@@ -136,13 +137,9 @@ export default function GameHeader({
                     · {hint.strategy.replace(/_/g, " ")}
                   </span>
                 </p>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ color: "var(--text)" }}
-                  dangerouslySetInnerHTML={{
-                    __html: hint.explanation.replace(/\*\*(.+?)\*\*/g, "<strong style=''color:#6b4a2a''>$1</strong>"),
-                  }}
-                />
+                <p className="text-sm leading-relaxed" style={{ color: "var(--text)" }}>
+                  <Rich text={hint.explanation} strongColor="var(--obsidian-gold, #bf9c45)" />
+                </p>
               </div>
               <button
                 onClick={onDismissHint}
