@@ -55,17 +55,17 @@ export default function GameHeader({
   const pct = totalCells > 0 ? Math.round((filledCount / totalCells) * 100) : 0;
 
   return (
-    <div className="flex flex-col gap-2" style={{ width: "min(92vw, 480px)" }}>
+    <div className="obsidian-hud flex flex-col gap-2" style={{ width: "min(92vw, 480px)" }}>
       {/* HUD stats bar */}
       <div
-        className="flex items-center justify-between px-4 py-3 rounded-2xl"
+        className="obsidian-hud-main flex items-center justify-between px-4 py-3 rounded-2xl"
         style={{
           background: "var(--surface)",
           border: "1.5px solid var(--border-2)",
           boxShadow: "var(--shadow)",
         }}
       >
-        <h2 className="text-sm font-bold tracking-wide uppercase" style={{ color: "var(--text-muted)" }}>
+        <h2 className="obsidian-hud-title text-sm font-bold tracking-wide uppercase" style={{ color: "var(--text-muted)" }}>
           {title}
         </h2>
         <div className="flex items-center gap-3">
@@ -93,7 +93,12 @@ export default function GameHeader({
 
       {/* Progress bar */}
       <div
-        className="w-full rounded-full overflow-hidden"
+        className="obsidian-hud-progress w-full rounded-full overflow-hidden"
+        role="progressbar"
+        aria-label="Brett fullført"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={pct}
         style={{ height: "5px", background: "var(--border)" }}
         title={`${pct}% fullfort`}
       >
