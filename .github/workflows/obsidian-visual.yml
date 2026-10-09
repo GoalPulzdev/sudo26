@@ -1,0 +1,58 @@
+name: Obsidian Visual Review
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/**"
+      - ".github/workflows/obsidian-visual.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Install pinned Playwright Chromium
+        run: npx --yes playwright@1.56.1 install --with-deps chromium
+      - name: Start built app
+        run: |
+          pnpm --dir apps/web start > /tmp/obsidian-web.log 2>&1 &
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:3000/ > /dev/null; then
+              echo "Built site ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/obsidian-web.log
+          exit 1
+      - name: Capture authentic desktop and mobile screenshots
+        run: |
+          mkdir -p visual-review
+          npx --yes playwright@1.56.1 screenshot --browser=chromium --viewport-size="1440,900" --wait-for-timeout=1200 --full-page http://127.0.0.1:3000/ visual-review/home-desktop.png
+          npx --yes playwright@1.56.1 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=1200 --full-page http://127.0.0.1:3000/ visual-review/home-mobile.png
+          npx --yes playwright@1.56.1 screenshot --browser=chromium --viewport-size="1440,900" --wait-for-timeout=1200 --full-page http://127.0.0.1:3000/play/mini visual-review/mini-desktop.png
+          npx --yes playwright@1.56.1 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=1200 --full-page http://127.0.0.1:3000/play/mini visual-review/mini-mobile.png
+          npx --yes playwright@1.56.1 screenshot --browser=chromium --viewport-size="1440,900" --wait-for-timeout=1200 --full-page http://127.0.0.1:3000/profile visual-review/profile-desktop.png
+          npx --yes playwright@1.56.1 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=1200 --full-page http://127.0.0.1:3000/stats visual-review/stats-mobile.png
+      - name: Upload browser evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: obsidian-real-browser-screenshots
+          path: visual-review/*.png
+          retention-days: 14
+          if-no-files-found: warn
