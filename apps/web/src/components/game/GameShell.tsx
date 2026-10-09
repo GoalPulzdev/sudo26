@@ -155,6 +155,7 @@ export default function GameShell({
         mistakes={game.mistakes}
         hintsUsed={game.hintsUsed}
         isPlaying={game.status === "playing"}
+        canPause={game.status !== "won"}
         onPause={() => dispatch({ type: game.status === "playing" ? "PAUSE" : "RESUME" })}
         filledCount={filledCount}
         totalCells={totalCells}
