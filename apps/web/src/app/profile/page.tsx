@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import ObsidianHallHeader from "@/components/ObsidianHallHeader";
 import { useAuthStore } from "@/store/authStore";
 import { useGameStore } from "@/store/gameStore";
 import { ACHIEVEMENT_DEFS } from "@/lib/achievements";
@@ -89,10 +90,11 @@ function ProfileSetupModal({ onSave }: { onSave: (name: string, color: string) =
 
   return (
     <motion.div
+      role="presentation"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4"
+      className="obsidian-profile-modal-backdrop fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 px-4"
       style={{ background: "rgba(0,0,0,0.4)" }}
     >
       <motion.div
@@ -100,7 +102,8 @@ function ProfileSetupModal({ onSave }: { onSave: (name: string, color: string) =
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
         transition={{ type: "spring", stiffness: 400, damping: 28 }}
-        className="rounded-3xl max-w-sm w-full flex flex-col gap-6 p-7"
+        className="obsidian-profile-modal rounded-3xl max-w-sm w-full flex flex-col gap-6 p-7"
+        role="dialog" aria-modal="true" aria-label="Rediger profil"
         style={{ background: "var(--surface)", boxShadow: "var(--shadow)", border: "1.5px solid var(--border-2)" }}
       >
         {/* Avatar preview */}
@@ -145,7 +148,7 @@ function ProfileSetupModal({ onSave }: { onSave: (name: string, color: string) =
               <button
                 key={c}
                 onClick={() => setColor(c)}
-                className="w-8 h-8 rounded-full transition-transform"
+                className="w-8 h-8 rounded-full transition-transform" aria-pressed={color === c}
                 style={{
                   background: c,
                   transform: color === c ? "scale(1.2)" : "scale(1)",
@@ -218,19 +221,15 @@ export default function ProfilePage(): React.JSX.Element {
   const displayColor = profile?.color ?? "#3a4a66";
 
   return (
-    <main className="min-h-screen flex flex-col items-center gap-6 px-4 py-6">
-      <div className="flex flex-col gap-6 w-full" style={{ maxWidth: 420 }}>
-
-        {/* Back nav */}
-        <Link href="/" className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>
-          ← Hjem
-        </Link>
+    <main className="obsidian-hall obsidian-profile-page min-h-screen flex flex-col items-center gap-6 px-4 py-6">
+      <ObsidianHallHeader chapter="03" eyebrow="PLAYER IDENTITY" title="Din profil." description="Resultatene dine. Måten du spiller på. Fremgangen du skaper." />
+      <div className="obsidian-hall-content flex flex-col gap-6 w-full" style={{ maxWidth: 720 }}>
 
         {/* Profile header */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl p-6 flex items-center gap-5"
+          className="obsidian-profile-identity rounded-3xl p-6 flex items-center gap-5"
           style={{ background: "var(--surface)", border: "1.5px solid var(--border-2)", boxShadow: "var(--shadow)" }}
         >
           <Avatar username={profile?.username ?? null} color={displayColor} size={64} />
@@ -284,7 +283,7 @@ export default function ProfilePage(): React.JSX.Element {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-2xl overflow-hidden"
+          className="obsidian-hall-table rounded-2xl overflow-hidden"
           style={{ background: "var(--surface)", border: "1.5px solid var(--border-2)", boxShadow: "var(--shadow-sm)" }}
         >
           {/* Header */}
@@ -321,7 +320,7 @@ export default function ProfilePage(): React.JSX.Element {
           className="flex flex-col gap-3"
         >
           <p className="text-xs font-black uppercase tracking-widest px-1" style={{ color: "var(--text-dim)" }}>
-            Achievements
+            Prestasjoner
           </p>
           <AchievementsGrid earnedKeys={earnedAchievements} />
         </motion.div>
