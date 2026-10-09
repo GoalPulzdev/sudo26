@@ -179,51 +179,15 @@ export default function MiniPage(): React.JSX.Element {
       onKeyDown={handleKeyDown}
       tabIndex={-1}
     >
-      {/* Header */}
-      <div className="obsidian-mini-hud flex flex-col gap-2" style={{ width: "min(92vw, 420px)" }}>
-        <div className="flex items-center justify-between px-4 py-3 rounded-2xl"
-          style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}>
-          <Link href="/" className="text-xs font-bold uppercase tracking-widest"
-            style={{ color: "var(--text-dim)" }}>← Hjem</Link>
-          <span className="text-sm font-black" style={{ color: "var(--text)" }}>Mini Sudoku <span className="obsidian-mini-edition">/ 06</span></span>
-          <div className="flex items-center gap-2 text-xs tabular-nums font-bold" style={{ color: "var(--text-muted)" }}>
-            <span>{m}:{s}</span>
-            {mistakes > 0 && <span style={{ color: "var(--error)" }}>✕{mistakes}</span>}
-          </div>
-        </div>
 
-        {/* Difficulty selector */}
-        <div className="flex gap-2">
-          {(["easy", "medium", "hard"] as MiniDifficulty[]).map((d) => (
-            <button
-              key={d}
-              type="button"
-              aria-pressed={difficulty === d}
-              onClick={() => startNewGame(d)}
-              className="flex-1 py-1.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all"
-              style={{
-                background: difficulty === d ? "#c4a166" : "var(--surface)",
-                color: difficulty === d ? "#121b2a" : "var(--text-muted)",
-                border: `1.5px solid ${difficulty === d ? "var(--accent)" : "var(--border)"}`,
-              }}
-            >
-              {DIFFICULTY_LABELS[d]}
-            </button>
-          ))}
-        </div>
-
-        {/* Progress bar */}
-        <div className="h-1 rounded-full overflow-hidden" role="progressbar" aria-label="Brett fullført" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} style={{ background: "var(--border)" }}>
-          <motion.div className="h-full rounded-full"
-            style={{ background: "linear-gradient(90deg, #b89055, #dfc08b)", width: `${pct}%` }}
-            animate={{ width: `${pct}%` }}
-            transition={{ type: "spring", stiffness: 80 }}
-          />
-        </div>
+      <div className="obsidian-mini-page-heading">
+        <Link href="/" className="obsidian-mini-back">← TILBAKE TIL ARENAEN</Link>
+        <span className="obsidian-mini-page-edition">THE ART OF FOCUS · 06 × 06</span>
+        <h1>Mini <em>Sudoku.</em></h1>
+        <p>Samme tilfredsstillende logikk. En kortere utfordring.</p>
       </div>
-
-      <button type="button" className="obsidian-mini-pause-trigger" aria-label={status === "paused" ? "Fortsett" : "Pause"} disabled={status === "won"} onClick={() => setStatus(status === "paused" ? "playing" : "paused")}>{status === "paused" ? "▶ Fortsett" : "Ⅱ Pause"}</button>
-
+      <section className="obsidian-mini-play-layout" aria-label="Mini Sudoku spillområde">
+        <div className="obsidian-mini-play-surface">
       {/* 6×6 Grid */}
       <div
         style={{
@@ -313,8 +277,61 @@ export default function MiniPage(): React.JSX.Element {
         )}
       </div>
 
+
+        </div>
+        <aside className="obsidian-mini-aside" aria-label="Spillstatus og vanskelighetsgrad">
+      {/* Header */}
+      <div className="obsidian-mini-hud flex flex-col gap-3" style={{ width: "min(92vw, 420px)" }}>
+        <div className="flex items-center justify-between px-4 py-3 rounded-2xl"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}>
+          <Link href="/" className="text-xs font-bold uppercase tracking-widest"
+            style={{ color: "var(--text-dim)" }}>← Hjem</Link>
+          <span className="text-sm font-black" style={{ color: "var(--text)" }}>Mini Sudoku <span className="obsidian-mini-edition">/ 06</span></span>
+          <div className="flex items-center gap-2 text-xs tabular-nums font-bold" style={{ color: "var(--text-muted)" }}>
+            <span>{m}:{s}</span>
+            {mistakes > 0 && <span style={{ color: "var(--error)" }}>✕{mistakes}</span>}
+          </div>
+        </div>
+
+        {/* Difficulty selector */}
+        <div className="flex gap-2">
+          {(["easy", "medium", "hard"] as MiniDifficulty[]).map((d) => (
+            <button
+              key={d}
+              type="button"
+              aria-pressed={difficulty === d}
+              onClick={() => startNewGame(d)}
+              className="flex-1 py-1.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all"
+              style={{
+                background: difficulty === d ? "#c4a166" : "var(--surface)",
+                color: difficulty === d ? "#121b2a" : "var(--text-muted)",
+                border: `1.5px solid ${difficulty === d ? "var(--accent)" : "var(--border)"}`,
+              }}
+            >
+              {DIFFICULTY_LABELS[d]}
+            </button>
+          ))}
+        </div>
+
+        {/* Progress bar */}
+        <div className="h-1 rounded-full overflow-hidden" role="progressbar" aria-label="Brett fullført" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} style={{ background: "var(--border)" }}>
+          <motion.div className="h-full rounded-full"
+            style={{ background: "linear-gradient(90deg, #b89055, #dfc08b)", width: `${pct}%` }}
+            animate={{ width: `${pct}%` }}
+            transition={{ type: "spring", stiffness: 80 }}
+          />
+        </div>
+      </div>
+
+      <button type="button" className="obsidian-mini-pause-trigger" aria-label={status === "paused" ? "Fortsett" : "Pause"} disabled={status === "won"} onClick={() => setStatus(status === "paused" ? "playing" : "paused")}>{status === "paused" ? "▶ Fortsett" : "Ⅱ Pause"}</button>
+
+
+          <p className="obsidian-mini-aside-caption">ET LITE BRETT.<br /><em>STORE ØYEBLIKK.</em></p>
+        </aside>
+      </section>
+
       {/* Number Pad 1–6 */}
-      <div className="obsidian-mini-keypad flex flex-col gap-2" style={{ width: "min(92vw, 360px)" }}>
+      <div className="obsidian-mini-keypad flex flex-col gap-3" style={{ width: "min(92vw, 360px)" }}>
         <div className="grid grid-cols-6 gap-1.5">
           {([1, 2, 3, 4, 5, 6] as Val[]).map((n) => (
             <motion.button
